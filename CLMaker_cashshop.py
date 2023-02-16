@@ -187,7 +187,12 @@ def write_data_cashshop(salesList : list[Sales]):
 
         i += 1
         result.loc[i,"Category3"] = "마일리지"
-        result.loc[i,"Check List"] =  str(y.bonus)+ " 마일리지 적립"
+
+        if "0" in str(y.bonus) :
+            result.loc[i,"Check List"] =  "마일리지 미노출"
+        else :            
+            result.loc[i,"Check List"] =  str(y.bonus)+ " 마일리지 적립"
+
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
         i += 1
         result.loc[i,"Category3"] = "아이템 획득"
