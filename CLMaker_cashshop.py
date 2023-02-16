@@ -175,8 +175,14 @@ def write_data_cashshop(salesList : list[Sales]):
         i += 1
         result.loc[i,"Category3"] = "아이템 구매"
 
-        if 
-        result.loc[i,"Check List"] = y.price + " 차감"
+        if "원" in y.price :
+            result.loc[i,"Check List"] = f"결제 모듈 내 {y.pkgName} 노출"
+            i += 1
+            result.loc[i,"Check List"] = f"결제 모듈 내 {y.price} 노출"
+            i += 1
+            result.loc[i,"Check List"] = f"결제 완료 시 보관함으로 획득"
+        else :
+            result.loc[i,"Check List"] = y.price + " 차감"
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
         i += 1
