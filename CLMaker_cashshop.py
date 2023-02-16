@@ -38,9 +38,8 @@ class Item():
         self.innerItemList = ""
 
 
-def extract_data_cashshop():
+def extract_data_cashshop(fileName):
 
-    fileName = "유료상점.csv"
     target = pd.read_csv(fileName)
     # fileName = "유료상점.xlsx"
     # target = pd.read_excel(fileName,sheet_name = '유료상점',engine='openpyxl')
@@ -61,7 +60,7 @@ def extract_data_cashshop():
     salesList = [Sales] 
     #salesList : list[Sales]
     salesList.clear()
-    print("extracting data in csv...")
+    print("데이터 추출 중...")
     tqdmCount2 =0
     for j in tqdm(range(0,totalCount)):
         tqdmCount2 +=1
@@ -121,7 +120,7 @@ def write_data_cashshop(salesList : list[Sales]):
     curRow = 0
     count = 0
     tqdmCount0=0
-    print("writing data...")
+    print("데이터 쓰는 중...")
     for y in tqdm(salesList):
         tqdmCount0+=1
         y : Sales
@@ -175,6 +174,8 @@ def write_data_cashshop(salesList : list[Sales]):
 
         i += 1
         result.loc[i,"Category3"] = "아이템 구매"
+
+        if 
         result.loc[i,"Check List"] = y.price + " 차감"
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
@@ -256,7 +257,7 @@ def postprocess_cashshop():
     startRow_D = 0
 
     tqdmCount1 = 0
-    print("post-processing in excel...")
+    print("엑셀 서식 처리중...")
     for i in tqdm(range(firstRow, lastRow+1)):
         tqdmCount1+=1
         #print(i)
@@ -328,9 +329,19 @@ def postprocess_cashshop():
 
 
 if __name__ == "__main__":
-    salesList = extract_data_cashshop()
+
+    #print("┃  R2M CASH SHOP CL MAKER  ┃")
+    fileName = input("> 데이터파일명 입력(엔터:유료상점DATA.csv) : ")
+    if fileName == "":
+        fileName = "유료상점DATA.csv"
+
+    while not os.path.isfile(fileName) :
+        fileName = input("> Insert csv file name : ")
+
+
+    salesList = extract_data_cashshop(fileName)
     write_data_cashshop(salesList)
     postprocess_cashshop()
 
-    print("Making Cash Shop Check List is Complete!")
-    input("press enter key to exit ...")
+    print("생성완료")
+    input("종료하려면 엔터키 입력...")
