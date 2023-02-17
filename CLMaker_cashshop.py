@@ -164,7 +164,10 @@ def write_data_cashshop(salesList : list[Sales]):
                 result.loc[i,"Check List"] = str(item1) + " 관련 이미지 노출"
                 i+=1
 
-        result.loc[i,"Check List"] = "마일리지 : " + str(y.bonus)
+        if int(y.bonus) == 0 :
+            result.loc[i,"Check List"] =  "마일리지 미노출"
+        else :            
+            result.loc[i,"Check List"] =  "마일리지 : " + str(y.bonus)+ " 적립"
         i+=1
         result.loc[i,"Check List"] = "구매 제한 : " + y.limit
         i+=1
@@ -188,8 +191,8 @@ def write_data_cashshop(salesList : list[Sales]):
         i += 1
         result.loc[i,"Category3"] = "마일리지"
 
-        if "0" in str(y.bonus) :
-            result.loc[i,"Check List"] =  "마일리지 : 미노출"
+        if int(y.bonus) == 0 :
+            result.loc[i,"Check List"] =  "미노출"
         else :            
             result.loc[i,"Check List"] =  "마일리지 : " + str(y.bonus)+ " 적립"
 
