@@ -277,11 +277,4 @@ Sub ColorOddRows()
     Next i
 End Sub
 
-Sub All_Cells_In_All_WorkSheets_2()
-    Dim sh As Worksheet
-    For Each sh In ActiveWorkbook.Worksheets
-        With sh.UsedRange
-            .Value = .Value
-        End With
-    Next sh
-End Sub
+
