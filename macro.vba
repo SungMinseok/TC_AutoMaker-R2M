@@ -285,3 +285,34 @@ Sub All_Cells_In_All_WorkSheets_2()
         End With
     Next sh
 End Sub
+
+Sub 같은값끼리병합() '같은값끼리병합 230227
+    Dim lastRow As Long
+    lastRow = Cells(Rows.Count, "A").End(xlUp).Row
+    
+    Application.DisplayAlerts = False
+    Dim currentVal As String
+    currentVal = Cells(1, "A").Value
+    
+    Dim i As Long
+    For i = 2 To lastRow
+        If currentVal <> Cells(i, "A").Value Then
+            currentVal = Cells(i, "A").Value
+        Else
+            Dim j As Long
+            For j = i To lastRow
+                If currentVal <> Cells(j, "A").Value Then
+                    Exit For
+                End If
+            Next j
+            If j - i > 0 Then
+                Range("A" & i - 1).Resize(j - i + 1).Merge
+            End If
+            i = j - 1
+        End If
+    Next i
+    
+    Cells(Rows.Count, "A").Font.Size = 9
+    Cells(Rows.Count, "A").Font.Bold = True
+    Application.DisplayAlerts = True
+End Sub
