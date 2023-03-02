@@ -177,7 +177,7 @@ def extract_data_cashshop(fileName):
         del a,tempDf
         gc.collect()
 
-    salesList.sort(key =lambda a: (a.server,a.category))
+    #salesList.sort(key =lambda a: (a.server,a.category))
     return salesList
 
 
@@ -185,6 +185,7 @@ def write_data_cashshop(salesList : list[Sales]):
     totalResult = pd.DataFrame()
 #print(len(salesList))
 
+    salesList.sort(key =lambda a: (a.server,a.category))
     curRow = 0
     count = 0
     tqdmCount0=0
@@ -330,16 +331,27 @@ def write_data_cashshop(salesList : list[Sales]):
 
 
 def write_data_cashshop_inspection(salesList : list[Sales]):
+
+    salesList.sort(key =lambda a: (a.salesCheck,a.category))
+
+
     totalResult = pd.DataFrame()
     curRow = 0
     count = 0
-    tqdmCount0=0
+    #tqdmCount0=0
     print("데이터 쓰는 중...")
     for y in tqdm(salesList):
-        tqdmCount0+=1
+
+        #tqdmCount0+=1
         y : Sales
         count += 1
         result = pd.DataFrame()
+
+
+        if y.salesCheck == "판매 제외" or y.salesCheck == "판매 전"  :
+            continue
+
+        
 
         i = curRow
         result.loc[i,"Category1"] = y.server
@@ -369,9 +381,8 @@ def write_data_cashshop_inspection(salesList : list[Sales]):
         result.loc[i,"ETC"] = y.pkgID
 
 
-        if y.salesCheck != "판매 제외" :
-            totalResult = pd.concat([totalResult,result], ignore_index=True)
-        #print(len(totalResult))
+        #if y.salesCheck != "판매 제외" and y.salesCheck != "판매 전"  :
+        totalResult = pd.concat([totalResult,result], ignore_index=True)
 
     totalResult = totalResult.replace("NaN","")
     totalResult = totalResult.replace("nan","")
