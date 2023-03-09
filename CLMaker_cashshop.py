@@ -359,8 +359,14 @@ def write_data_cashshop_inspection(salesList : list[Sales]):
         result.loc[i,"Category3"] = y.pkgName
 
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-    
-        info_0 = f'{y.category} / {y.price} / {y.bonus} / {y.limit}'
+        bonusStr = ""
+
+        if int(y.bonus) == 0 :
+            bonusStr =  "마일리지 X"
+        else :            
+            bonusStr =  f"{y.bonus} 마일리지"
+
+        info_0 = f'{y.category} / {y.price} / {bonusStr} / {y.limit}'
         
         info_expired = y.endDate.strftime('%m/%d/%Y(목) 11:00 까지')
 
