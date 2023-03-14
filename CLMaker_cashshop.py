@@ -61,7 +61,7 @@ class Sales():
         self.itemList0 = []
         self.itemList1 = []
         self.itemList2 =[]
-        self.order = ""
+        self.order = -1
 
         #별도 저장값
         self.salesCheck = ""
@@ -188,7 +188,7 @@ def write_data_cashshop(salesList : list[Sales]):
     totalResult = pd.DataFrame()
 #print(len(salesList))
 
-    salesList.sort(key =lambda a: (a.server,a.category,a.order))
+    #salesList.sort(key =lambda a: (a.server,a.category,str(a.order)))
     curRow = 0
     count = 0
     tqdmCount0=0
@@ -611,9 +611,8 @@ def highlight_star_cells(sheet):
     return sheet
 
 
+
 if __name__ == "__main__":
-
-
     #print("┃  R2M CASH SHOP CL MAKER  ┃")
     print("체크리스트 타입 입력 :")
     print("0:TC, 1:점검")
@@ -633,9 +632,13 @@ if __name__ == "__main__":
     clType = ""
     if fileType == "0":
         clType = "TC"
-        tcStartDate = input("(업데이트날짜 : YYYY-MM-DD)>: ")
+        print("업데이트날짜 입력 시, 해당 날짜 포함하여 이후 시작하는 상품만 작성")
+        print("YYYY-MM-DD")
+        print("(그냥 엔터키 입력 시, 오늘로 설정)")
+        tcStartDate = input(">: ")
         if tcStartDate == "" :
-            tcStartDate = "2000-01-01"
+            tcStartDate = datetime.date.today().strftime('%Y-%m-%d')
+            #tcStartDate = "2000-01-01"
         
     elif fileType == "1":
         clType = "정기점검"
@@ -651,23 +654,21 @@ if __name__ == "__main__":
     if not os.path.isdir(tempDir) :
         os.mkdir(tempDir)
 
+
     xlFileName = f"./CL_CashShop_{clType}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
     tempCsvName = f"./temp/tempCsv.csv"
 
 #endregion
-
-
-
-
-
-
-
-
-
+    try:
+        salesList = extract_data_cashshop(fileName)
+        pass
+    except PermissionError:
+        print(f"해당 문서가 열려있습니다. 닫고 다시 시작해주세요. {fileName}")
+        input("아무 키나 누르세요...")
+        os.system('python ' + os.path.basename(__file__))
 
 
     if fileType == "0":
-        salesList = extract_data_cashshop(fileName)
         write_data_cashshop(salesList)
         postprocess_cashshop()
     elif fileType == "1":
@@ -678,5 +679,6 @@ if __name__ == "__main__":
 
     print("생성완료")
     for id in idList :
-        print(id)
-    input("종료하려면 엔터키 입력...")
+        print(id)        
+    os.system('pause')
+
