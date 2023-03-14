@@ -61,6 +61,7 @@ class Sales():
         self.itemList0 = []
         self.itemList1 = []
         self.itemList2 =[]
+        self.order = ""
 
         #별도 저장값
         self.salesCheck = ""
@@ -124,6 +125,7 @@ def extract_data_cashshop(fileName):
         a.pkgID = int(tempDf.loc[0,"CashShopID"])
         a.pkgName = tempDf.loc[0,"PkgName"] #+ "[귀속]"
         a.category = tempDf.loc[0,"Category"]
+        a.order = tempDf.loc[0,"Order"]
         a.price = str(tempDf.loc[0,"Price"])
         try:
             a.bonus = int(tempDf.loc[0,"Bonus"])
@@ -186,7 +188,7 @@ def write_data_cashshop(salesList : list[Sales]):
     totalResult = pd.DataFrame()
 #print(len(salesList))
 
-    salesList.sort(key =lambda a: (a.server,a.category))
+    salesList.sort(key =lambda a: (a.server,a.category,a.order))
     curRow = 0
     count = 0
     tqdmCount0=0
@@ -334,7 +336,7 @@ def write_data_cashshop(salesList : list[Sales]):
 
 def write_data_cashshop_inspection(salesList : list[Sales]):
 
-    salesList.sort(key =lambda a: (a.server,a.salesCheck,a.category))
+    salesList.sort(key =lambda a: (a.server,a.salesCheck,a.category,a.order))
 
 
     totalResult = pd.DataFrame()
