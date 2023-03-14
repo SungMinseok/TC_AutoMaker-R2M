@@ -22,6 +22,7 @@ tempCsvName = f"./temp/tempCsv.csv"
 
 xlFileName = ""
 tcStartDate = ""
+idList = [int]
 
 def dateCheck(start_date, end_date, today = datetime.date.today()):
     
@@ -297,6 +298,7 @@ def write_data_cashshop(salesList : list[Sales]):
             #print("추가")
             
             totalResult = pd.concat([totalResult,result], ignore_index=True)
+            idList.append(y.pkgID)
         #print(len(totalResult))
 
     totalResult = totalResult.replace("NaN","")
@@ -332,7 +334,7 @@ def write_data_cashshop(salesList : list[Sales]):
 
 def write_data_cashshop_inspection(salesList : list[Sales]):
 
-    salesList.sort(key =lambda a: (a.salesCheck,a.category))
+    salesList.sort(key =lambda a: (a.server,a.salesCheck,a.category))
 
 
     totalResult = pd.DataFrame()
@@ -673,4 +675,6 @@ if __name__ == "__main__":
 
 
     print("생성완료")
+    for id in idList :
+        print(id)
     input("종료하려면 엔터키 입력...")
