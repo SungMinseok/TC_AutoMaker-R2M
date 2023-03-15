@@ -22,6 +22,7 @@ tempCsvName = f"./temp/tempCsv.csv"
 
 xlFileName = ""
 tcStartDate = ""
+
 idList = [int]
 
 def dateCheck(start_date, end_date, today = datetime.date.today()):
@@ -162,11 +163,12 @@ def extract_data_cashshop(fileName):
         else: 
             a.endDate = pd.to_datetime(tempDf.loc[0,"EndDate"])
           
-        if fileType == "0" :#TC
-            startDate = datetime.datetime.strptime(tcStartDate, '%Y-%m-%d')
-            a.salesCheck = dateCheck(a.startDate,a.endDate,startDate.date())
-        elif fileType == "1" :#점검
-            a.salesCheck = dateCheck(a.startDate,a.endDate)
+        #if fileType == "0" :#TC
+            #startDate = datetime.datetime.strptime(tcStartDate, '%Y-%m-%d')
+            #a.salesCheck = dateCheck(a.startDate,a.endDate,startDate.date())
+        #elif fileType == "1" :#점검
+        startDate = datetime.datetime.strptime(tcStartDate, '%Y-%m-%d')
+        a.salesCheck = dateCheck(a.startDate,a.endDate,startDate.date())
 
 
 
@@ -610,8 +612,9 @@ def highlight_star_cells(sheet):
                 continue
     return sheet
 
-def main():
-    global fileType,tcStartDate
+
+if __name__ == "__main__":
+
 
     #print("┃  R2M CASH SHOP CL MAKER  ┃")
     print("체크리스트 타입 입력 :")
@@ -632,12 +635,25 @@ def main():
     clType = ""
     if fileType == "0":
         clType = "TC"
-        tcStartDate = input("(업데이트날짜 : YYYY-MM-DD)(해당 날짜 포함하여 이후 시작하는 상품만 작성)>: ")
+        print("업데이트날짜 입력 시, 해당 날짜 포함하여 이후 시작하는 상품만 작성")
+        print("YYYY-MM-DD")
+        print("(그냥 엔터키 입력 시, 오늘로 설정)")
+        tcStartDate = input(">: ")
         if tcStartDate == "" :
-            tcStartDate = "2000-01-01"
+            tcStartDate = datetime.date.today().strftime('%Y-%m-%d')
+            #tcStartDate = "2000-01-01"
         
     elif fileType == "1":
         clType = "정기점검"
+        # 오늘 날짜 구하기
+        todayDate = datetime.datetime.today().date()
+
+        # 그 주의 목요일 날짜 구하기
+        days_until_thursday = (3 - todayDate.weekday()) % 7
+        thursdayDate = todayDate + datetime.timedelta(days=days_until_thursday)
+        tcStartDate = thursdayDate.strftime('%Y-%m-%d')
+
+        print(f"이번주 목요일 {tcStartDate} 기준으로 작성됩니다.")
 
 
 
@@ -650,26 +666,18 @@ def main():
     if not os.path.isdir(tempDir) :
         os.mkdir(tempDir)
 
-    global xlFileName, tempCsvName
 
     xlFileName = f"./CL_CashShop_{clType}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
     tempCsvName = f"./temp/tempCsv.csv"
 
 #endregion
-
-
-
-
-
     try:
         salesList = extract_data_cashshop(fileName)
+        pass
     except PermissionError:
         print(f"해당 문서가 열려있습니다. 닫고 다시 시작해주세요. {fileName}")
-        os.system('pause')
-        main()
-
-
-
+        input("아무 키나 누르세요...")
+        os.system('python ' + os.path.basename(__file__))
 
 
     if fileType == "0":
@@ -684,9 +692,5 @@ def main():
     print("생성완료")
     for id in idList :
         print(id)        
-    os.open(xlFileName,1)
     os.system('pause')
 
-
-if __name__ == "__main__":
-    main()
