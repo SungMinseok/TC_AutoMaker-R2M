@@ -390,7 +390,8 @@ def write_data_cashshop_inspection(salesList : list[Sales]):
 
     # #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
      
-        result.loc[i,"ETC"] = y.pkgID
+        result.loc[i,"pkgID"] = y.pkgID
+        result.loc[i,"order"] = y.order
 
 
         #if y.salesCheck != "판매 제외" and y.salesCheck != "판매 전"  :
