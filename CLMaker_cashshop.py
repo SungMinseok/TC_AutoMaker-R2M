@@ -623,11 +623,11 @@ if __name__ == "__main__":
     fileType = input(">:")
     print("데이터파일명 입력 :")
     print("0:국내, 1:대만")
-    fileName = input(">:")
+    countryType = input(">:")
     #fileName = ""
-    if fileName == "0":
+    if countryType == "0":
         fileName = "유료상점DATA_KR.xlsx"
-    elif fileName == "1":
+    elif countryType == "1":
         fileName = "유료상점DATA_TW.xlsx"
     while not os.path.isfile(fileName) :
         fileName = input(">:")
@@ -649,12 +649,18 @@ if __name__ == "__main__":
         # 오늘 날짜 구하기
         todayDate = datetime.datetime.today().date()
 
-        # 그 주의 목요일 날짜 구하기
-        days_until_thursday = (3 - todayDate.weekday()) % 7
-        thursdayDate = todayDate + datetime.timedelta(days=days_until_thursday)
+        # 그 주의 점검 날짜 구하기 (대만:화, 국내:목)
+        dateID= 0
+        if countryType == "0":
+            dateID = (3,"목")
+        elif countryType == "1":
+            dateID = (1,"화")
+
+        days_until_target = (dateID[0] - todayDate.weekday()) % 7
+        thursdayDate = todayDate + datetime.timedelta(days=days_until_target)
         tcStartDate = thursdayDate.strftime('%Y-%m-%d')
 
-        print(f"이번주 목요일 {tcStartDate} 기준으로 작성됩니다.")
+        print(f"이번주 {dateID[1]}요일 {tcStartDate} 기준으로 작성됩니다.")
 
 
 
