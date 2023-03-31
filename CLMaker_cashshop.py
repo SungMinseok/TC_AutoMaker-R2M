@@ -190,7 +190,7 @@ def write_data_cashshop(salesList : list[Sales]):
     totalResult = pd.DataFrame()
 #print(len(salesList))
 
-    #salesList.sort(key =lambda a: (a.server,a.category,str(a.order)))
+    salesList.sort(key =lambda a: (a.server,a.category,str(a.order)))
     curRow = 0
     count = 0
     tqdmCount0=0
@@ -229,6 +229,7 @@ def write_data_cashshop(salesList : list[Sales]):
         result.loc[i,"Check List"] = "사용 시 다음 아이템 획득\n\n- "+desc1
 
         i += 1
+        desc0 = f'{y.pkgName} 상자[귀속] 1개'
         desc0 = desc0.replace("\n","\n- ")
         result.loc[i,"Check List"] = "<"+y.pkgName+"> 구성품 상세 정보\n- " + desc0
 
@@ -304,6 +305,8 @@ def write_data_cashshop(salesList : list[Sales]):
             totalResult = pd.concat([totalResult,result], ignore_index=True)
             idList.append(y.pkgID)
         #print(len(totalResult))
+
+        """상품별체크중단점"""
 
     totalResult = totalResult.replace("NaN","")
     totalResult = totalResult.replace("nan","")
