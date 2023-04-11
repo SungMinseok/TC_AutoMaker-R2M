@@ -81,11 +81,45 @@ def extract_data_cashshop(fileName):
     #target = pd.read_csv(fileName)
 
 #XLSX 읽기
-    tempTarget = pd.read_excel(fileName,engine='openpyxl', na_values = "")
-    tempTarget.to_csv(tempCsvName, encoding='cp949')
-    target = pd.read_csv(tempCsvName, encoding='cp949')
+    # tempTarget = pd.read_excel(fileName,engine='openpyxl', na_values = "")
+    # tempTarget.to_csv(tempCsvName, encoding='cp949')
+    # target = pd.read_csv(tempCsvName, encoding='cp949')
+    #target = pd.read_excel(fileName,engine='openpyxl', na_values = "")
 
 
+    # # 모든 시트 이름 가져오기
+    # sheet_names = pd.read_excel(fileName, sheet_name=None).keys()
+    # sheet_names1 = pd.read_excel(fileName, sheet_name=None)
+
+    # # 모든 시트의 데이터프레임을 리스트에 저장
+    # dfs = []
+    # headerCheck = False
+    # for sheet_name in sheet_names:
+    #     if not headerCheck :
+    #         headerCheck = True
+    #         df = pd.read_excel(fileName, sheet_name=sheet_name, header = 0, na_values="")
+    #     else :
+    #         df = pd.read_excel(fileName, sheet_name=sheet_name,header = None,  na_values="")
+    #         #df = df[1:]
+    #     dfs.append(df)
+
+    # # 모든 데이터프레임을 연속해서 연결하여 하나의 데이터프레임으로 만듦
+    # target = pd.concat(dfs, axis = 0, ignore_index=True)
+    target = pd.DataFrame()
+
+
+    sheet_names = pd.read_excel(fileName, sheet_name=None).keys()
+    for i, sheet_name in enumerate(sheet_names):
+        curDf = pd.read_excel(fileName, sheet_name=sheet_name, na_values="")
+
+        target = target.append(curDf, ignore_index = True)
+
+        del curDf
+        gc.collect()
+
+    
+    # 모든 데이터프레임을 연속해서 연결하여 하나의 데이터프레임으로 만듦
+    #target = pd.concat(dfs, ignore_index=True)
 
 
 
@@ -694,7 +728,8 @@ if __name__ == "__main__":
         write_data_cashshop(salesList)
         postprocess_cashshop()
     elif fileType == "1":
-        salesList = extract_data_cashshop(fileName)
+        if salesList == None :
+            salesList = extract_data_cashshop(fileName)
         write_data_cashshop_inspection(salesList)
         postprocess_cashshop()
 
