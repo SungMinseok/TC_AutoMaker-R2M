@@ -12,6 +12,8 @@ import datetime
 from openpyxl.styles import Font, Color
 #from openpyxl.styles.colors import RED
 from openpyxl.utils import get_column_letter
+from pathlib import Path
+from enum import Enum, auto
 #cashShopIdIndexList = cashShopIdList.index
 clType = ""
 cashShopDir = ""
@@ -22,6 +24,11 @@ tempCsvName = f"./temp/tempCsv.csv"
 
 xlFileName = ""
 tcStartDate = ""
+
+class DocumentType(Enum) :
+    TestCase = 0
+    CheckList = 1
+    
 
 def dateCheck(start_date, end_date, today = datetime.date.today()):
     
@@ -38,132 +45,159 @@ def dateCheck(start_date, end_date, today = datetime.date.today()):
     else:
         return "이벤트 제외"
 
-class Event():
+class Item():
+    # def __init__(self) :
+    #     self.id = ""
+    #     self.name = ""
+    #     self.count = ""
 
-    
+    def __init__(self, id, name, count) :
+        self.id = id
+        self.name = name
+        self.count = count
+    # def additem(self, id, name, count) :
+    #     self.id = id
+    #     self.name = name
+    #     self.count = count
+
+class Craft():
+    def __init__(self,price, limit, ingredient) :
+        self.price = price
+        self.limit = limit
+        self.ingredient = ingredient
+
+class Event():
     def __init__(self) :
 
         self.id = ""
-        self.eType = ""
+        self.type = ""
         self.name = ""
-        self.questDesc = ""
 
-        self.itemList0 = []
-        self.itemList1 = []
-        self.itemList2 =[]
-
-        self.craftPrice = ""
-        self.craftIngred = ""
         self.limit = ""
         self.server = ""
-        self.startDate = ""
-        self.endDate = ""
+        self.start_date = ""
+        self.end_date = ""
+
+        self.desc_list = []
+        self.item_list = []
+        self.craft_list = []
 
         #별도 저장값
-        self.startCheck = ""
+        self.open_check = ""
 
-def extract_data_event(fileName):
 
-#CSV 읽기
-    #target = pd.read_csv(fileName)
+def extract_data(fileName):
 
-#XLSX 읽기
-    tempTarget = pd.read_excel(fileName,engine='openpyxl', na_values = "")
-    tempTarget.to_csv(tempCsvName, encoding='cp949')
-    target = pd.read_csv(tempCsvName, encoding='cp949')
+    target = pd.DataFrame()
+
+    sheet_names = pd.read_excel(fileName, sheet_name=None).keys()
+    for sheet_name in sheet_names:
+        
+        if sheet_name == "사용법" :
+            continue
+        
+        curDf = pd.read_excel(fileName, sheet_name=sheet_name, na_values="")
+        target = target.append(curDf, ignore_index = True)
+
+        del curDf
+        gc.collect()
 
     target = target.replace('-',np.nan)
-    idList = target["EventID"].dropna(axis=0)
-    idIndexList = idList.index
+    targetIdList = target["ID"].dropna(axis=0) #실제 ID의 리스트
+    targetIdIndexList = targetIdList.index #문서에서 ID가 입력된 행의 인덱스의 리스트
 
-    totalCount = len(idIndexList)
-
-    eventList = [Event]
-    eventList.clear()
-
+    totalCount = len(targetIdIndexList)
+    targetList = []
     print("데이터 추출 중...")
-    for j in tqdm(range(0,totalCount)):
 
-        if (j+1) >= len(idIndexList) :
-            tempDf = target[idIndexList[j]:]
+    for j in tqdm(range(0,totalCount)):\
+    
+
+        if (j+1) >= len(targetIdIndexList) :
+            tempDf = target[targetIdIndexList[j]:]
         else :
-            tempDf = target[idIndexList[j]:idIndexList[j+1]]
+            tempDf = target[targetIdIndexList[j]:targetIdIndexList[j+1]]
         tempDf = tempDf.reset_index()
+        
 
         a = Event()
-        a.id = int(tempDf.loc[0,"CashShopID"])
-        a.pkgName = tempDf.loc[0,"PkgName"] #+ "[귀속]"
-        a.category = tempDf.loc[0,"Category"]
-        a.price = str(tempDf.loc[0,"Price"])
-        try:
-            a.bonus = int(tempDf.loc[0,"Bonus"])
-        except:
-            a.bonus = 0
-        a.limit = tempDf.loc[0,"Limit"]
+        a.id = int(tempDf.loc[0,"ID"])
+        a.type = str(tempDf.loc[0,"EventType"])
+        a.name = str(tempDf.loc[0,"EventName"]) #+ "[귀속]"
 
         for k in range(len(tempDf)):
-            #print(len(tempDf))
-            if not pd.isnull(tempDf.iloc[k]['Name0']):
-                itemName = tempDf.iloc[k]['Name0']
-                itemCount = tempDf.iloc[k]['Count0']
-                try : 
-                    a.itemList0.append(f"{itemName}[귀속] {int(itemCount)}개")
-                except:
-                    a.itemList0.append(f"{itemName}[귀속] {(itemCount)}개")
-                #print(a.itemList0)
+            str0 = tempDf.loc[k,'QuestDesc']
+            if not pd.isnull(str0):
+                a.desc_list.append(f"{str0}")
+            else :
+                continue 
+            
 
         for k in range(len(tempDf)):
-            if not pd.isnull(tempDf.iloc[k]['Name1']):
-                itemName = tempDf.iloc[k]['Name1']
-                itemCount = tempDf.iloc[k]['Count1']
-                try: 
-                    a.itemList1.append(f"{itemName}[귀속] {int(itemCount)}개")
-                except:
-                    a.itemList1.append(f"{itemName}[귀속] {(itemCount)}개")
+            str0 = tempDf.loc[k,'ItemID_0']
+            str1 = tempDf.loc[k,'ItemName_0']
+            str2 = tempDf.loc[k,'ItemCount_0']
+
+            if not pd.isnull(str1):
+                newItem = Item(str0,str1,str2)
+                a.item_list.append(newItem)
+            else :
+                continue 
+
+
+        for k in range(len(tempDf)):
+            str0 = tempDf.loc[k,'CraftPrice']
+            str1 = tempDf.loc[k,'CraftLimit']
+            str2 = tempDf.loc[k,'CraftIngred']
+
+            if not pd.isnull(str2):
+                newCraft = Craft(str0,str1,str2)
+                a.craft_list.append(newCraft)
+                #a.item_list_0.append(f"{str1} {str2} | {str0}")
+            else :
+                continue 
+
 
         a.server = tempDf.loc[0,"Server"]
+        a.limit = tempDf.loc[0,"Limit"]
        
-        a.startDate = pd.to_datetime(tempDf.loc[0,"StartDate"])
+        a.start_date = pd.to_datetime(tempDf.loc[0,"StartDate"])
+        a.end_date = pd.to_datetime(tempDf.loc[0,"EndDate"])
 
-        if "상시" in str(tempDf.loc[0,"EndDate"]) :
-            a.endDate = datetime.datetime.strptime("2099-12-31 00:00:00",'%Y-%m-%d %H:%M:%S')
-        else: 
-            a.endDate = pd.to_datetime(tempDf.loc[0,"EndDate"])
+        # if "상시" in str(tempDf.loc[0,"EndDate"]) :
+        #     a.endDate = datetime.datetime.strptime("2099-12-31 00:00:00",'%Y-%m-%d %H:%M:%S')
+        # else: 
+        #     a.endDate = pd.to_datetime(tempDf.loc[0,"EndDate"])
           
-        if fileType == "0" :#TC
-            startDate = datetime.datetime.strptime(tcStartDate, '%Y-%m-%d')
-            a.salesCheck = dateCheck(a.startDate,a.endDate,startDate.date())
-        elif fileType == "1" :#점검
-            a.salesCheck = dateCheck(a.startDate,a.endDate)
+        #startDate = datetime.datetime.strptime(tcStartDate, '%Y-%m-%d')
+        #a.salesCheck = dateCheck(a.startDate,a.endDate,startDate.date())
+        a.open_check = dateCheck(a.start_date,a.end_date,check_start_date.date())
 
 
-
-        if salesList != None :
-            salesList.append(a)
+        #print(a)
+        if targetList != None :
+            targetList.append(a)
         else :
-            salesList = a
+            targetList = a
 
 
 
         del a,tempDf
         gc.collect()
 
-    #salesList.sort(key =lambda a: (a.server,a.category))
-    return salesList
+    return targetList
 
 
-def write_data_cashshop(salesList : list[Sales]):
+def write_data_4(targetList : list[Event]):
     totalResult = pd.DataFrame()
 #print(len(salesList))
 
-    salesList.sort(key =lambda a: (a.server,a.category))
+    targetList.sort(key =lambda a: (a.server,a.category))
     curRow = 0
     count = 0
-    tqdmCount0=0
     print("데이터 쓰는 중...")
-    for y in tqdm(salesList):
-        tqdmCount0+=1
-        y : Sales
+    for y in tqdm(targetList):
+        y = Event()
         count += 1
         result = pd.DataFrame()
 
@@ -301,57 +335,84 @@ def write_data_cashshop(salesList : list[Sales]):
                 ) 
 
 
-def write_data_cashshop_inspection(salesList : list[Sales]):
+def write_data(targetList : list[Event]):
 
-    salesList.sort(key =lambda a: (a.salesCheck,a.category))
-
+    targetList.sort(key =lambda a: (a.open_check, a.id))
 
     totalResult = pd.DataFrame()
     curRow = 0
     count = 0
-    #tqdmCount0=0
     print("데이터 쓰는 중...")
-    for y in tqdm(salesList):
+    for y in tqdm(targetList):
 
-        #tqdmCount0+=1
-        y : Sales
         count += 1
         result = pd.DataFrame()
 
 
-        if y.salesCheck == "판매 제외" or y.salesCheck == "판매 전"  :
+        if y.open_check == "이벤트 제외" or y.open_check == "이벤트 전"  :
             continue
 
         
 
         i = curRow
         result.loc[i,"Category1"] = y.server
-        result.loc[i,"Category2"] = y.salesCheck
-        result.loc[i,"Category3"] = y.pkgName
+        result.loc[i,"Category2"] = y.open_check
+        result.loc[i,"Category3"] = y.name
 
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-    
-        info_0 = f'{y.category} / {y.price} / {y.bonus} / {y.limit}'
+        #if y.open_check == "이벤트 시작" :
+        info = ""
+        if y.type != "도감":
+            info = f"{y.start_date.strftime('%Y-%m-%d')}({dateID[1]}) ~ {y.end_date.strftime('%Y-%m-%d')}({dateID[1]})\n"
         
-        info_expired = y.endDate.strftime('%m/%d/%Y(목) 11:00 까지')
+        if y.type == "출석" or y.type == "미션" :
+            info += f"{y.limit} 수행 가능\n"
+        
+        if y.type == "출석" :
+            for index, item in enumerate(y.item_list) :
+                info += f'\n{int(index)+1}일차 : {item.name} {int(item.count)}개'
+        elif y.type == "미션" :
+            for index, item in enumerate(y.item_list) :
+                info += f'\n{y.desc_list[index]} : {item.name} {int(item.count)}개'
+        elif y.type == "드랍" :
+            for index, item in enumerate(y.item_list) :
+                info += f'\n{y.desc_list[index]} : {item.name} {round(item.count,2)}%'
+        elif y.type == "제작" :
+            for index, item in enumerate(y.item_list) :
+                craft = y.craft_list[index]
+                info += f'\n{item.name} ({craft.limit})\n골드 {int(craft.price)} + {craft.ingredient}\n'
+        elif y.type == "도감" :
+            info += f"이벤트 기간 : {y.start_date.strftime('%m/%d/%Y')} 11:30 ~ {y.end_date.strftime('%m/%d/%Y')} 11:30\n"
+            for index, desc in enumerate(y.desc_list) :
+                info += f'\n재료 : {desc}\n'
+            for index, item in enumerate(y.item_list) :
+                if item.count >= 1 :
+                    item.count = int(item.count)
+                else : 
+                    item.count = f'{float(item.count) * 100}%'
+                info += f'\n{item.name} +{(item.count)}'
+        #info_expired = y.endDate.strftime('%m/%d/%Y(목) 11:00 까지')
 
-        info_1 = "\n".join(y.itemList0)
-        info_1 = info_1.replace("다이아몬드[귀속]","다이아몬드")
+        # info_1 = "\n".join(y.itemList0)
+        # info_1 = info_1.replace("다이아몬드[귀속]","다이아몬드")
 
-        info_2 = "\n".join(map(str, y.itemList1))
-        info_2 = info_2.replace("nan\n","")
-        info_2 = info_2.replace("\n","\n- ")
-        info_2 = "사용 시 다음 아이템 획득\n- "+info_2
+        # info_2 = "\n".join(map(str, y.itemList1))
+        # info_2 = info_2.replace("nan\n","")
+        # info_2 = info_2.replace("\n","\n- ")
+        # info_2 = "사용 시 다음 아이템 획득\n- "+info_2
 
-        info_3 = f'* 상세정보 및 패키지 상자 구성품 내 [귀속] 노출 확인\n* 패키지 이미지 내 구성품 관련 이미지 노출 확인'
-
-        result.loc[i,"Check List"] = f'{info_0}\n{info_expired}\n\n{info_1}\n\n{info_2}\n\n{info_3}'
+        # info_3 = f'* 상세정보 및 패키지 상자 구성품 내 [귀속] 노출 확인\n* 패키지 이미지 내 구성품 관련 이미지 노출 확인'
+        # elif y.open_check == "이벤트 유지" :
+        #     info = "이벤트 유지"
+        # elif y.open_check == "이벤트 종료" :
+        result.loc[i,"Check List"] = f'{info}'
 
     # #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
      
-        result.loc[i,"ETC"] = y.pkgID
+        result.loc[i,"ETC"] = y.id
 
-
+        del y
+        gc.collect()
         #if y.salesCheck != "판매 제외" and y.salesCheck != "판매 전"  :
         totalResult = pd.concat([totalResult,result], ignore_index=True)
 
@@ -359,7 +420,7 @@ def write_data_cashshop_inspection(salesList : list[Sales]):
     totalResult = totalResult.replace("nan","")
     totalResult = totalResult.replace(np.nan,"")
 
-    totalResult.to_excel(xlFileName, # directory and file name to write
+    totalResult.to_excel(xl_filename, # directory and file name to write
 
                 sheet_name = 'Sheet1', 
 
@@ -387,7 +448,7 @@ def write_data_cashshop_inspection(salesList : list[Sales]):
 
 
 def postprocess_cashshop():
-    wb = xl.load_workbook(xlFileName,data_only = True)
+    wb = xl.load_workbook(xl_filename,data_only = True)
     sheetList = wb.sheetnames
     ws = wb[sheetList[0]]
     ws.column_dimensions['b'].width = 17
@@ -480,7 +541,7 @@ def postprocess_cashshop():
     #ws = highlight_belonging(ws)
     #ws = find_and_replace(ws,"귀속","귀속")
     ws = highlight_star_cells(ws)
-    wb.save(xlFileName)
+    wb.save(xl_filename)
 
 
 def process_temp_str(temp_str):
@@ -574,68 +635,62 @@ def highlight_star_cells(sheet):
 
 if __name__ == "__main__":
 
+    while True:
+        file_type_input = input("문서타입(0:TC, 1:CL) >: ")
+        try : 
+            file_type = DocumentType(int(file_type_input)).name
+            break
+        except :             
+            print("잘못된 입력입니다. 다시 입력해주세요.")
 
-    #print("┃  R2M CASH SHOP CL MAKER  ┃")
-    print("체크리스트 타입 입력 :")
-    print("0:TC, 1:점검")
-    fileType = input(">:")
-    print("데이터파일명 입력 :")
-    print("0:국내, 1:대만")
-    fileName = input(">:")
-    #fileName = ""
-    if fileName == "0":
-        fileName = "유료상점DATA_KR.xlsx"
-    elif fileName == "1":
-        fileName = "유료상점DATA_TW.xlsx"
-    while not os.path.isfile(fileName) :
-        fileName = input(">:")
-        
+    file_dict = {"0": "이벤트DATA_KR.xlsx", "1": "이벤트DATA_TW.xlsx"}
+    # 파일명 입력 받기
+    while True:
+        data_filename_input = input("국가설정(0:KR, 1:TW): ")
+        if data_filename_input in file_dict:
+            data_filename = file_dict[data_filename_input]
+            if Path(data_filename).is_file():
+                break
+            else:
+                print("파일이 존재하지 않습니다. 다시 입력해주세요.")
+        else:
+            print("잘못된 입력입니다. 다시 입력해주세요.")
 
-    clType = ""
-    if fileType == "0":
-        clType = "TC"
-        tcStartDate = input("(업데이트날짜 : YYYY-MM-DD)>: ")
-        if tcStartDate == "" :
-            tcStartDate = "2000-01-01"
-        
-    elif fileType == "1":
-        clType = "정기점검"
+    todayDate = datetime.datetime.today().date()
 
+    # 그 주의 점검 날짜 구하기 (대만:화, 국내:목)
+    if file_type == DocumentType.TestCase :
 
+        check_start_date = input("업데이트날짜(YYYY-MM-DD) >: ")
+        if check_start_date == "" :
+            check_start_date = datetime.datetime.now().strftime('%Y-%m-%d')
 
-#region basic Info
+    else:
+        global dateID
+        dateID= 0
+        if data_filename_input == "0":
+            dateID = (3,"목")
+        elif data_filename_input == "1":
+            dateID = (1,"화")
 
-    cashShopDir = f"./CL_CashShop_{clType}"
-    if not os.path.isdir(cashShopDir) :
-        os.mkdir(cashShopDir)
-    tempDir = "./temp"
-    if not os.path.isdir(tempDir) :
-        os.mkdir(tempDir)
+        days_until_target = (dateID[0] - todayDate.weekday()) % 7
+        thursdayDate = todayDate + datetime.timedelta(days=days_until_target)
+        check_start_date = thursdayDate.strftime('%Y-%m-%d')
 
-    xlFileName = f"./CL_CashShop_{clType}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
-    tempCsvName = f"./temp/tempCsv.csv"
+        print(f"이번주 {dateID[1]}요일 {check_start_date} 기준으로 작성됩니다.")
 
-#endregion
+    check_start_date = datetime.datetime.strptime(check_start_date, '%Y-%m-%d')
 
+    result_directory = f"./Event_{file_type}"
+    if not os.path.isdir(result_directory) :
+        os.mkdir(result_directory)
 
+    xl_filename = f"{result_directory}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
 
-
-
-
-
-
-
-
-
-    if fileType == "0":
-        salesList = extract_data_cashshop(fileName)
-        write_data_cashshop(salesList)
-        postprocess_cashshop()
-    elif fileType == "1":
-        salesList = extract_data_cashshop(fileName)
-        write_data_cashshop_inspection(salesList)
-        postprocess_cashshop()
+    targetList = extract_data(data_filename)
+    write_data(targetList)
+    postprocess_cashshop()
 
 
-    print("생성완료")
-    input("종료하려면 엔터키 입력...")
+    print("complete!")
+    os.system("pause")

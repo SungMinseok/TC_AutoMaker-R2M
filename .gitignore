@@ -4,3 +4,5 @@ backup/
 temp/
 dist/
 ~$*.xlsx
+Event_CheckList/
+Event_DocumentType.TestCase/

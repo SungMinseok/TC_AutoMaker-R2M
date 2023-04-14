@@ -41,8 +41,6 @@ def dateCheck(start_date, end_date, today = datetime.date.today()):
         return "판매 제외"
 
 class Sales():
-
-    
     def __init__(self) :
 
         self.pkgID = ""
@@ -67,12 +65,42 @@ class Sales():
         #별도 저장값
         self.salesCheck = ""
 
+class Event():
+    def __init__(self) :
+
+        self.id = ""
+        self.type = ""
+        self.name = ""
+        self.quest_desc = ""
+        self.item_list_0 = []
+        self.item_list_1 = []
+        # self.item_id_0 = ""
+        # self.item_name_0 = ""
+        # self.item_count_0 = ""
+        # self.item_id_1 = ""
+        # self.item_name_1 = ""
+        # self.item_count_1 = ""
+        self.craft_price = ""
+        self.craft_ingred = ""
+        self.limit = ""
+        self.server = ""
+        self.start_date = ""
+        self.end_date = ""
+
+        #별도 저장값
+        self.open_check = ""
+
 class Item():
 
     def __init__(self) :
         self.name = ""
         self.id = ""
         self.innerItemList = ""
+
+
+
+
+
 
 
 def extract_data_cashshop(fileName):
@@ -143,9 +171,7 @@ def extract_data_cashshop(fileName):
     #salesList : list[Sales]
     salesList.clear()
     print("데이터 추출 중...")
-    tqdmCount2 =0
     for j in tqdm(range(0,totalCount)):
-        tqdmCount2 +=1
         #print(cashShopIdIndexList[j], j+1)
 
         if (j+1) >= len(cashShopIdIndexList) :
@@ -211,7 +237,7 @@ def extract_data_cashshop(fileName):
         else :
             salesList = a
 
-
+        #print(a)
 
         del a,tempDf
         gc.collect()
@@ -486,6 +512,8 @@ def postprocess_cashshop():
     for i in tqdm(range(firstRow, lastRow+1)):
         tqdmCount1+=1
         #print(i)
+
+        """서버 카테고리 합치기"""
         if (ws['b'+str(i)].value is not None) :
             if startRow_B == 0  :
                 startRow_B = i
@@ -499,6 +527,7 @@ def postprocess_cashshop():
                     startValue_B = ws['b'+str(i)].value
                     startRow_B = i
 
+        """판매 분류 카테고리 합치기"""
         if ws['c'+str(i)].value is not None:
             if startRow_C == 0 :
                 startRow_C = i
