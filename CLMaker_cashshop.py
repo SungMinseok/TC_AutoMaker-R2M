@@ -400,8 +400,21 @@ def write_data_cashshop(salesList : list[Sales]):
 
 
 def write_data_cashshop_inspection(salesList : list[Sales]):
+    
+    for sale in salesList:
+        print(f'{sale.pkgName}|{sale.server}|{sale.salesCheck}|{sale.category}|{sale.order}')
+    try:
+        #    sale.salesCheck = float(sale.salesCheck)
+        salesList.sort(key=lambda a: (a.server, a.salesCheck, a.category, str(a.order)))
+    except Exception as e:
+        print(e)
+        print("정렬에 문제 발생... 표에 제대로 입력됐는지 확인 필요...")
 
-    salesList.sort(key =lambda a: (a.server,a.salesCheck,a.category,a.order))
+    # try:
+    #     salesList.sort(key =lambda a: (a.server,a.salesCheck,a.category,a.order))
+    # except Exception as e:
+    #     print(e)
+    #     print("정렬에 문제 발생... 표에 제대로 입력됐는지 확인 필요...")
 
 
     totalResult = pd.DataFrame()

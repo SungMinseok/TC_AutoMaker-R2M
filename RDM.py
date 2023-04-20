@@ -16,6 +16,22 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QFil
 
 import CLMaker_cashshop as ClCash
 import CLMaker_Event as ClEvent
+import openpyxl
+
+
+
+
+
+# class MyWindow(QtWidgets.QWidget):
+#     def __init__(self, parent=None):
+#         super().__init__(parent)
+#         self.input_datapath = MyLineEdit()
+#         self.layout = QtWidgets.QVBoxLayout(self)
+#         self.layout.addWidget(self.input_datapath)
+
+
+
+
 
 
 class Ui_MainWindow(object):
@@ -121,6 +137,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.input_datapath = QtWidgets.QLineEdit(self.layoutWidget)
+        #self.input_datapath.setAcceptDrops(True)
+
+
+
+        #self.input_datapath =MyLineEdit()
+
+        #self.input_datapath =MyLineEdit()
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -132,6 +155,11 @@ class Ui_MainWindow(object):
         font.setPointSize(9)
         self.input_datapath.setFont(font)
         self.input_datapath.setObjectName("input_datapath")
+
+
+
+
+
         self.horizontalLayout_5.addWidget(self.input_datapath)
         self.btn_datapath = QtWidgets.QPushButton(self.layoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Fixed)
@@ -211,11 +239,6 @@ class Ui_MainWindow(object):
     
     
     
-    
-    
-    
-    
-    
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "RDM (R2M Document Maker)"))
@@ -235,19 +258,48 @@ class Ui_MainWindow(object):
 
 
         self.btn_datapath.clicked.connect(self.select_data_file)
+        self.btn_execute.clicked.connect(self.activate)
 
+        self.input_datapath.setAcceptDrops(True)
+        self.input_datapath.dragEnterEvent = self.drag_enter_event
+        self.input_datapath.dropEvent = self.drop_event
+    
+
+#기본동작■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
     def select_data_file(self):
         # Open a file dialog to select the data file
-        data_file, _ = QFileDialog.getOpenFileName(MainWindow,"데이터 파일 선택")
+        file_filter = "Video files (*.mp4 *.mkv)"
+        file_filter = "엑셀 파일 (*.xlsx)"
+
+        data_file, _ = QFileDialog.getOpenFileName(MainWindow,"데이터 파일 선택", filter= file_filter)
         self.input_datapath.setText(data_file)
 
+    def drag_enter_event(self, event):
+        # 드래그앤드랍 가능한 MIME 타입인지 체크
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
+    
+    def drop_event(self, event):
+        # 파일 경로를 가져와서 QLineEdit에 입력
+        urls = event.mimeData().urls()
+        file_path = urls[0].toLocalFile()
+        self.input_datapath.setText(file_path)
 
-    def activate_clcash(self):
-        data = ClCash.extract_data_cashshop(self.input_datapath)
+#■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    def activate(self):
 
+        if self.combox_contents.currentText() == "유료상점" and self.combox_doctype.currentText() == "CL" :
 
+            #data = ClCash.extract_data_cashshop(self.input_datapath.text())
+            data = ClCash.extract_data_cashshop("이벤트DATA_KR.xlsx")
+            ClCash.write_data_cashshop_inspection(data)
+            ClCash.postprocess_cashshop()
 
+        #wb = openpyxl.load_workbook('result_230420_095250.xlsx')
+        
 
 if __name__ == "__main__":
     import sys

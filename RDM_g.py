@@ -1,6 +1,9 @@
 
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QTextEdit, QComboBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QTextEdit, QComboBox, QDialog
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
+
 from enum import Enum, auto
 import datetime
 import os
@@ -11,6 +14,27 @@ class DocumentType(Enum):
     TestCase = auto()
     CheckList = auto()
 
+class PopupDialog(QDialog):
+    def __init__(self, parent, image_path):
+        super().__init__(parent)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.Tool)
+        self.setWindowModality(Qt.NonModal)
+        #dialog = QDialog()
+        #self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setStyleSheet("background-color:transparent;")
+
+        pixmap = QPixmap(image_path)
+        pixmap = pixmap.scaled(300, 300, aspectRatioMode=Qt.KeepAspectRatio)
+        self.label = QLabel(self)
+        self.label.setPixmap(pixmap)
+        self.resize(pixmap.width(), pixmap.height())
+
+    def mouseReleaseEvent(self, event):
+        self.close()
+
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -18,8 +42,20 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 300, 300)
 
         self.contents_label = QLabel("컨텐츠", self)
-        self.contents_label.setGeometry(20, 20, 150, 30)
+        self.contents_label.setGeometry(20, 20, 50, 50)
         self.contents_label.move(20, 20)
+
+        global image_path
+        image_path = 'Accessory_Cash_002.png'
+        pixmap = QPixmap(image_path)
+        #self.contents_label.setPixmap(pixmap)
+        self.contents_label.setPixmap(pixmap.scaled(self.contents_label.size(), aspectRatioMode=True))
+
+        # QLabel 위젯에 마우스 이벤트 핸들러 등록
+        self.contents_label.enterEvent = self.show_popup
+        self.contents_label.leaveEvent = self.hide_popup
+        
+
 
         self.contents_combo = QComboBox(self)
         self.contents_combo.move(180, 20)
@@ -58,6 +94,30 @@ class MainWindow(QMainWindow):
         # Create a label for displaying the processing status
         self.status_label = QLabel("", self)
         self.status_label.setGeometry(20, 170, 200, 30)
+
+
+    # def onMouseEnterEvent(self, event):
+    #     # 마우스 클릭 시 이미지 확대
+    #     self.contents_label.setPixmap(self.contents_label.pixmap().scaled(300, 300, aspectRatioMode=True))
+
+    # def onMouseLeaveEvent(self, event):
+    #     # 마우스 릴리즈 시 이미지 원래 크기로 돌아감
+    #     self.contents_label.setPixmap(self.contents_label.pixmap().scaled(100, 100, aspectRatioMode=True))
+
+    def show_popup(self, event):
+        self.popup_dialog = PopupDialog(self,image_path)
+        pos = self.contents_label.mapToGlobal(self.contents_label.rect().bottomLeft())
+        self.popup_dialog.move(pos)
+        self.popup_dialog.show()
+
+    def hide_popup(self, event):
+        if hasattr(self, 'popup_dialog'):
+            self.popup_dialog.close()
+            del self.popup_dialog
+
+
+
+
 
     def select_data_file(self):
         # Open a file dialog to select the data file
