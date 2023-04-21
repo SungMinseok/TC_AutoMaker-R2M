@@ -21,7 +21,7 @@ if not os.path.isdir(tempDir) :
 tempCsvName = f"./temp/tempCsv.csv"
 
 xlFileName = ""
-tcStartDate = ""
+#tcStartDate = ""
 
 idList = [int]
 
@@ -103,7 +103,7 @@ class Item():
 
 
 
-def extract_data_cashshop(fileName):
+def extract_data_cashshop(fileName, tcStartDate):
 
 #CSV 읽기
     #target = pd.read_csv(fileName)
@@ -758,7 +758,7 @@ if __name__ == "__main__":
 
 #endregion
     try:
-        salesList = extract_data_cashshop(fileName)
+        salesList = extract_data_cashshop(fileName,tcStartDate)
         pass
     except PermissionError:
         print(f"해당 문서가 열려있습니다. 닫고 다시 시작해주세요. {fileName}")
@@ -771,7 +771,7 @@ if __name__ == "__main__":
         postprocess_cashshop()
     elif fileType == "1":
         if salesList == None :
-            salesList = extract_data_cashshop(fileName)
+            salesList = extract_data_cashshop(fileName,tcStartDate)
         write_data_cashshop_inspection(salesList)
         postprocess_cashshop()
 
