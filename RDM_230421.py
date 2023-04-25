@@ -260,6 +260,58 @@ class Ui_MainWindow(object):
         self.btn_execute.setShortcut(_translate("MainWindow", "F2"))
 
 
+
+
+#복붙시작◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈
+
+
+        self.btn_datapath.clicked.connect(self.select_data_file)
+        self.btn_execute.clicked.connect(self.activate)
+
+        self.input_datapath.setAcceptDrops(True)
+        self.input_datapath.dragEnterEvent = self.drag_enter_event
+        self.input_datapath.dropEvent = self.drop_event
+    
+
+#기본동작■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+
+    def select_data_file(self):
+        # Open a file dialog to select the data file
+        file_filter = "Video files (*.mp4 *.mkv)"
+        file_filter = "엑셀 파일 (*.xlsx)"
+
+        data_file, _ = QFileDialog.getOpenFileName(MainWindow,"데이터 파일 선택", filter= file_filter)
+        self.input_datapath.setText(data_file)
+
+    def drag_enter_event(self, event):
+        # 드래그앤드랍 가능한 MIME 타입인지 체크
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
+    
+    def drop_event(self, event):
+        # 파일 경로를 가져와서 QLineEdit에 입력
+        urls = event.mimeData().urls()
+        file_path = urls[0].toLocalFile()
+        self.input_datapath.setText(file_path)
+
+#■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    def activate(self):
+
+        if self.combox_contents.currentText() == "유료상점" and self.combox_doctype.currentText() == "CL" :
+
+            #data = ClCash.extract_data_cashshop(self.input_datapath.text())
+            data = ClCash.extract_data_cashshop("유료상점DATA_KR.xlsx","2023-04-27")
+            ClCash.write_data_cashshop_inspection(data)
+            ClCash.postprocess_cashshop()
+
+        #wb = openpyxl.load_workbook('result_230420_095250.xlsx')
+        
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QTextEdit, QComboBox
+import CLMaker_cashshop as ClCash
+import CLMaker_Event as ClEvent
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -268,3 +320,11 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
+
+
+
+
+
+
+
+

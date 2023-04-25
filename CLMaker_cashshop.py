@@ -20,7 +20,7 @@ if not os.path.isdir(tempDir) :
     os.mkdir(tempDir)
 tempCsvName = f"./temp/tempCsv.csv"
 
-xlFileName = ""
+#xlFileName = ""
 #tcStartDate = ""
 
 idList = [int]
@@ -372,6 +372,8 @@ def write_data_cashshop(salesList : list[Sales]):
     totalResult = totalResult.replace("nan","")
     totalResult = totalResult.replace(np.nan,"")
 
+    xlFileName = f"./CL_CashShop_{clType}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
+
     totalResult.to_excel(xlFileName, # directory and file name to write
 
                 sheet_name = 'Sheet1', 
@@ -398,6 +400,7 @@ def write_data_cashshop(salesList : list[Sales]):
 
                 ) 
 
+    return xlFileName
 
 def write_data_cashshop_inspection(salesList : list[Sales]):
     
@@ -477,6 +480,9 @@ def write_data_cashshop_inspection(salesList : list[Sales]):
     totalResult = totalResult.replace("nan","")
     totalResult = totalResult.replace(np.nan,"")
 
+    xlFileName = f"./CL_CashShop_{clType}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
+
+
     totalResult.to_excel(xlFileName, # directory and file name to write
 
                 sheet_name = 'Sheet1', 
@@ -502,9 +508,11 @@ def write_data_cashshop_inspection(salesList : list[Sales]):
                 #freeze_panes = (2, 0)
 
                 ) 
+    
+    return xlFileName
 
 
-def postprocess_cashshop():
+def postprocess_cashshop(xlFileName):
     wb = xl.load_workbook(xlFileName,data_only = True)
     sheetList = wb.sheetnames
     ws = wb[sheetList[0]]
@@ -753,7 +761,7 @@ if __name__ == "__main__":
         os.mkdir(tempDir)
 
 
-    xlFileName = f"./CL_CashShop_{clType}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
+    #xlFileName = f"./CL_CashShop_{clType}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
     tempCsvName = f"./temp/tempCsv.csv"
 
 #endregion
@@ -767,13 +775,13 @@ if __name__ == "__main__":
 
 
     if fileType == "0":
-        write_data_cashshop(salesList)
-        postprocess_cashshop()
+        xlFileName = write_data_cashshop(salesList)
+        postprocess_cashshop(xlFileName)
     elif fileType == "1":
         if salesList == None :
             salesList = extract_data_cashshop(fileName,tcStartDate)
-        write_data_cashshop_inspection(salesList)
-        postprocess_cashshop()
+        xlFileName = write_data_cashshop_inspection(salesList)
+        postprocess_cashshop(xlFileName)
 
 
     print("생성완료")

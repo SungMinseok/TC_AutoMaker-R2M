@@ -254,7 +254,7 @@ class Ui_MainWindow(object):
         self.btn_execute.setText(_translate("MainWindow", "실행 (F2)"))
         self.btn_execute.setShortcut(_translate("MainWindow", "F1"))
 
-    
+#복붙시작◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈
 
 
         self.btn_datapath.clicked.connect(self.select_data_file)
