@@ -303,8 +303,8 @@ class Ui_MainWindow(object):
 
             #data = ClCash.extract_data_cashshop(self.input_datapath.text())
             data = ClCash.extract_data_cashshop("유료상점DATA_KR.xlsx","2023-04-27")
-            ClCash.write_data_cashshop_inspection(data)
-            ClCash.postprocess_cashshop()
+            xlFileName = ClCash.write_data_cashshop_inspection(data)
+            ClCash.postprocess_cashshop(xlFileName)
 
         #wb = openpyxl.load_workbook('result_230420_095250.xlsx')
         
