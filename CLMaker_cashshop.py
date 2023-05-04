@@ -402,7 +402,10 @@ def write_data_cashshop(salesList : list[Sales]):
 
     return xlFileName
 
-def write_data_cashshop_inspection(salesList : list[Sales]):
+def write_data_cashshop_inspection(salesList : list[Sales], docType = "CL"):
+
+
+    
     
     for sale in salesList:
         print(f'{sale.pkgName}|{sale.server}|{sale.salesCheck}|{sale.category}|{sale.order}')
@@ -480,7 +483,9 @@ def write_data_cashshop_inspection(salesList : list[Sales]):
     totalResult = totalResult.replace("nan","")
     totalResult = totalResult.replace(np.nan,"")
 
-    xlFileName = f"./CL_CashShop_{clType}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
+    
+
+    xlFileName = f"./CL_CashShop_{docType}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
 
 
     totalResult.to_excel(xlFileName, # directory and file name to write
