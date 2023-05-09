@@ -280,7 +280,7 @@ class Ui_MainWindow(object):
 
     def select_data_file(self):
         # Open a file dialog to select the data file
-        file_filter = "Video files (*.mp4 *.mkv)"
+        #file_filter = "Video files (*.mp4 *.mkv)"
         file_filter = "엑셀 파일 (*.xlsx)"
 
         data_file, _ = QFileDialog.getOpenFileName(MainWindow,"데이터 파일 선택", filter= file_filter)

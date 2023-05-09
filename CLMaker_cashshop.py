@@ -402,7 +402,7 @@ def write_data_cashshop(salesList : list[Sales]):
 
     return xlFileName
 
-def write_data_cashshop_inspection(salesList : list[Sales], docType = "CL"):
+def write_data_cashshop_inspection(salesList : list[Sales], resultPath = ""):
 
 
     
@@ -485,7 +485,7 @@ def write_data_cashshop_inspection(salesList : list[Sales], docType = "CL"):
 
     
 
-    xlFileName = f"./CL_CashShop_{docType}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
+    xlFileName = f"./{resultPath}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
 
 
     totalResult.to_excel(xlFileName, # directory and file name to write
@@ -727,7 +727,7 @@ if __name__ == "__main__":
 
     clType = ""
     if fileType == "0":
-        clType = "TC"
+        clType = "TestCase"
         print("업데이트날짜 입력 시, 해당 날짜 포함하여 이후 시작하는 상품만 작성")
         print("YYYY-MM-DD")
         print("(그냥 엔터키 입력 시, 오늘로 설정)")
@@ -737,7 +737,7 @@ if __name__ == "__main__":
             #tcStartDate = "2000-01-01"
         
     elif fileType == "1":
-        clType = "정기점검"
+        clType = "CheckList"
         # 오늘 날짜 구하기
         todayDate = datetime.datetime.today().date()
 
@@ -758,7 +758,7 @@ if __name__ == "__main__":
 
 #region basic Info
 
-    cashShopDir = f"./CL_CashShop_{clType}"
+    cashShopDir = f"./CashShop_{clType}"
     if not os.path.isdir(cashShopDir) :
         os.mkdir(cashShopDir)
     tempDir = "./temp"
