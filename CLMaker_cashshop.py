@@ -246,7 +246,7 @@ def extract_data_cashshop(fileName, tcStartDate):
     return salesList
 
 
-def write_data_cashshop(salesList : list[Sales]):
+def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_TestCase"):
     totalResult = pd.DataFrame()
 #print(len(salesList))
 
@@ -372,7 +372,7 @@ def write_data_cashshop(salesList : list[Sales]):
     totalResult = totalResult.replace("nan","")
     totalResult = totalResult.replace(np.nan,"")
 
-    xlFileName = f"./CL_CashShop_{clType}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
+    xlFileName = f"./{resultPath}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
 
     totalResult.to_excel(xlFileName, # directory and file name to write
 
@@ -402,7 +402,7 @@ def write_data_cashshop(salesList : list[Sales]):
 
     return xlFileName
 
-def write_data_cashshop_inspection(salesList : list[Sales], resultPath = ""):
+def write_data_cashshop_inspection(salesList : list[Sales], resultPath = "유료상점_CheckList"):
 
 
     

@@ -380,17 +380,28 @@ class Ui_MainWindow(object):
         except Exception as e:
             print(e)
 
+    def print_log(self, log):
+        self.progressLabel.setText(log)
+
 
 #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
     def activate(self):
-        
+        result_path = self.input_resultpath.text()
+        target_date = self.dateedit.text()
+        data_file_name = self.input_datapath.text()
 
-        if self.combox_contents.currentText() == "유료상점" and self.combox_doctype.currentText() == "CheckList" :
+        if self.combox_contents.currentText() == "유료상점" :
+            if self.combox_doctype.currentText() == "CheckList" :
+                data = ClCash.extract_data_cashshop(data_file_name, self.dateedit.text())
+                result_file_name = ClCash.write_data_cashshop_inspection(data,result_path)
+                ClCash.postprocess_cashshop(result_file_name)
+            elif self.combox_doctype.currentText() == "TestCase" :
+                data = ClCash.extract_data_cashshop(data_file_name, self.dateedit.text())
+                result_file_name = ClCash.write_data_cashshop(data,result_path)
+                ClCash.postprocess_cashshop(result_file_name)
 
-            #data = ClCash.extract_data_cashshop(self.input_datapath.text())
-            data = ClCash.extract_data_cashshop("유료상점DATA_KR.xlsx", self.dateedit.text())
-            ClCash.write_data_cashshop_inspection(data)
-            ClCash.postprocess_cashshop()
+        print("생성완료")
+
 
         #wb = openpyxl.load_workbook('result_230420_095250.xlsx')
         
