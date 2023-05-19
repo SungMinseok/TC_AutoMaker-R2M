@@ -140,7 +140,8 @@ def extract_data_cashshop(fileName, tcStartDate):
     for i, sheet_name in enumerate(sheet_names):
         curDf = pd.read_excel(fileName, sheet_name=sheet_name, na_values="")
 
-        target = target.append(curDf, ignore_index = True)
+        #target = target.append(curDf, ignore_index = True)
+        target = pd.concat([target, curDf], ignore_index=True)
 
         del curDf
         gc.collect()

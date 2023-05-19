@@ -313,6 +313,8 @@ class Ui_MainWindow(object):
 
 
 #복붙시작◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈
+        self.set_data_path()
+        self.set_result_path()
 
 
         self.btn_datapath.clicked.connect(self.select_data_file)
@@ -382,25 +384,32 @@ class Ui_MainWindow(object):
 
     def print_log(self, log):
         self.progressLabel.setText(log)
-
+        QApplication.processEvents()
 
 #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
     def activate(self):
         result_path = self.input_resultpath.text()
         target_date = self.dateedit.text()
         data_file_name = self.input_datapath.text()
+        result_file_name = ""
 
         if self.combox_contents.currentText() == "유료상점" :
             if self.combox_doctype.currentText() == "CheckList" :
+                self.print_log("데이터 추출 중")
                 data = ClCash.extract_data_cashshop(data_file_name, self.dateedit.text())
+                self.print_log("데이터 쓰는 중")
                 result_file_name = ClCash.write_data_cashshop_inspection(data,result_path)
+                self.print_log("데이터 정리 중")
                 ClCash.postprocess_cashshop(result_file_name)
             elif self.combox_doctype.currentText() == "TestCase" :
+                self.print_log("데이터 추출 중")
                 data = ClCash.extract_data_cashshop(data_file_name, self.dateedit.text())
+                self.print_log("데이터 쓰는 중")
                 result_file_name = ClCash.write_data_cashshop(data,result_path)
+                self.print_log("데이터 정리 중")
                 ClCash.postprocess_cashshop(result_file_name)
-
-        print("생성완료")
+        self.print_log("생성완료")
+        os.startfile(os.path.normpath(result_file_name))
 
 
         #wb = openpyxl.load_workbook('result_230420_095250.xlsx')
