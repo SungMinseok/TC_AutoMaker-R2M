@@ -361,9 +361,9 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
         i += 1
         result.loc[i,"Category3"] = "구매 제한"
-        result.loc[i,"Check List"] = str(y.limit) + " 구매 시 상품 슬롯 비활성화"
-        i += 1
-        result.loc[i,"Check List"] = "상품 슬롯 하단에 [구매 완료] 라벨 노출"
+        result.loc[i,"Check List"] = str(y.limit) + " 구매 시 [구매 완료] 라벨 노출 및 터치 불가\n(스텝업 상품일 경우, 다음 단계 상품 노출)"
+        #i += 1
+        #result.loc[i,"Check List"] = "상품 슬롯 하단에 [구매 완료] 라벨 노출"
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
         curRow = i
         
