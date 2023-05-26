@@ -251,7 +251,7 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
     totalResult = pd.DataFrame()
 #print(len(salesList))
 
-    salesList.sort(key =lambda a: (a.server,a.category,str(a.order)))
+    salesList.sort(key =lambda a: (a.server,a.category,a.pkgID))
     curRow = 0
     count = 0
     tqdmCount0=0
