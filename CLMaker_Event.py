@@ -188,7 +188,7 @@ def extract_data(fileName):
     return targetList
 
 
-def write_data_4(targetList : list[Event]):
+def write_data_event_testcase(targetList : list[Event]):
     totalResult = pd.DataFrame()
 #print(len(salesList))
 
