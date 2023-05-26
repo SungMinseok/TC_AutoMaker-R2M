@@ -273,34 +273,40 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
         result.loc[i,"Category3"] = "카테고리"
         result.loc[i,"Check List"] = y.category
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-        i += 1
-        result.loc[i,"Category3"] = "상세정보"
-        desc0 = ""
-        if len(y.itemList0) != 0 :
-            for item in y.itemList0 :
-                if '다이아' in item :
-                    item = item.replace("다이아몬드[귀속]","다이아몬드")
-                    item = item.replace("다이아[귀속]","다이아몬드")
-                    item = f'{item}\nR2M에서 사용되는 유료 재화 입니다.\n\n'
-                
-                desc0 += item
-            desc0 += f'\n사용 시 다음 아이템 획득'
-            #desc0 = "\n".join(y.itemList0)
-            result.loc[i,"Check List"] = desc0
-        else : 
-            result.loc[i,"Check List"] = f'{y.pkgName} 상자[귀속]'
 
-        i += 1
-        desc1 = "\n".join(map(str, y.itemList1))
-        desc1 = desc1.replace("nan\n","")
-        #desc1 = desc1.replace("\n","\n- ")
-        #result.loc[i,"Check List"] = "사용 시 다음 아이템 획득\n\n- "+desc1
-        result.loc[i,"Check List"] = desc1
+        if y.category == "시즌 뽑기" :
+            i += 1
+            result.loc[i,"Category3"] = "상세정보 팝업"
 
-        # i += 1
-        # desc0 = f'{y.pkgName} 상자[귀속] 1개'
-        # desc0 = desc0.replace("\n","\n- ")
-        # result.loc[i,"Check List"] = "<"+y.pkgName+"> 구성품 상세 정보\n- " + desc0
+        else :
+            i += 1
+            result.loc[i,"Category3"] = "상세정보 팝업"
+            desc0 = ""
+            if len(y.itemList0) != 0 :
+                for item in y.itemList0 :
+                    if '다이아' in item :
+                        item = item.replace("다이아몬드[귀속]","다이아몬드")
+                        item = item.replace("다이아[귀속]","다이아몬드")
+                        item = f'{item}\nR2M에서 사용되는 유료 재화 입니다.\n\n'
+                    
+                    desc0 += item
+                desc0 += f'\n사용 시 다음 아이템 획득'
+                #desc0 = "\n".join(y.itemList0)
+                result.loc[i,"Check List"] = desc0
+            else : 
+                result.loc[i,"Check List"] = f'{y.pkgName} 상자[귀속]'
+
+            i += 1
+            desc1 = "\n".join(map(str, y.itemList1))
+            desc1 = desc1.replace("nan\n","")
+            #desc1 = desc1.replace("\n","\n- ")
+            #result.loc[i,"Check List"] = "사용 시 다음 아이템 획득\n\n- "+desc1
+            result.loc[i,"Check List"] = desc1
+
+            # i += 1
+            # desc0 = f'{y.pkgName} 상자[귀속] 1개'
+            # desc0 = desc0.replace("\n","\n- ")
+            # result.loc[i,"Check List"] = "<"+y.pkgName+"> 구성품 상세 정보\n- " + desc0
 
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
