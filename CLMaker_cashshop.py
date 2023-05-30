@@ -222,7 +222,12 @@ def extract_data_cashshop(fileName, tcStartDate):
         if "상시" in str(tempDf.loc[0,"EndDate"]) :
             a.endDate = datetime.datetime.strptime("2099-12-31 00:00:00",'%Y-%m-%d %H:%M:%S')
         else: 
-            a.endDate = pd.to_datetime(tempDf.loc[0,"EndDate"])
+            try: 
+                a.endDate = pd.to_datetime(tempDf.loc[0,"EndDate"])
+            except : 
+                print("상품 시작/종료 시간 입력 오류 : 'yyyy-mm-dd' 만 입력되어야 함. 시간이 써있지 않은지 확인 필요")
+                os.system('pause')
+                return
           
         #if fileType == "0" :#TC
             #startDate = datetime.datetime.strptime(tcStartDate, '%Y-%m-%d')
@@ -426,7 +431,7 @@ def write_data_cashshop_inspection(salesList : list[Sales], resultPath = "유료
         print(f'{sale.pkgName}|{sale.server}|{sale.salesCheck}|{sale.category}|{sale.order}')
     try:
         #    sale.salesCheck = float(sale.salesCheck)
-        salesList.sort(key=lambda a: (a.server, a.salesCheck, a.category, str(a.order)))
+        salesList.sort(key=lambda a: (a.server, a.salesCheck, a.category, a.order))
     except Exception as e:
         print(e)
         print("정렬에 문제 발생... 표에 제대로 입력됐는지 확인 필요...")
