@@ -86,14 +86,14 @@ class Event():
         self.open_check = ""
 
 
-def extract_data(fileName):
+def extract_data(fileName, tcStartDate):
 
     target = pd.DataFrame()
 
     sheet_names = pd.read_excel(fileName, sheet_name=None).keys()
     for sheet_name in sheet_names:
         
-        if sheet_name == "사용법" :
+        if sheet_name == "사용법" or sheet_name == "템플릿" :
             continue
         
         curDf = pd.read_excel(fileName, sheet_name=sheet_name, na_values="")
@@ -171,7 +171,8 @@ def extract_data(fileName):
           
         #startDate = datetime.datetime.strptime(tcStartDate, '%Y-%m-%d')
         #a.salesCheck = dateCheck(a.startDate,a.endDate,startDate.date())
-        a.open_check = dateCheck(a.start_date,a.end_date,check_start_date.date())
+        startDate = datetime.datetime.strptime(tcStartDate, '%Y-%m-%d')
+        a.open_check = dateCheck(a.start_date,a.end_date,startDate.date())
 
 
         #print(a)
@@ -335,7 +336,7 @@ def write_data_event_testcase(targetList : list[Event]):
                 ) 
 
 
-def write_data(targetList : list[Event]):
+def write_data(targetList : list[Event], resultPath = "이벤트_CheckList"):
 
     targetList.sort(key =lambda a: (a.open_check, a.id))
 
@@ -361,6 +362,13 @@ def write_data(targetList : list[Event]):
 
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
         #if y.open_check == "이벤트 시작" :
+
+        # dateID= 0
+        # if data_filename_input == "0":
+        #     dateID = (3,"목")
+        # elif data_filename_input == "1":
+        dateID = (1,"화")
+
         info = ""
         if y.type != "도감":
             info = f"{y.start_date.strftime('%Y-%m-%d')}({dateID[1]}) ~ {y.end_date.strftime('%Y-%m-%d')}({dateID[1]})\n"
@@ -370,13 +378,13 @@ def write_data(targetList : list[Event]):
         
         if y.type == "출석" :
             for index, item in enumerate(y.item_list) :
-                info += f'\n{int(index)+1}일차 : {item.name} {int(item.count)}개'
+                info += f'\n{int(index)+1}일차 : {item.name}[귀속] {int(item.count)}개'
         elif y.type == "미션" :
             for index, item in enumerate(y.item_list) :
-                info += f'\n{y.desc_list[index]} : {item.name} {int(item.count)}개'
+                info += f'\n{y.desc_list[index]} : {item.name}[귀속] {int(item.count)}개'
         elif y.type == "드랍" :
             for index, item in enumerate(y.item_list) :
-                info += f'\n{y.desc_list[index]} : {item.name} {round(item.count,2)}%'
+                info += f'\n{y.desc_list[index]} : {item.name}[귀속] {round(item.count,2)}%'
         elif y.type == "제작" :
             for index, item in enumerate(y.item_list) :
                 craft = y.craft_list[index]
@@ -420,7 +428,9 @@ def write_data(targetList : list[Event]):
     totalResult = totalResult.replace("nan","")
     totalResult = totalResult.replace(np.nan,"")
 
-    totalResult.to_excel(xl_filename, # directory and file name to write
+    xlFileName = f"./{resultPath}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
+
+    totalResult.to_excel(xlFileName, # directory and file name to write
 
                 sheet_name = 'Sheet1', 
 
@@ -446,9 +456,10 @@ def write_data(targetList : list[Event]):
 
                 ) 
 
+    return xlFileName
 
-def postprocess_cashshop():
-    wb = xl.load_workbook(xl_filename,data_only = True)
+def postprocess_cashshop(xlFileName):
+    wb = xl.load_workbook(xlFileName,data_only = True)
     sheetList = wb.sheetnames
     ws = wb[sheetList[0]]
     ws.column_dimensions['b'].width = 17
@@ -541,7 +552,7 @@ def postprocess_cashshop():
     #ws = highlight_belonging(ws)
     #ws = find_and_replace(ws,"귀속","귀속")
     ws = highlight_star_cells(ws)
-    wb.save(xl_filename)
+    wb.save(xlFileName)
 
 
 def process_temp_str(temp_str):
@@ -679,17 +690,17 @@ if __name__ == "__main__":
 
         print(f"이번주 {dateID[1]}요일 {check_start_date} 기준으로 작성됩니다.")
 
-    check_start_date = datetime.datetime.strptime(check_start_date, '%Y-%m-%d')
+    #check_start_date = datetime.datetime.strptime(check_start_date, '%Y-%m-%d')
 
     result_directory = f"./Event_{file_type}"
     if not os.path.isdir(result_directory) :
         os.mkdir(result_directory)
 
-    xl_filename = f"{result_directory}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
+    #xl_filename = f"{result_directory}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
 
-    targetList = extract_data(data_filename)
-    write_data(targetList)
-    postprocess_cashshop()
+    targetList = extract_data(data_filename,check_start_date)
+    xlFileName = write_data(targetList)
+    postprocess_cashshop(xlFileName)
 
 
     print("complete!")
