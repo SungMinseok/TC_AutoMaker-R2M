@@ -186,7 +186,7 @@ def extract_data_cashshop(fileName, tcStartDate):
         a = Sales()
         a.pkgID = int(tempDf.loc[0,"CashShopID"])
         a.pkgName = tempDf.loc[0,"PkgName"] #+ "[귀속]"
-        a.category = tempDf.loc[0,"Category"]
+        a.category = str(tempDf.loc[0,"Category"])
         a.order = tempDf.loc[0,"Order"]
         a.price = str(tempDf.loc[0,"Price"])
         try:
@@ -215,7 +215,7 @@ def extract_data_cashshop(fileName, tcStartDate):
                 except:
                     a.itemList1.append(f"{itemName}[귀속] {(itemCount)}개")
 
-        a.server = tempDf.loc[0,"Server"]
+        a.server = str(tempDf.loc[0,"Server"])
        
         a.startDate = pd.to_datetime(tempDf.loc[0,"StartDate"])
 
