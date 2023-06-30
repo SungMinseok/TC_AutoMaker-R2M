@@ -89,6 +89,7 @@ class Event():
 def extract_data(fileName, tcStartDate):
 
     target = pd.DataFrame()
+    
 
     sheet_names = pd.read_excel(fileName, sheet_name=None).keys()
     for sheet_name in sheet_names:
