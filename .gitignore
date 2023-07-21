@@ -2,6 +2,8 @@ CL_CashShop_TC/
 CL_CashShop_정기점검/
 유료상점_CheckList/
 유료상점_TestCase/
+이벤트_CheckList/
+이벤트_TestCase/
 backup/
 temp/
 dist/
