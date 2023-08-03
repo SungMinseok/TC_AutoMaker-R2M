@@ -136,12 +136,19 @@ def extract_data_cashshop(fileName, tcStartDate):
     target = pd.DataFrame()
 
 
-    sheet_names = pd.read_excel(fileName, sheet_name=None).keys()
+    #sheet_names = pd.read_excel(fileName, sheet_name=None).keys()
+    sheet_names = pd.ExcelFile(fileName).sheet_names
+
+    #시트 너무 많으면 오래걸려서 시트 개수 제한 n개
+    sheet_names = sheet_names[:2]
     for i, sheet_name in enumerate(sheet_names):
+        
         curDf = pd.read_excel(fileName, sheet_name=sheet_name, na_values="")
 
         #target = target.append(curDf, ignore_index = True)
         target = pd.concat([target, curDf], ignore_index=True)
+        target.replace('　', '', regex=True, inplace=True)
+        target.replace('', pd.NA, inplace=True)
 
         del curDf
         gc.collect()
@@ -253,6 +260,9 @@ def extract_data_cashshop(fileName, tcStartDate):
 
 
 def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_TestCase"):
+    '''
+    유료상점_테스트케이스_작성용
+    '''
     totalResult = pd.DataFrame()
 #print(len(salesList))
 
@@ -422,8 +432,14 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
 
     return xlFileName
 
-def write_data_cashshop_inspection(salesList : list[Sales], resultPath = "유료상점_CheckList"):
 
+def write_data_cashshop_inspection(salesList : list[Sales], resultPath = "유료상점_CheckList", show_everything = False):
+
+    '''
+    유료상점_체크리스트_작성용\n
+    show_everything : true > 유지/종료상품도 내용 표시
+
+    '''
 
     
     
@@ -474,21 +490,33 @@ def write_data_cashshop_inspection(salesList : list[Sales], resultPath = "유료
         else :            
             bonusStr =  f"{y.bonus} 마일리지"
 
-        info_0 = f'{y.category} / {y.price} / {bonusStr} / {y.limit}'
+        info_0 = f'{y.category}'
+        info_1 = ""
+        info_2 = ""
+        info_3 = ""
         
-        info_expired = y.endDate.strftime('%m/%d/%Y(목) 11:00 까지')
+        if y.endDate == datetime.datetime.strptime("2099-12-31 00:00:00",'%Y-%m-%d %H:%M:%S') :
+            info_expired = "상시 판매 상품(종료날짜 미표시)"
+        else :
+            info_expired = f"{y.endDate.strftime('%m/%d/%Y(목) 11:00 까지')}"
 
-        info_1 = "\n".join(y.itemList0)
-        info_1 = info_1.replace("다이아몬드[귀속]","다이아몬드")
+        if show_everything or y.salesCheck == "판매 시작":
+            info_0 = f'{info_0} / {y.price} / {bonusStr} / {y.limit}'
 
-        info_2 = "\n".join(map(str, y.itemList1))
-        info_2 = info_2.replace("nan\n","")
-        info_2 = info_2.replace("\n","\n- ")
-        info_2 = "사용 시 다음 아이템 획득\n- "+info_2
+            info_expired = f"\n{info_expired}"
 
-        info_3 = f'* 상세정보 및 패키지 상자 구성품 내 [귀속] 노출 확인\n* 패키지 이미지 내 구성품 관련 이미지 노출 확인'
+            info_1 = "\n".join(y.itemList0)
+            info_1 = info_1.replace("다이아몬드[귀속]","다이아몬드")
+            info_1 = f'\n\n{info_1}'
 
-        result.loc[i,"Check List"] = f'{info_0}\n{info_expired}\n\n{info_1}\n\n{info_2}\n\n{info_3}'
+            info_2 = "\n".join(map(str, y.itemList1))
+            info_2 = info_2.replace("nan\n","")
+            info_2 = info_2.replace("\n","\n- ")
+            info_2 = "\n\n사용 시 다음 아이템 획득\n- "+info_2
+
+            info_3 = f'\n\n* 상세정보 및 패키지 상자 구성품 내 [귀속] 노출 확인\n* 패키지 이미지 내 구성품 관련 이미지 노출 확인'
+
+        result.loc[i,"Check List"] = f'{info_0}{info_expired}{info_1}{info_2}{info_3}'
 
     # #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
      
