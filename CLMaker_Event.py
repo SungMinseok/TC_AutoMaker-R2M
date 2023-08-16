@@ -190,7 +190,7 @@ def extract_data(fileName, tcStartDate):
     return targetList
 
 
-def write_data_event_testcase(targetList : list[Event]):
+def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_TestCase"):
     totalResult = pd.DataFrame()
 #print(len(salesList))
 
@@ -204,15 +204,20 @@ def write_data_event_testcase(targetList : list[Event]):
         result = pd.DataFrame()
 
         i = curRow
-        result.loc[i,"Category1"] = y.server
-        result.loc[i,"Category2"] = y.pkgName + "\n" + str(y.pkgID)
-        result.loc[i,"Category3"] = "이름"
-        result.loc[i,"Check List"] = y.pkgName
+
+        if y.open_check == "이벤트 유지" or y.open_check == "이벤트 종료"  :
+            continue
+
+        if y.type == "출석" :
+            result.loc[i,"Category1"] = f'{y.type} 이벤트'
+            result.loc[i,"Category2"] = f'{y.name}\n{y.id}'#y.pkgName + "\n" + str(y.pkgID)
+            result.loc[i,"Category3"] = "UI"
+            result.loc[i,"Check List"] = '이벤트 리소스 적용'
 
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-        i += 1
-        result.loc[i,"Category3"] = "카테고리"
-        result.loc[i,"Check List"] = y.category
+            i += 1
+            result.loc[i,"Category3"] = "기간"
+            result.loc[i,"Check List"] = f"{y.start_date.strftime('%Y-%m-%d')}({dateID[1]}) ~ {y.end_date.strftime('%Y-%m-%d')}({dateID[1]})"
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
         i += 1
         result.loc[i,"Category3"] = "상세정보"

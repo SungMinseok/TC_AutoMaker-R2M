@@ -498,7 +498,7 @@ def write_data_cashshop_inspection(salesList : list[Sales], resultPath = "유료
         if y.endDate == datetime.datetime.strptime("2099-12-31 00:00:00",'%Y-%m-%d %H:%M:%S') :
             info_expired = "상시 판매 상품(종료날짜 미표시)"
         else :
-            info_expired = f"{y.endDate.strftime('%m/%d/%Y(목) 11:00 까지')}"
+            info_expired = f" | {y.endDate.strftime('%m/%d/%Y(목) 점검 전 까지')}"
 
         if show_everything or y.salesCheck == "판매 시작":
             info_0 = f'{info_0} / {y.price} / {bonusStr} / {y.limit}'
@@ -507,12 +507,14 @@ def write_data_cashshop_inspection(salesList : list[Sales], resultPath = "유료
 
             info_1 = "\n".join(y.itemList0)
             info_1 = info_1.replace("다이아몬드[귀속]","다이아몬드")
+            info_1 = info_1.replace("로얄 코인[귀속]","로얄 코인")
             info_1 = f'\n\n{info_1}'
 
-            info_2 = "\n".join(map(str, y.itemList1))
-            info_2 = info_2.replace("nan\n","")
-            info_2 = info_2.replace("\n","\n- ")
-            info_2 = "\n\n사용 시 다음 아이템 획득\n- "+info_2
+            if len(y.itemList1) != 0 :
+                info_2 = "\n".join(map(str, y.itemList1))
+                info_2 = info_2.replace("nan\n","")
+                info_2 = info_2.replace("\n","\n- ")
+                info_2 = "\n\n사용 시 다음 아이템 획득\n- "+info_2
 
             info_3 = f'\n\n* 상세정보 및 패키지 상자 구성품 내 [귀속] 노출 확인\n* 패키지 이미지 내 구성품 관련 이미지 노출 확인'
 

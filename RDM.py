@@ -138,6 +138,13 @@ class WindowClass(QMainWindow, form_class) :
                     result_file_name = ClEvent.write_data(data,result_path)
                     self.print_log("데이터 정리 중...")
                     ClEvent.postprocess_cashshop(result_file_name)
+                elif self.combox_doctype.currentText() == "TestCase" :
+                    self.print_log("데이터 추출 중...")
+                    data = ClEvent.extract_data(data_file_name, self.dateedit.text())
+                    self.print_log("데이터 쓰는 중...")
+                    result_file_name = ClEvent.write_data_event_testcase(data,result_path)
+                    self.print_log("데이터 정리 중...")
+                    ClEvent.postprocess_cashshop(result_file_name)
                 # elif self.combox_doctype.currentText() == "TestCase" :
                 #     self.print_log("데이터 추출 중...")
                 #     data = ClCash.extract_data_cashshop(data_file_name, self.dateedit.text())
