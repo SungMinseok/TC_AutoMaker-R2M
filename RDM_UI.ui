@@ -16,6 +16,111 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLabel" name="label_15">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>23</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>110</width>
+          <height>23</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <family>맑은 고딕</family>
+          <pointsize>9</pointsize>
+          <weight>75</weight>
+          <italic>false</italic>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(31, 78,120);
+color: rgb(255, 255, 255);
+font : bold</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="text">
+         <string> 프로젝트명</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="combox_country">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>1888888</width>
+          <height>23</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <family>맑은 고딕</family>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(155, 194, 230);</string>
+        </property>
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <property name="insertPolicy">
+         <enum>QComboBox::InsertAtBottom</enum>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>15</height>
+         </size>
+        </property>
+        <property name="placeholderText">
+         <string/>
+        </property>
+        <item>
+         <property name="text">
+          <string>KR R2M</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>TW R2M</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QLabel" name="label_13">
@@ -27,7 +132,7 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>110</width>
           <height>23</height>
          </size>
         </property>
@@ -132,7 +237,7 @@ font : bold</string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>110</width>
           <height>23</height>
          </size>
         </property>
@@ -226,9 +331,9 @@ font : bold</string>
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <layout class="QHBoxLayout" name="horizontalLayout_7">
       <item>
-       <widget class="QLabel" name="label_15">
+       <widget class="QLabel" name="label_18">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -237,7 +342,7 @@ font : bold</string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>110</width>
           <height>23</height>
          </size>
         </property>
@@ -262,7 +367,7 @@ font : bold</string>
          <enum>QFrame::NoFrame</enum>
         </property>
         <property name="text">
-         <string> 국가</string>
+         <string> 시작 날짜</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -270,25 +375,27 @@ font : bold</string>
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="combox_country">
+       <widget class="QDateEdit" name="dateedit">
         <property name="enabled">
          <bool>true</bool>
         </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QLabel" name="label_16">
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>0</height>
+          <height>23</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>1888888</width>
+          <width>110</width>
           <height>23</height>
          </size>
         </property>
@@ -296,42 +403,30 @@ font : bold</string>
          <font>
           <family>맑은 고딕</family>
           <pointsize>9</pointsize>
+          <weight>75</weight>
+          <italic>false</italic>
+          <bold>true</bold>
          </font>
         </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
         <property name="styleSheet">
-         <string notr="true">background-color: rgb(155, 194, 230);</string>
+         <string notr="true">background-color: rgb(31, 78,120);
+color: rgb(255, 255, 255);
+font : bold</string>
         </property>
-        <property name="currentIndex">
-         <number>0</number>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
         </property>
-        <property name="insertPolicy">
-         <enum>QComboBox::InsertAtBottom</enum>
+        <property name="text">
+         <string> 데이터 경로(자동)</string>
         </property>
-        <property name="iconSize">
-         <size>
-          <width>16</width>
-          <height>15</height>
-         </size>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
         </property>
-        <property name="placeholderText">
-         <string/>
-        </property>
-        <item>
-         <property name="text">
-          <string>KR</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>TW</string>
-         </property>
-        </item>
        </widget>
       </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
        <widget class="QLineEdit" name="input_datapath">
         <property name="sizePolicy">
@@ -438,6 +533,48 @@ font : bold</string>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_8">
       <item>
+       <widget class="QLabel" name="label_17">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>23</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>110</width>
+          <height>23</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <family>맑은 고딕</family>
+          <pointsize>9</pointsize>
+          <weight>75</weight>
+          <italic>false</italic>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(31, 78,120);
+color: rgb(255, 255, 255);
+font : bold</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="text">
+         <string> 완성 경로(자동)</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QLineEdit" name="input_resultpath">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
@@ -541,22 +678,24 @@ font : bold</string>
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_7">
-      <item>
-       <widget class="QDateEdit" name="dateedit">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
     </item>
     <item>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="1">
        <widget class="QCheckBox" name="checkBox_2">
         <property name="text">
-         <string>[CL] 판매유지/종료 내용 표시</string>
+         <string>유료상점 CL 판매유지/종료 내용 표시</string>
         </property>
        </widget>
       </item>
@@ -564,6 +703,9 @@ font : bold</string>
        <widget class="QCheckBox" name="checkBox">
         <property name="text">
          <string>생성 후 파일 열기</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -643,6 +785,7 @@ font: bold</string>
     <property name="title">
      <string>메뉴</string>
     </property>
+    <addaction name="action_howtouse"/>
     <addaction name="action_patchnote"/>
    </widget>
    <addaction name="menu"/>
@@ -656,6 +799,11 @@ font: bold</string>
   <action name="actionAD">
    <property name="text">
     <string>AD</string>
+   </property>
+  </action>
+  <action name="action_howtouse">
+   <property name="text">
+    <string>HOW TO USE</string>
    </property>
   </action>
  </widget>

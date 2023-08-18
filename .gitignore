@@ -10,3 +10,4 @@ dist/
 ~$*.xlsx
 Event_CheckList/
 Event_DocumentType.TestCase/
+.venv/

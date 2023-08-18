@@ -51,21 +51,29 @@ class Item():
     #     self.name = ""
     #     self.count = ""
 
-    def __init__(self, id, name, count) :
+    def __init__(self, id, name, count, movelimit=6, removedate=0) :
         self.id = id
         self.name = name
         self.count = count
+        self.movelimit = movelimit
+        self.removedate = removedate
     # def additem(self, id, name, count) :
     #     self.id = id
     #     self.name = name
     #     self.count = count
 
 class Craft():
-    def __init__(self,price, limit, ingredient) :
+    def __init__(self,price, limit, recipe, rate = 100) :
         self.price = price
         self.limit = limit
-        self.ingredient = ingredient
+        self.recipe = recipe
+        self.rate = rate
 
+class Quest():
+    def __init__(self, id, name) :
+        self.id = id
+        self.name = name
+        
 class Event():
     def __init__(self) :
 
@@ -127,9 +135,16 @@ def extract_data(fileName, tcStartDate):
         a.name = str(tempDf.loc[0,"EventName"]) #+ "[귀속]"
 
         for k in range(len(tempDf)):
-            str0 = tempDf.loc[k,'QuestDesc']
-            if not pd.isnull(str0):
-                a.desc_list.append(f"{str0}")
+            str0 = tempDf.loc[k,'QuestID']
+            str1 = tempDf.loc[k,'QuestDesc']
+            if not pd.isnull(str1):
+                if not pd.isnull(str0):
+                    newQuest = Quest(str0,str1)
+                    #a.desc_list.append(newQuest)
+                else :
+                    newQuest = Quest(0,str1)
+                a.desc_list.append(newQuest)
+
             else :
                 continue 
             
@@ -137,10 +152,23 @@ def extract_data(fileName, tcStartDate):
         for k in range(len(tempDf)):
             str0 = tempDf.loc[k,'ItemID_0']
             str1 = tempDf.loc[k,'ItemName_0']
+            try:
+                if '[귀속]' not in str1 :
+                    str1 = f'{str1}[귀속]'
+                    str1 = str1.replace(' [귀속]','[귀속]')
+                if '코인' in str1 :
+                    str1 = str1.replace('[귀속]','')
+            except : 
+                pass
             str2 = tempDf.loc[k,'ItemCount_0']
+            str3 = tempDf.loc[k,'ItemMovelimit_0']
+            try:
+                str4 = pd.to_datetime(tempDf.loc[k,'ItemRemovedate_0'])
+            except:
+                str4 = 0
 
             if not pd.isnull(str1):
-                newItem = Item(str0,str1,str2)
+                newItem = Item(str0,str1,str2,str3,str4)
                 a.item_list.append(newItem)
             else :
                 continue 
@@ -194,12 +222,12 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
     totalResult = pd.DataFrame()
 #print(len(salesList))
 
-    targetList.sort(key =lambda a: (a.server,a.category))
+    targetList.sort(key =lambda a: (a.id))
     curRow = 0
     count = 0
     print("데이터 쓰는 중...")
     for y in tqdm(targetList):
-        y = Event()
+        #y = Event()
         count += 1
         result = pd.DataFrame()
 
@@ -207,105 +235,258 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
 
         if y.open_check == "이벤트 유지" or y.open_check == "이벤트 종료"  :
             continue
+    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
         if y.type == "출석" :
             result.loc[i,"Category1"] = f'{y.type} 이벤트'
             result.loc[i,"Category2"] = f'{y.name}\n{y.id}'#y.pkgName + "\n" + str(y.pkgID)
-            result.loc[i,"Category3"] = "UI"
-            result.loc[i,"Check List"] = '이벤트 리소스 적용'
-
-    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+            result.loc[i,"Category3"] = "이벤트명"
+            result.loc[i,"Check List"] = f'{y.name}'
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             i += 1
             result.loc[i,"Category3"] = "기간"
-            result.loc[i,"Check List"] = f"{y.start_date.strftime('%Y-%m-%d')}({dateID[1]}) ~ {y.end_date.strftime('%Y-%m-%d')}({dateID[1]})"
-    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-        i += 1
-        result.loc[i,"Category3"] = "상세정보"
+            #result.loc[i,"Check List"] = f"{y.start_date.strftime('%Y-%m-%d')}({dateID[1]}) ~ {y.end_date.strftime('%Y-%m-%d')}({dateID[1]})"
+            result.loc[i,"Check List"] = f"{y.start_date.strftime('%Y-%m-%d')} ~ {y.end_date.strftime('%Y-%m-%d')}"
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            i += 1            
+            result.loc[i,"Category3"] = "리소스 이미지"
+            result.loc[i,"Check List"] = '이벤트 리소스 적용'
+            i += 1            
+            result.loc[i,"Check List"] = '이벤트 리소스 내 기간 정상 노출'
 
-        if len(y.itemList0) != 0 :
-            desc0 = "\n".join(y.itemList0)
-            desc0 = desc0.replace("다이아몬드[귀속]","다이아몬드")
-            result.loc[i,"Check List"] = desc0
-        else : 
-            result.loc[i,"Check List"] = f'{y.pkgName} 상자[귀속]'
-
-        i += 1
-        desc1 = "\n".join(map(str, y.itemList1))
-        desc1 = desc1.replace("nan\n","")
-        desc1 = desc1.replace("\n","\n- ")
-        result.loc[i,"Check List"] = "사용 시 다음 아이템 획득\n\n- "+desc1
-
-        i += 1
-        desc0 = desc0.replace("\n","\n- ")
-        result.loc[i,"Check List"] = "<"+y.pkgName+"> 구성품 상세 정보\n- " + desc0
-
-    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-
-        i += 1
-        result.loc[i,"Category3"] = "상품슬롯"
-
-        for item1 in y.itemList1 :
-            if str(item1) != "nan" :
-                result.loc[i,"Check List"] = str(item1) + " 관련 이미지 노출"
-                i+=1
-
-        if int(y.bonus) == 0 :
-            result.loc[i,"Check List"] =  "마일리지 미노출"
-        else :            
-            result.loc[i,"Check List"] =  "마일리지 : " + str(y.bonus)+ " 적립"
-        i+=1
-        result.loc[i,"Check List"] = "구매 제한 : " + str(y.limit)
-        i+=1
-        result.loc[i,"Check List"] = "구매 가격 : " + y.price
-        
-    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-
-        i += 1
-        result.loc[i,"Category3"] = "아이템 구매"
-
-        if "원" in y.price or "TWD" in y.price:
-            result.loc[i,"Check List"] = f"결제 모듈 내 {y.pkgName} 노출"
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             i += 1
-            result.loc[i,"Check List"] = f"결제 모듈 내 {y.price} 노출"
+            result.loc[i,"Category3"] = "제한"
+            result.loc[i,"Check List"] = f"{y.limit}"
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            for index, item in enumerate(y.item_list) :
+                i += 1
+                result.loc[i,"Category3"] = f'{index+1}일차'
+                #result.loc[i,"Check List"] = f'{item.name}[귀속] {int(item.count)}개'.replace('[귀속][귀속]','[귀속]')
+                result.loc[i,"Check List"] = f'{item.name} {int(item.count)}개'#.replace('[귀속][귀속]','[귀속]')
+
+
+    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+        elif y.type == "미션" :
+            result.loc[i,"Category1"] = f'{y.type} 이벤트'
+            result.loc[i,"Category2"] = f'{y.name}\n{y.id}'#y.pkgName + "\n" + str(y.pkgID)
+            result.loc[i,"Category3"] = "이벤트명"
+            result.loc[i,"Check List"] = f'{y.name}'
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             i += 1
-            result.loc[i,"Check List"] = f"결제 완료 시 보관함으로 획득"
-        else :
-            result.loc[i,"Check List"] = y.price + " 차감"
+            result.loc[i,"Category3"] = "기간"
+            #result.loc[i,"Check List"] = f"{y.start_date.strftime('%Y-%m-%d')}({dateID[1]}) ~ {y.end_date.strftime('%Y-%m-%d')}({dateID[1]})"
+            result.loc[i,"Check List"] = f"{y.start_date.strftime('%Y-%m-%d')} ~ {y.end_date.strftime('%Y-%m-%d')}"
+        #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            i += 1            
+            result.loc[i,"Category3"] = "리소스 이미지"
+            result.loc[i,"Check List"] = '이벤트 리소스 적용'
+            i += 1            
+            result.loc[i,"Check List"] = '이벤트 리소스 내 기간 정상 노출'
+#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            i += 1
+            result.loc[i,"Category3"] = "제한"
+            result.loc[i,"Check List"] = f"{y.limit}"
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            for index, quest in enumerate(y.desc_list) :
+                i += 1
+                result.loc[i,"Category3"] = f'{quest.name}'
+                #result.loc[i,"Check List"] = f'{item.name}[귀속] {int(item.count)}개'.replace('[귀속][귀속]','[귀속]')
+                result.loc[i,"Check List"] = f'{y.item_list[index].name} {int(y.item_list[index].count)}개'#.replace('[귀속][귀속]','[귀속]')
+
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            i += 1            
+            result.loc[i,"Category3"] = "퀘스트 연결"
+            result.loc[i,"Check List"] = '6개 퀘스트 완료 시, 메인 퀘스트 보상 획득 가능'
+
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+        elif y.type == "드랍" :
+            result.loc[i,"Category1"] = f'{y.type} 이벤트'
+            result.loc[i,"Category2"] = f'{y.name}\n{y.id}'#y.pkgName + "\n" + str(y.pkgID)
+            result.loc[i,"Category3"] = "기간"
+            #result.loc[i,"Check List"] = f"{y.start_date.strftime('%Y-%m-%d')}({dateID[1]}) ~ {y.end_date.strftime('%Y-%m-%d')}({dateID[1]})"
+            result.loc[i,"Check List"] = f"{y.start_date.strftime('%Y-%m-%d')} 11:30:00 ~ {y.end_date.strftime('%Y-%m-%d')} 11:30:00(KST)"
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            i += 1            
+            result.loc[i,"Category3"] = "드랍 위치"
+            result.loc[i,"Check List"] = f'{y.desc_list[0].name}'
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            for index, item in enumerate(y.item_list) :
+                i += 1
+                result.loc[i,"Category3"] = "드랍 아이템"                
+                result.loc[i,"Check List"] = f'{item.name} ({(item.id)})'.replace('.0','')
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            for index, item in enumerate(y.item_list) :
+                i += 1
+                result.loc[i,"Category3"] = "드랍 확률"                
+                result.loc[i,"Check List"] = f'{item.name} : {round(item.count,2)}%'#.replace('[귀속][귀속]','[귀속]')
+
+    
+    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+        elif y.type == "제작" :
+            result.loc[i,"Category1"] = f'{y.type} 이벤트'
+
+
+            for index, item in enumerate(y.item_list) :
+                #i += 1
+                try:
+                    result.loc[i,"Category2"] = f'{item.name}\n{int(item.id)}'#y.pkgName + "\n" + str(y.pkgID)
+                except:
+                    result.loc[i,"Category2"] = f'{item.name}'#y.pkgName + "\n" + str(y.pkgID)
+
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                result.loc[i,"Category3"] = "제한"
+                result.loc[i,"Check List"] = f"{y.craft_list[index].limit}"
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                i += 1            
+                result.loc[i,"Category3"] = "기간"
+                result.loc[i,"Check List"] = f"{y.start_date.strftime('%m/%d/%Y')} ~ {y.end_date.strftime('%m/%d/%Y')} (이벤트 기간 실데이터 2:30:00)"
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       
+                i += 1            
+                result.loc[i,"Category3"] = "재료"
+                result.loc[i,"Check List"] = f"{y.craft_list[index].recipe}"
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                i += 1            
+                result.loc[i,"Category3"] = "비용"
+                result.loc[i,"Check List"] = f"{int(y.craft_list[index].price)} 골드"
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                i += 1            
+                result.loc[i,"Category3"] = "확률"
+                result.loc[i,"Check List"] = f"{int(y.craft_list[index].rate)}%로 제작 성공"
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                i += 1            
+                result.loc[i,"Category3"] = "실제 제작"
+                result.loc[i,"Check List"] = f"아이템 제작 버튼 터치 시, 인벤토리 내 '{item.name}' 획득"
+
+                if not pd.isnull(item.removedate) :
+                    i += 1
+                    result.loc[i,"Check List"] = f"자동 삭제 '{item.removedate.strftime('%Y-%m-%d')} 11:30' 적용"
+                    i += 1    
+    
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
-        i += 1
-        result.loc[i,"Category3"] = "마일리지"
+        elif y.type == "도감" :
+            result.loc[i,"Category1"] = f'{y.type} 이벤트'
+            result.loc[i,"Category2"] = f'{y.name}\n{y.id}'#y.pkgName + "\n" + str(y.pkgID)
+            result.loc[i,"Category3"] = "도감명"
+            result.loc[i,"Check List"] = f'{y.name}'
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            i += 1
+            result.loc[i,"Category3"] = "기간"
+            #result.loc[i,"Check List"] = f"{y.start_date.strftime('%Y-%m-%d')}({dateID[1]}) ~ {y.end_date.strftime('%Y-%m-%d')}({dateID[1]})"
+            result.loc[i,"Check List"] = f"이벤트 기간 : {y.start_date.strftime('%m/%d/%Y')} 11:30 ~ {y.end_date.strftime('%m/%d/%Y')} 11:30"
+        #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            
+            for index, quest in enumerate(y.desc_list) :
+                i += 1
+                result.loc[i,"Category3"] = f'필요 아이템'
+                #result.loc[i,"Check List"] = f'{item.name}[귀속] {int(item.count)}개'.replace('[귀속][귀속]','[귀속]')
+                result.loc[i,"Check List"] = f'{quest.name} ({int(quest.id)})'#.replace('[귀속][귀속]','[귀속]')
 
-        if int(y.bonus) == 0 :
-            result.loc[i,"Check List"] =  "미노출"
-        else :            
-            result.loc[i,"Check List"] =  "마일리지 : " + str(y.bonus)+ " 적립"
+        #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            
+            for index, item in enumerate(y.item_list) :
+                i += 1
+                result.loc[i,"Category3"] = f'능력치'
+                try:
+                    stat_amount = float(item.count)
+                    if stat_amount < 1 :
+                        stat_amount *= 100
+                        stat_amount = f'{stat_amount}0%'
+                    else :
+                        stat_amount = int(stat_amount)
 
-    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-        i += 1
-        result.loc[i,"Category3"] = "아이템 획득"
-        result.loc[i,"Check List"] = y.pkgName + " 상자[귀속] 인벤토리 획득"
-    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-        i += 1
-        result.loc[i,"Category3"] = "아이템 사용"
+                    result.loc[i,"Check List"] = f"{item.name} +{stat_amount}".replace('[귀속]','')
+                except : 
+                    result.loc[i,"Check List"] = f'{item.name} +{(item.count)}'.replace('[귀속]','')#.replace('[귀속][귀속]','[귀속]')
 
-        for item1 in y.itemList1 :
-            if str(item1) != "nan" :
-                result.loc[i,"Check List"] = "- " + str(item1) + " 획득 및 사용"
-                i+=1
+    #     if len(y.itemList0) != 0 :
+    #         desc0 = "\n".join(y.itemList0)
+    #         desc0 = desc0.replace("다이아몬드[귀속]","다이아몬드")
+    #         result.loc[i,"Check List"] = desc0
+    #     else : 
+    #         result.loc[i,"Check List"] = f'{y.pkgName} 상자[귀속]'
+
+    #     i += 1
+    #     desc1 = "\n".join(map(str, y.itemList1))
+    #     desc1 = desc1.replace("nan\n","")
+    #     desc1 = desc1.replace("\n","\n- ")
+    #     result.loc[i,"Check List"] = "사용 시 다음 아이템 획득\n\n- "+desc1
+
+    #     i += 1
+    #     desc0 = desc0.replace("\n","\n- ")
+    #     result.loc[i,"Check List"] = "<"+y.pkgName+"> 구성품 상세 정보\n- " + desc0
+
+    # #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    #     i += 1
+    #     result.loc[i,"Category3"] = "상품슬롯"
+
+    #     for item1 in y.itemList1 :
+    #         if str(item1) != "nan" :
+    #             result.loc[i,"Check List"] = str(item1) + " 관련 이미지 노출"
+    #             i+=1
+
+    #     if int(y.bonus) == 0 :
+    #         result.loc[i,"Check List"] =  "마일리지 미노출"
+    #     else :            
+    #         result.loc[i,"Check List"] =  "마일리지 : " + str(y.bonus)+ " 적립"
+    #     i+=1
+    #     result.loc[i,"Check List"] = "구매 제한 : " + str(y.limit)
+    #     i+=1
+    #     result.loc[i,"Check List"] = "구매 가격 : " + y.price
         
-        i-=1
-    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-        i += 1
-        result.loc[i,"Category3"] = "구매 제한"
-        result.loc[i,"Check List"] = str(y.limit) + " 구매 시 상품 슬롯 비활성화"
-        i += 1
-        result.loc[i,"Check List"] = "상품 슬롯 하단에 [구매 완료] 라벨 노출"
-    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    # #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    #     i += 1
+    #     result.loc[i,"Category3"] = "아이템 구매"
+
+    #     if "원" in y.price or "TWD" in y.price:
+    #         result.loc[i,"Check List"] = f"결제 모듈 내 {y.pkgName} 노출"
+    #         i += 1
+    #         result.loc[i,"Check List"] = f"결제 모듈 내 {y.price} 노출"
+    #         i += 1
+    #         result.loc[i,"Check List"] = f"결제 완료 시 보관함으로 획득"
+    #     else :
+    #         result.loc[i,"Check List"] = y.price + " 차감"
+    # #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    #     i += 1
+    #     result.loc[i,"Category3"] = "마일리지"
+
+    #     if int(y.bonus) == 0 :
+    #         result.loc[i,"Check List"] =  "미노출"
+    #     else :            
+    #         result.loc[i,"Check List"] =  "마일리지 : " + str(y.bonus)+ " 적립"
+
+    # #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    #     i += 1
+    #     result.loc[i,"Category3"] = "아이템 획득"
+    #     result.loc[i,"Check List"] = y.pkgName + " 상자[귀속] 인벤토리 획득"
+    # #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    #     i += 1
+    #     result.loc[i,"Category3"] = "아이템 사용"
+
+    #     for item1 in y.itemList1 :
+    #         if str(item1) != "nan" :
+    #             result.loc[i,"Check List"] = "- " + str(item1) + " 획득 및 사용"
+    #             i+=1
+        
+    #     i-=1
+    # #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    #     i += 1
+    #     result.loc[i,"Category3"] = "구매 제한"
+    #     result.loc[i,"Check List"] = str(y.limit) + " 구매 시 상품 슬롯 비활성화"
+    #     i += 1
+    #     result.loc[i,"Check List"] = "상품 슬롯 하단에 [구매 완료] 라벨 노출"
+    # #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         curRow = i
         
         #print(f'{y.pkgName} {y.salesCheck}')
-        if y.salesCheck == "판매 전" or y.salesCheck == "판매 시작":
+        if y.open_check == "이벤트 시작 전" or y.open_check == "이벤트 시작":
             #print("추가")
             
             totalResult = pd.concat([totalResult,result], ignore_index=True)
@@ -314,6 +495,8 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
     totalResult = totalResult.replace("NaN","")
     totalResult = totalResult.replace("nan","")
     totalResult = totalResult.replace(np.nan,"")
+
+    xlFileName = f"./{resultPath}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
 
     totalResult.to_excel(xlFileName, # directory and file name to write
 
@@ -339,7 +522,9 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
 
                 #freeze_panes = (2, 0)
 
-                ) 
+                )
+    
+    return xlFileName
 
 
 def write_data(targetList : list[Event], resultPath = "이벤트_CheckList"):
@@ -366,45 +551,47 @@ def write_data(targetList : list[Event], resultPath = "이벤트_CheckList"):
         result.loc[i,"Category2"] = y.open_check
         result.loc[i,"Category3"] = y.name
 
-    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         #if y.open_check == "이벤트 시작" :
 
         # dateID= 0
         # if data_filename_input == "0":
         #     dateID = (3,"목")
         # elif data_filename_input == "1":
-        dateID = (1,"화")
+       # dateID = (1,"화")
 
         info = ""
         if y.type != "도감":
-            info = f"{y.start_date.strftime('%Y-%m-%d')}({dateID[1]}) ~ {y.end_date.strftime('%Y-%m-%d')}({dateID[1]})\n"
+            #info = f"{y.start_date.strftime('%Y-%m-%d')}({dateID[1]}) ~ {y.end_date.strftime('%Y-%m-%d')}({dateID[1]})\n"
+            info = f"{y.start_date.strftime('%Y-%m-%d')} ~ {y.end_date.strftime('%Y-%m-%d')}\n"
         
         if y.type == "출석" or y.type == "미션" :
             info += f"{y.limit} 수행 가능\n"
         
         if y.type == "출석" :
             for index, item in enumerate(y.item_list) :
-                info += f'\n{int(index)+1}일차 : {item.name}[귀속] {int(item.count)}개'
+                info += f'\n{int(index)+1}일차 : {item.name} {int(item.count)}개'
         elif y.type == "미션" :
             for index, item in enumerate(y.item_list) :
-                info += f'\n{y.desc_list[index]} : {item.name}[귀속] {int(item.count)}개'
+                info += f'\n{y.desc_list[index].name} : {item.name} {int(item.count)}개'
         elif y.type == "드랍" :
             for index, item in enumerate(y.item_list) :
-                info += f'\n{y.desc_list[index]} : {item.name}[귀속] {round(item.count,2)}%'
+                info += f'\n{y.desc_list[index].name} : {item.name} {round(item.count,2)}%'
         elif y.type == "제작" :
             for index, item in enumerate(y.item_list) :
                 craft = y.craft_list[index]
-                info += f'\n{item.name} ({craft.limit})\n골드 {int(craft.price)} + {craft.ingredient}\n'
+                info += f'\n{item.name} ({craft.limit})\n골드 {int(craft.price)} + {craft.recipe}\n'
         elif y.type == "도감" :
             info += f"이벤트 기간 : {y.start_date.strftime('%m/%d/%Y')} 11:30 ~ {y.end_date.strftime('%m/%d/%Y')} 11:30\n"
             for index, desc in enumerate(y.desc_list) :
-                info += f'\n재료 : {desc}\n'
+                info += f'\n재료 : {desc.name}\n'
             for index, item in enumerate(y.item_list) :
                 if item.count >= 1 :
                     item.count = int(item.count)
                 else : 
                     item.count = f'{float(item.count) * 100}%'
                 info += f'\n{item.name} +{(item.count)}'
+                info = info.replace('[귀속]','')
         #info_expired = y.endDate.strftime('%m/%d/%Y(목) 11:00 까지')
 
         # info_1 = "\n".join(y.itemList0)
@@ -421,7 +608,7 @@ def write_data(targetList : list[Event], resultPath = "이벤트_CheckList"):
         # elif y.open_check == "이벤트 종료" :
         result.loc[i,"Check List"] = f'{info}'
 
-    # #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    # #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
      
         result.loc[i,"ETC"] = y.id
 
@@ -508,10 +695,10 @@ def postprocess_cashshop(xlFileName):
                 # mergeTargetCell = "C"+str(startRow_C)+":C"+str(i-1)
                 # ws.merge_cells(mergeTargetCell)
                 # startRow_C = i
-                if ( ws['c'+str(i)].value != startValue_C) :
+                if ( ws['C'+str(i)].value != startValue_C) :
                     mergeTargetCell = "c"+str(startRow_C)+":c"+str(i-1)
                     ws.merge_cells(mergeTargetCell)
-                    startValue_C = ws['c'+str(i)].value
+                    startValue_C = ws['C'+str(i)].value
                     startRow_C = i
 
 
@@ -519,12 +706,21 @@ def postprocess_cashshop(xlFileName):
             if startRow_D == 0 :
                 startRow_D = i
                 #print(startRow)
+                '''추가 230818'''
+                startValue_D = ws['d'+str(i)].value
             else :
-                firstTargetCell =  "D"+str(startRow_D)
-                mergeTargetCell = "D"+str(startRow_D)+":D"+str(i-1)
-                ws.merge_cells(mergeTargetCell)
-                startRow_D = i
+                '''원래'''
+                # firstTargetCell =  "D"+str(startRow_D)
+                # mergeTargetCell = "D"+str(startRow_D)+":D"+str(i-1)
+                # ws.merge_cells(mergeTargetCell)
+                # startRow_D = i
+                '''변경 230818'''
 
+                if ( ws['d'+str(i)].value != startValue_D) :
+                    mergeTargetCell = "D"+str(startRow_D)+":D"+str(i-1)
+                    ws.merge_cells(mergeTargetCell)
+                    startValue_D = ws['D'+str(i)].value
+                    startRow_D = i
 
         ws['b'+str(i)].alignment = Alignment(
             horizontal='center'

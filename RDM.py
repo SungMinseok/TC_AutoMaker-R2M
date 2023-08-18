@@ -111,65 +111,65 @@ class WindowClass(QMainWindow, form_class) :
         data_file_name = self.input_datapath.text()
         result_file_name = ""
 
-        try:
+        #try:
 
-            if self.combox_contents.currentText() == "유료상점" :
-                if self.combox_doctype.currentText() == "CheckList" :
-                    self.print_log("데이터 추출 중...")
-                    data = ClCash.extract_data_cashshop(data_file_name, self.dateedit.text())
-                    self.print_log("데이터 쓰는 중...")
-                    result_file_name = ClCash.write_data_cashshop_inspection(data,result_path,self.checkBox_2.isChecked())
-                    self.print_log("데이터 정리 중...")
-                    ClCash.postprocess_cashshop(result_file_name)
-                elif self.combox_doctype.currentText() == "TestCase" :
-                    self.print_log("데이터 추출 중...")
-                    data = ClCash.extract_data_cashshop(data_file_name, self.dateedit.text())
-                    self.print_log("데이터 쓰는 중...")
-                    result_file_name = ClCash.write_data_cashshop(data,result_path)
-                    self.print_log("데이터 정리 중...")
-                    ClCash.postprocess_cashshop(result_file_name)
-
-
-            elif self.combox_contents.currentText() == "이벤트" :
-                if self.combox_doctype.currentText() == "CheckList" :
-                    self.print_log("데이터 추출 중...")
-                    data = ClEvent.extract_data(data_file_name, self.dateedit.text())
-                    self.print_log("데이터 쓰는 중...")
-                    result_file_name = ClEvent.write_data(data,result_path)
-                    self.print_log("데이터 정리 중...")
-                    ClEvent.postprocess_cashshop(result_file_name)
-                elif self.combox_doctype.currentText() == "TestCase" :
-                    self.print_log("데이터 추출 중...")
-                    data = ClEvent.extract_data(data_file_name, self.dateedit.text())
-                    self.print_log("데이터 쓰는 중...")
-                    result_file_name = ClEvent.write_data_event_testcase(data,result_path)
-                    self.print_log("데이터 정리 중...")
-                    ClEvent.postprocess_cashshop(result_file_name)
-                # elif self.combox_doctype.currentText() == "TestCase" :
-                #     self.print_log("데이터 추출 중...")
-                #     data = ClCash.extract_data_cashshop(data_file_name, self.dateedit.text())
-                #     self.print_log("데이터 쓰는 중...")
-                #     result_file_name = ClCash.write_data_cashshop(data,result_path)
-                #     self.print_log("데이터 정리 중...")
-                #     ClCash.postprocess_cashshop(result_file_name)
-
-        
+        if self.combox_contents.currentText() == "유료상점" :
+            if self.combox_doctype.currentText() == "CheckList" :
+                self.print_log("데이터 추출 중...")
+                data = ClCash.extract_data_cashshop(data_file_name, self.dateedit.text())
+                self.print_log("데이터 쓰는 중...")
+                result_file_name = ClCash.write_data_cashshop_inspection(data,result_path,self.checkBox_2.isChecked())
+                self.print_log("데이터 정리 중...")
+                ClCash.postprocess_cashshop(result_file_name)
+            elif self.combox_doctype.currentText() == "TestCase" :
+                self.print_log("데이터 추출 중...")
+                data = ClCash.extract_data_cashshop(data_file_name, self.dateedit.text())
+                self.print_log("데이터 쓰는 중...")
+                result_file_name = ClCash.write_data_cashshop(data,result_path)
+                self.print_log("데이터 정리 중...")
+                ClCash.postprocess_cashshop(result_file_name)
 
 
+        elif self.combox_contents.currentText() == "이벤트" :
+            if self.combox_doctype.currentText() == "CheckList" :
+                self.print_log("데이터 추출 중...")
+                data = ClEvent.extract_data(data_file_name, self.dateedit.text())
+                self.print_log("데이터 쓰는 중...")
+                result_file_name = ClEvent.write_data(data,result_path)
+                self.print_log("데이터 정리 중...")
+                ClEvent.postprocess_cashshop(result_file_name)
+            elif self.combox_doctype.currentText() == "TestCase" :
+                self.print_log("데이터 추출 중...")
+                data = ClEvent.extract_data(data_file_name, self.dateedit.text())
+                self.print_log("데이터 쓰는 중...")
+                result_file_name = ClEvent.write_data_event_testcase(data,result_path)
+                self.print_log("데이터 정리 중...")
+                ClEvent.postprocess_cashshop(result_file_name)
+            # elif self.combox_doctype.currentText() == "TestCase" :
+            #     self.print_log("데이터 추출 중...")
+            #     data = ClCash.extract_data_cashshop(data_file_name, self.dateedit.text())
+            #     self.print_log("데이터 쓰는 중...")
+            #     result_file_name = ClCash.write_data_cashshop(data,result_path)
+            #     self.print_log("데이터 정리 중...")
+            #     ClCash.postprocess_cashshop(result_file_name)
+
+    
 
 
 
 
 
-            self.print_log("문서 여는 중...")
-            os.startfile(os.path.normpath(result_file_name))
-            self.print_log("실행 가능")
 
 
-        except PermissionError:
-            self.print_log(f"문서를 닫고 실행하세요. {data_file_name}")
+        self.print_log("문서 여는 중...")
+        os.startfile(os.path.normpath(result_file_name))
+        self.print_log("실행 가능")
 
-            #print(f"해당 문서가 열려있습니다. 닫고 다시 시작해주세요. {data_file_name}")
+
+        # except PermissionError:
+        #     self.print_log(f"문서를 닫고 실행하세요. {data_file_name}")
+        # except Exception as e:
+        #     print(str(e))
 
         #wb = openpyxl.load_workbook('result_230420_095250.xlsx')
         

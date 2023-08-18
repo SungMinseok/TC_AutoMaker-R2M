@@ -140,7 +140,10 @@ def extract_data_cashshop(fileName, tcStartDate):
     sheet_names = pd.ExcelFile(fileName).sheet_names
 
     #시트 너무 많으면 오래걸려서 시트 개수 제한 n개
-    sheet_names = sheet_names[:2]
+    try:
+        sheet_names = sheet_names[:3]
+    except:
+        pass
     for i, sheet_name in enumerate(sheet_names):
         
         curDf = pd.read_excel(fileName, sheet_name=sheet_name, na_values="")
@@ -507,6 +510,7 @@ def write_data_cashshop_inspection(salesList : list[Sales], resultPath = "유료
 
             info_1 = "\n".join(y.itemList0)
             info_1 = info_1.replace("다이아몬드[귀속]","다이아몬드")
+            info_1 = info_1.replace("다이아[귀속]","다이아")
             info_1 = info_1.replace("로얄 코인[귀속]","로얄 코인")
             info_1 = f'\n\n{info_1}'
 
@@ -515,6 +519,7 @@ def write_data_cashshop_inspection(salesList : list[Sales], resultPath = "유료
                 info_2 = info_2.replace("nan\n","")
                 info_2 = info_2.replace("\n","\n- ")
                 info_2 = "\n\n사용 시 다음 아이템 획득\n- "+info_2
+                info_2 = info_2.replace("로얄 코인[귀속]","로얄 코인")
 
             info_3 = f'\n\n* 상세정보 및 패키지 상자 구성품 내 [귀속] 노출 확인\n* 패키지 이미지 내 구성품 관련 이미지 노출 확인'
 
