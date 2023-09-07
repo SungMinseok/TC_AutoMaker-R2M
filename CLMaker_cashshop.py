@@ -74,6 +74,7 @@ class Event():
         self.quest_desc = ""
         self.item_list_0 = []
         self.item_list_1 = []
+        self.item_list_2 = []
         # self.item_id_0 = ""
         # self.item_name_0 = ""
         # self.item_count_0 = ""
@@ -96,6 +97,7 @@ class Item():
         self.name = ""
         self.id = ""
         self.innerItemList = ""
+        self.rate = ""
 
 
 
@@ -225,6 +227,15 @@ def extract_data_cashshop(fileName, tcStartDate):
                 except:
                     a.itemList1.append(f"{itemName}[귀속] {(itemCount)}개")
 
+        for k in range(len(tempDf)):
+            if not pd.isnull(tempDf.iloc[k]['Name2']):
+                itemName = tempDf.iloc[k]['Name2']
+                itemCount = tempDf.iloc[k]['Count2']
+                try: 
+                    a.itemList2.append(f"{itemName}[귀속] {int(itemCount)}개")
+                except:
+                    a.itemList2.append(f"{itemName}[귀속] {(itemCount)}개")
+
         a.server = str(tempDf.loc[0,"Server"])
        
         a.startDate = pd.to_datetime(tempDf.loc[0,"StartDate"])
@@ -292,7 +303,7 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
         result.loc[i,"Check List"] = y.category
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
-        if y.category == "시즌 뽑기" :
+        if y.category == "" :
             i += 1
             result.loc[i,"Category3"] = "상세정보 팝업"
 
@@ -341,7 +352,10 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
         else :            
             result.loc[i,"Check List"] =  "마일리지 : " + str(y.bonus)+ " 적립"
         i+=1
-        result.loc[i,"Check List"] = "구매 제한 : " + str(y.limit)
+        if str(y.limit) == 'nan' :
+            result.loc[i,"Check List"] = "구매 제한 없음"
+        else :            
+            result.loc[i,"Check List"] = "구매 제한 : " + str(y.limit)
         i+=1
         result.loc[i,"Check List"] = "구매 가격 : " + y.price
         
@@ -385,7 +399,11 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
         i += 1
         result.loc[i,"Category3"] = "구매 제한"
-        result.loc[i,"Check List"] = str(y.limit) + " 구매 시 [구매 완료] 라벨 노출 및 터치 불가\n(스텝업 상품일 경우, 다음 단계 상품 노출)"
+        
+        if str(y.limit) == 'nan' :
+            result.loc[i,"Check List"] = "구매 제한 없음 (n회 구매 시, [구매 완료] 라벨 미노출)"
+        else :            
+            result.loc[i,"Check List"] = str(y.limit) + " 구매 시 [구매 완료] 라벨 노출 및 터치 불가\n(스텝업 상품일 경우, 다음 단계 상품 노출)"
         #i += 1
         #result.loc[i,"Check List"] = "상품 슬롯 하단에 [구매 완료] 라벨 노출"
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
