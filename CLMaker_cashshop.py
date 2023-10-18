@@ -216,6 +216,7 @@ def extract_data_cashshop(fileName, tcStartDate):
                     a.itemList0.append(f"{itemName}[귀속] {int(itemCount)}개")
                 except:
                     a.itemList0.append(f"{itemName}[귀속] {(itemCount)}개")
+
                 #print(a.itemList0)
 
         for k in range(len(tempDf)):
@@ -235,6 +236,20 @@ def extract_data_cashshop(fileName, tcStartDate):
                     a.itemList2.append(f"{itemName}[귀속] {int(itemCount)}개")
                 except:
                     a.itemList2.append(f"{itemName}[귀속] {(itemCount)}개")
+
+        # for k in range(len(tempDf)):
+        #     if not pd.isnull(tempDf.iloc[k]['Name1']):
+        #         for l in range(len(tempDf)):
+                    
+        #             if l == 0 :
+        #                 a.itemList0[k] += '\n사용 시 다음 아이템 획득'
+        #             a.itemList0[k] += f'\n{a.itemList1[l]}'
+
+        #             if not pd.isnull(tempDf.iloc[k+1]['Name0']):
+        #                 break
+                    
+
+
 
         a.server = str(tempDf.loc[0,"Server"])
        
@@ -454,12 +469,11 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
     return xlFileName
 
 
-def write_data_cashshop_inspection(salesList : list[Sales], resultPath = "유료상점_CheckList", show_everything = False):
+def write_data_cashshop_inspection(salesList : list[Sales], resultPath, check_box_list):
 
     '''
     유료상점_체크리스트_작성용\n
-    show_everything : true > 유지/종료상품도 내용 표시
-
+    check_box_list : 옵션 체크 리스트
     '''
 
     
@@ -518,28 +532,36 @@ def write_data_cashshop_inspection(salesList : list[Sales], resultPath = "유료
         
         if y.endDate == datetime.datetime.strptime("2099-12-31 00:00:00",'%Y-%m-%d %H:%M:%S') :
             info_expired = "상시 판매 상품(종료날짜 미표시)"
+            if y.salesCheck != "판매 시작":
+                continue
         else :
             info_expired = f" | {y.endDate.strftime('%m/%d/%Y(목) 점검 전 까지')}"
 
-        if show_everything or y.salesCheck == "판매 시작":
+        if check_box_list[1] or y.salesCheck == "판매 시작":
             info_0 = f'{info_0} / {y.price} / {bonusStr} / {y.limit}'
 
             info_expired = f"\n{info_expired}"
 
-            info_1 = "\n".join(y.itemList0)
-            info_1 = info_1.replace("다이아몬드[귀속]","다이아몬드")
-            info_1 = info_1.replace("다이아[귀속]","다이아")
-            info_1 = info_1.replace("로얄 코인[귀속]","로얄 코인")
-            info_1 = f'\n\n{info_1}'
+            if len(y.itemList0) != 0 :
+                info_1 = "\n".join(y.itemList0)
+                info_1 = info_1.replace("다이아몬드[귀속]","다이아몬드")
+                info_1 = info_1.replace("다이아[귀속]","다이아")
+                info_1 = info_1.replace("코인[귀속]","코인")
+                info_1 = f'\n\n{info_1}'
 
             if len(y.itemList1) != 0 :
                 info_2 = "\n".join(map(str, y.itemList1))
                 info_2 = info_2.replace("nan\n","")
                 info_2 = info_2.replace("\n","\n- ")
-                info_2 = "\n\n사용 시 다음 아이템 획득\n- "+info_2
-                info_2 = info_2.replace("로얄 코인[귀속]","로얄 코인")
-
-            info_3 = f'\n\n* 상세정보 및 패키지 상자 구성품 내 [귀속] 노출 확인\n* 패키지 이미지 내 구성품 관련 이미지 노출 확인'
+                if len(y.itemList0) != 0 :
+                    info_2 = "\n\n사용 시 다음 아이템 획득\n- "+info_2
+                else:
+                    info_2 = f'\n\n{info_2}'
+                
+                info_2 = info_2.replace("코인[귀속]","코인")
+            
+            if check_box_list[3]:
+                info_3 = f'\n\n* 상세정보 및 패키지 상자 구성품 내 [귀속] 노출 확인\n* 패키지 이미지 내 구성품 관련 이미지 노출 확인'
 
         result.loc[i,"Check List"] = f'{info_0}{info_expired}{info_1}{info_2}{info_3}'
 

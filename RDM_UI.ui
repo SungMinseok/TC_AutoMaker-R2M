@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>433</width>
+    <width>440</width>
     <height>589</height>
    </rect>
   </property>
@@ -692,15 +692,8 @@ font : bold</string>
     </item>
     <item>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="1">
-       <widget class="QCheckBox" name="checkBox_2">
-        <property name="text">
-         <string>유료상점 CL 판매유지/종료 내용 표시</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
-       <widget class="QCheckBox" name="checkBox">
+       <widget class="QCheckBox" name="checkBox_0">
         <property name="text">
          <string>생성 후 파일 열기</string>
         </property>
@@ -709,7 +702,50 @@ font : bold</string>
         </property>
        </widget>
       </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="checkBox_1">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>유료상점 CL 판매유지/종료 내용 표시</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkBox_2">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>판매 유지/종료 상시상품 표시</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="checkBox_3">
+        <property name="text">
+         <string>유료상점 CL 상세 체크 문구 표시</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
      </layout>
+    </item>
+    <item>
+     <spacer name="verticalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -777,7 +813,7 @@ font: bold</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>433</width>
+     <width>440</width>
      <height>21</height>
     </rect>
    </property>

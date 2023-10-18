@@ -106,8 +106,8 @@ def extract_data(fileName, tcStartDate):
             continue
         
         curDf = pd.read_excel(fileName, sheet_name=sheet_name, na_values="")
-        target = target.append(curDf, ignore_index = True)
-
+        #target = target.append(curDf, ignore_index = True)
+        target = pd.concat([target, curDf], ignore_index=True)
         del curDf
         gc.collect()
 

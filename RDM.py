@@ -23,8 +23,8 @@ form_class = uic.loadUiType(f'./RDM_UI.ui')[0]
 class WindowClass(QMainWindow, form_class) :
     def __init__(self) :
         super().__init__()
-        self.setupUi(self)
-        self.setFixedSize(400,275)
+        self.setupUi(self) 
+        self.setFixedSize(400,325)
         self.action_patchnote.triggered.connect(lambda : self.파일열기("패치노트_RDM.txt"))
         self.print_log("실행 가능")
 
@@ -111,6 +111,12 @@ class WindowClass(QMainWindow, form_class) :
         data_file_name = self.input_datapath.text()
         result_file_name = ""
 
+        check_box_list = [
+            self.checkBox_0.isChecked(),
+            self.checkBox_1.isChecked(),
+            self.checkBox_2.isChecked(),
+            self.checkBox_3.isChecked(),
+            ]
         #try:
 
         if self.combox_contents.currentText() == "유료상점" :
@@ -118,7 +124,7 @@ class WindowClass(QMainWindow, form_class) :
                 self.print_log("데이터 추출 중...")
                 data = ClCash.extract_data_cashshop(data_file_name, self.dateedit.text())
                 self.print_log("데이터 쓰는 중...")
-                result_file_name = ClCash.write_data_cashshop_inspection(data,result_path,self.checkBox_2.isChecked())
+                result_file_name = ClCash.write_data_cashshop_inspection(data,result_path,check_box_list)
                 self.print_log("데이터 정리 중...")
                 ClCash.postprocess_cashshop(result_file_name)
             elif self.combox_doctype.currentText() == "TestCase" :
