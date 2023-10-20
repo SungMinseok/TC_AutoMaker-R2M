@@ -14,10 +14,12 @@ from PyQt5.QtCore import Qt
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QKeySequence,QPixmap, QColor
 from PyQt5.QtWidgets import QLabel, QApplication, QWidget, QVBoxLayout
+from PyQt5.QtCore import QDate,QTimer,Qt, QThread, pyqtSignal
+import time
+import threading
 
-
-form_class = uic.loadUiType(f'./RDM_UI.ui')[0]
-
+form_class = uic.loadUiType(f'RDM_UI.ui')[0]
+FROM_CLASS_Loading = uic.loadUiType("load.ui")[0]
 #화면을 띄우는데 사용되는 Class 선언            print(e)
 
 class WindowClass(QMainWindow, form_class) :
@@ -28,6 +30,7 @@ class WindowClass(QMainWindow, form_class) :
         self.action_patchnote.triggered.connect(lambda : self.파일열기("패치노트_RDM.txt"))
         self.print_log("실행 가능")
 
+        self.worker_thread = None
 #복붙시작◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈
         self.set_data_path()
         self.set_result_path()
@@ -103,13 +106,50 @@ class WindowClass(QMainWindow, form_class) :
         QApplication.processEvents()
 
 #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    def make_process(self, result_path, data_file_name, contents_name, doctype, date_text, check_box_list):
+        
+        
+        
+        if contents_name == "유료상점" : 
+            if doctype == "CheckList" :
+                data = ClCash.extract_data_cashshop(data_file_name,date_text)
+                result_file_name = ClCash.write_data_cashshop_inspection(data,result_path,check_box_list)
+                ClCash.postprocess_cashshop(result_file_name)
+            elif doctype == "TestCase" :
+                data = ClCash.extract_data_cashshop(data_file_name, date_text)
+                result_file_name = ClCash.write_data_cashshop(data,result_path)
+                ClCash.postprocess_cashshop(result_file_name)
+
+        elif contents_name == "이벤트" :
+            if doctype == "CheckList" :
+                data = ClEvent.extract_data(data_file_name, date_text)
+                result_file_name = ClEvent.write_data(data,result_path)
+                ClEvent.postprocess_cashshop(result_file_name)
+            elif doctype == "TestCase" :
+                data = ClEvent.extract_data(data_file_name,date_text)
+                result_file_name = ClEvent.write_data_event_testcase(data,result_path)
+                ClEvent.postprocess_cashshop(result_file_name)
+
+        os.startfile(os.path.normpath(result_file_name))
+
+        self.worker_thread.finished.emit()
+        self.worker_thread.quit()
+        #self.worker_thread.wait()
+
+
+
+        self.loading
+        self.loading.deleteLater()
+
+
     def activate(self):
 
         
         result_path = self.input_resultpath.text()
-        target_date = self.dateedit.text()
         data_file_name = self.input_datapath.text()
-        result_file_name = ""
+        contents_name = self.combox_contents.currentText()#유료상점/이벤트
+        doctype = self.combox_doctype.currentText()#체크리스트/테스트케이스
+        date_text = self.dateedit.text()
 
         check_box_list = [
             self.checkBox_0.isChecked(),
@@ -117,75 +157,158 @@ class WindowClass(QMainWindow, form_class) :
             self.checkBox_2.isChecked(),
             self.checkBox_3.isChecked(),
             ]
-        #try:
+        #self.start_loading()
 
-        if self.combox_contents.currentText() == "유료상점" :
-            if self.combox_doctype.currentText() == "CheckList" :
-                self.print_log("데이터 추출 중...")
-                data = ClCash.extract_data_cashshop(data_file_name, self.dateedit.text())
-                self.print_log("데이터 쓰는 중...")
-                result_file_name = ClCash.write_data_cashshop_inspection(data,result_path,check_box_list)
-                self.print_log("데이터 정리 중...")
-                ClCash.postprocess_cashshop(result_file_name)
-            elif self.combox_doctype.currentText() == "TestCase" :
-                self.print_log("데이터 추출 중...")
-                data = ClCash.extract_data_cashshop(data_file_name, self.dateedit.text())
-                self.print_log("데이터 쓰는 중...")
-                result_file_name = ClCash.write_data_cashshop(data,result_path)
-                self.print_log("데이터 정리 중...")
-                ClCash.postprocess_cashshop(result_file_name)
+        # loading_thread = threading.Thread(target = self.start_loading(self))
+        # loading_thread.start()
+        self.loading = loading(self)
+        #time.sleep(1)
+        # self.worker = Worker(self)
+        # self.worker.start()
+        # loading_window = LoadingWindow()
+        # loading_thread = LoadingThread()
+
+        # loading_thread.finished.connect(loading_window.close)
+
+        # loading_window.show()
+        # loading_thread.start()
+        #self.show_loading_window()    
+        self.worker_thread = WorkerThread(myWindow,result_path, data_file_name,contents_name, doctype, date_text,check_box_list)
+        self.worker_thread.finished.connect(self.cleanup)
+        self.worker_thread.start()
+        #self.make_process(result_path,data_file_name,contents_name,doctype,date_text,check_box_list)
+
+        #making_thread = threading.Thread(target = self.make_process(result_path,data_file_name,contents_name,doctype,date_text,check_box_list))
+        #making_thread.start()
+        #self.loading = loading(self)
+
+        
+        #self.loading
+        #self.loading.deleteLater()
+        # result_file_name = ""
+        # if self.combox_contents.currentText() == "유료상점" :
+        #     if self.combox_doctype.currentText() == "CheckList" :
+        #         self.print_log("데이터 추출 중...")
+        #         data = ClCash.extract_data_cashshop(data_file_name, self.dateedit.text())
+        #         self.print_log("데이터 쓰는 중...")
+        #         result_file_name = ClCash.write_data_cashshop_inspection(data,result_path,check_box_list)
+        #         self.print_log("데이터 정리 중...")
+        #         ClCash.postprocess_cashshop(result_file_name)
+        #     elif self.combox_doctype.currentText() == "TestCase" :
+        #         self.print_log("데이터 추출 중...")
+        #         data = ClCash.extract_data_cashshop(data_file_name, self.dateedit.text())
+        #         self.print_log("데이터 쓰는 중...")
+        #         result_file_name = ClCash.write_data_cashshop(data,result_path)
+        #         self.print_log("데이터 정리 중...")
+        #         ClCash.postprocess_cashshop(result_file_name)
 
 
-        elif self.combox_contents.currentText() == "이벤트" :
-            if self.combox_doctype.currentText() == "CheckList" :
-                self.print_log("데이터 추출 중...")
-                data = ClEvent.extract_data(data_file_name, self.dateedit.text())
-                self.print_log("데이터 쓰는 중...")
-                result_file_name = ClEvent.write_data(data,result_path)
-                self.print_log("데이터 정리 중...")
-                ClEvent.postprocess_cashshop(result_file_name)
-            elif self.combox_doctype.currentText() == "TestCase" :
-                self.print_log("데이터 추출 중...")
-                data = ClEvent.extract_data(data_file_name, self.dateedit.text())
-                self.print_log("데이터 쓰는 중...")
-                result_file_name = ClEvent.write_data_event_testcase(data,result_path)
-                self.print_log("데이터 정리 중...")
-                ClEvent.postprocess_cashshop(result_file_name)
-            # elif self.combox_doctype.currentText() == "TestCase" :
-            #     self.print_log("데이터 추출 중...")
-            #     data = ClCash.extract_data_cashshop(data_file_name, self.dateedit.text())
-            #     self.print_log("데이터 쓰는 중...")
-            #     result_file_name = ClCash.write_data_cashshop(data,result_path)
-            #     self.print_log("데이터 정리 중...")
-            #     ClCash.postprocess_cashshop(result_file_name)
+        # elif self.combox_contents.currentText() == "이벤트" :
+        #     if self.combox_doctype.currentText() == "CheckList" :
+        #         self.print_log("데이터 추출 중...")
+        #         data = ClEvent.extract_data(data_file_name, self.dateedit.text())
+        #         self.print_log("데이터 쓰는 중...")
+        #         result_file_name = ClEvent.write_data(data,result_path)
+        #         self.print_log("데이터 정리 중...")
+        #         ClEvent.postprocess_cashshop(result_file_name)
+        #     elif self.combox_doctype.currentText() == "TestCase" :
+        #         self.print_log("데이터 추출 중...")
+        #         data = ClEvent.extract_data(data_file_name, self.dateedit.text())
+        #         self.print_log("데이터 쓰는 중...")
+        #         result_file_name = ClEvent.write_data_event_testcase(data,result_path)
+        #         self.print_log("데이터 정리 중...")
+        #         ClEvent.postprocess_cashshop(result_file_name)
 
     
 
+        # self.print_log("문서 여는 중...")
+        #os.startfile(os.path.normpath(result_file_name))
+        # self.print_log("실행 가능")
+    def cleanup(self):
+        self.worker_thread = None
+
+    def start_loading(self,qma):
+        #self.loading = loading(qma)
+        loading(self)
+        # loading_thread = threading.Thread(target = loading(self))
+        # loading_thread.start()
 
 
-
-
-
-
-        self.print_log("문서 여는 중...")
-        os.startfile(os.path.normpath(result_file_name))
-        self.print_log("실행 가능")
-
-
-        # except PermissionError:
-        #     self.print_log(f"문서를 닫고 실행하세요. {data_file_name}")
-        # except Exception as e:
-        #     print(str(e))
-
-        #wb = openpyxl.load_workbook('result_230420_095250.xlsx')
+class loading(QWidget,FROM_CLASS_Loading):
+    
+    def __init__(self,parent):
+    #     super(loading,self).__init__(parent)    
+    #     self.setupUi(self) 
+    #    # self.center()
+    #     self.show()
         
+    #     # 동적 이미지 추가
+    #     self.movie = QMovie('giphy.gif', QByteArray(), self)
+    #     self.movie.setCacheMode(QMovie.CacheAll)
+    #     # QLabel에 동적 이미지 삽입
+    #     self.label.setMovie(self.movie)
+    #     self.movie.start()
+    #     # 윈도우 해더 숨기기
+    #     self.setWindowFlags(Qt.FramelessWindowHint)
+    #     #QApplication.processEvents()
+    #     self.label.resize(700, 400)
+        super(loading, self).__init__(parent)    
+        self.setupUi(self) 
+        #self.resize(parent.size())
+        self.setFixedSize(parent.size())
+        self.center()
+        # Get the size of the parent widget and set the loading widget to the same size
+        
+        self.show()
+        
+        #self.movie = QMovie('lcu_ui_ready_check.gif', QByteArray(), self)
+        self.movie = QMovie('rengar.gif', QByteArray(), self)
+        self.movie.setCacheMode(QMovie.CacheAll)
+        self.label.setMovie(self.movie)
+        self.label.setScaledContents(True)
+        #self.movie.set(500,500)
+        self.movie.start()
+        self.setWindowFlags(Qt.FramelessWindowHint)
+    # 위젯 정중앙 위치
+    def center(self):
+        
+        size=self.size()
+        ph = self.parent().geometry().height()
+        pw = self.parent().geometry().width()
+        #self.resize(0,0)
+        #self.setGeometry(0,0,600,600)
+        self.move(int(pw/2 - size.width()/2), int(ph/2 - size.height()/2))
+        self.move(int(pw/2 - size.width()/2), int(ph/2 - size.height()/2))
+class WorkerThread(QThread):
+    finished = pyqtSignal()
+
+    def __init__(self, window, result_path, data_file_name, contents_name, doctype, date_text, check_box_list):
+        super().__init__()
+        self.window = window
+        self.result_path = result_path
+        self.data_file_name = data_file_name
+        self.contents_name = contents_name
+        self.doctype = doctype
+        self.date_text = date_text
+        self.check_box_list = check_box_list
+
+    def run(self):
+        #self.sleep(1)
+        self.window.make_process(self.result_path, self.data_file_name, self.contents_name, self.doctype, self.date_text, self.check_box_list)
+        self.finished.emit()
+
+
+from PyQt5 import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import*
+from PyQt5 import uic
 import sys
 from enum import Enum, auto
 import datetime
 import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QTextEdit, QComboBox
-from PyQt5.QtCore import QDate
 
 import CLMaker_cashshop as ClCash
 import CLMaker_Event as ClEvent

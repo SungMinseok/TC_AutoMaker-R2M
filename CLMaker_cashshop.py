@@ -328,38 +328,54 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
             desc0 = ""
             if len(y.itemList0) != 0 :
                 for item in y.itemList0 :
-                    if '다이아' in item :
+                    if '다이아몬드' in item :
                         item = item.replace("다이아몬드[귀속]","다이아몬드")
-                        item = item.replace("다이아[귀속]","다이아몬드")
+                        #item = item.replace("다이아[귀속]","다이아몬드")
                         item = f'{item}\nR2M에서 사용되는 유료 재화 입니다.\n\n'
                     
-                    desc0 += item
-                desc0 += f'\n사용 시 다음 아이템 획득'
-                #desc0 = "\n".join(y.itemList0)
+                    if y.category == '시즌 뽑기' :
+                        desc0 = "\n".join(map(str, y.itemList0))
+                    else :
+                        desc0 += item
+                if len(y.itemList1) != 0 :
+                    desc0 += f'\n사용 시 다음 아이템 획득'
+                elif len(y.itemList2) != 0 :
+                    desc0 += f'\n사용 시 다음 아이템 중 1종 획득'
                 result.loc[i,"Check List"] = desc0
             else : 
                 result.loc[i,"Check List"] = f'{y.pkgName} 상자[귀속]'
+            
+            if len(y.itemList1) != 0 :
+                i += 1
+                #desc1 = f'사용 시 다음 아이템 획득'
+                desc1 = "\n".join(map(str, y.itemList1))
+                desc1 = desc1.replace("nan\n","")
+                desc1 = desc1.replace("코인[귀속]","코인")
+                result.loc[i,"Check List"] = desc1
 
-            i += 1
-            desc1 = "\n".join(map(str, y.itemList1))
-            desc1 = desc1.replace("nan\n","")
-            #desc1 = desc1.replace("\n","\n- ")
-            #result.loc[i,"Check List"] = "사용 시 다음 아이템 획득\n\n- "+desc1
-            result.loc[i,"Check List"] = desc1
+            if len(y.itemList2) != 0 :
+                i += 1
+                #desc2 = f'사용 시 다음 아이템 중 1종 획득'
+                desc2 = "\n".join(map(str, y.itemList2))
+                desc2 = desc2.replace("nan\n","")
+                desc2 = desc2.replace("코인[귀속]","코인")
+                result.loc[i,"Check List"] = desc2
 
-            # i += 1
-            # desc0 = f'{y.pkgName} 상자[귀속] 1개'
-            # desc0 = desc0.replace("\n","\n- ")
-            # result.loc[i,"Check List"] = "<"+y.pkgName+"> 구성품 상세 정보\n- " + desc0
 
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
         i += 1
         result.loc[i,"Category3"] = "상품슬롯"
 
+        for item0 in y.itemList0 :
+            if '다이아몬드' in str(item0):
+                result.loc[i,"Check List"] = "다이아몬드 이미지 노출"
+                i+=1
+
         for item1 in y.itemList1 :
             if str(item1) != "nan" :
-                result.loc[i,"Check List"] = str(item1) + " 관련 이미지 노출"
+                item1 = item1.replace("코인[귀속]","코인")
+                result.loc[i,"Check List"] = str(item1) + " 이미지 노출"
                 i+=1
 
         if int(y.bonus) == 0 :
@@ -367,7 +383,7 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
         else :            
             result.loc[i,"Check List"] =  "마일리지 : " + str(y.bonus)+ " 적립"
         i+=1
-        if str(y.limit) == 'nan' :
+        if str(y.limit) == 'nan' or str(y.limit) == '무제한':
             result.loc[i,"Check List"] = "구매 제한 없음"
         else :            
             result.loc[i,"Check List"] = "구매 제한 : " + str(y.limit)
@@ -393,21 +409,46 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
         result.loc[i,"Category3"] = "마일리지"
 
         if int(y.bonus) == 0 :
-            result.loc[i,"Check List"] =  "미노출"
+            result.loc[i,"Check List"] =  "미획득"
         else :            
             result.loc[i,"Check List"] =  "마일리지 : " + str(y.bonus)+ " 적립"
 
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
         i += 1
-        result.loc[i,"Category3"] = "아이템 획득"
-        result.loc[i,"Check List"] = y.pkgName + " 상자[귀속] 인벤토리 획득"
+        if "원" in y.price or "TWD" in y.price:
+            result.loc[i,"Category3"] = "보관함 수령"
+        elif y.category == "시즌 뽑기":
+            result.loc[i,"Category3"] = "뽑기 획득"
+        else:
+            result.loc[i,"Category3"] = "아이템 획득"
+        if len(y.itemList1) != 0 :
+                
+            for item0 in y.itemList0 :
+                if '다이아' not in item0 :
+                    result.loc[i,"Check List"] = f'{item0} 인벤토리로 획득'#y.pkgName + " 인벤토리로 획득"
+                else:
+                    item0 = item0.replace('[귀속]','')
+                    result.loc[i,"Check List"] = f'{item0} 지급'#y.pkgName + " 인벤토리로 획득"
+
+                i += 1
+        else:
+            
+            if y.category == "시즌 뽑기":
+                result.loc[i,"Check List"] = "최상급 뽑기 11회 연출 및 카드 획득(고급 이상)"
+            else:
+                result.loc[i,"Check List"] = y.pkgName + " 인벤토리 획득"
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
         i += 1
-        result.loc[i,"Category3"] = "아이템 사용"
+        for item0 in y.itemList0 :
+            if '상자' in item0 :
+                result.loc[i,"Category3"] = "상자 구성품\n획득 및 사용"
+                break
+            result.loc[i,"Category3"] = "아이템 사용"
 
         for item1 in y.itemList1 :
             if str(item1) != "nan" :
-                result.loc[i,"Check List"] = "- " + str(item1) + " 획득 및 사용"
+                item1 = item1.replace("코인[귀속]","코인")
+                result.loc[i,"Check List"] = str(item1) + " 획득 및 사용"
                 i+=1
         
         i-=1
@@ -415,10 +456,14 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
         i += 1
         result.loc[i,"Category3"] = "구매 제한"
         
-        if str(y.limit) == 'nan' :
+        if str(y.limit) == 'nan' or str(y.limit) == '무제한':
             result.loc[i,"Check List"] = "구매 제한 없음 (n회 구매 시, [구매 완료] 라벨 미노출)"
         else :            
-            result.loc[i,"Check List"] = str(y.limit) + " 구매 시 [구매 완료] 라벨 노출 및 터치 불가\n(스텝업 상품일 경우, 다음 단계 상품 노출)"
+            if '스텝' in y.pkgName :
+                result.loc[i,"Check List"] = str(y.limit) + " 구매 시 스텝업 다음 단계 상품 노출\n(마지막 단계 : [구매 완료] 라벨 노출 및 터치 불가)"
+            else :
+                result.loc[i,"Check List"] = str(y.limit) + " 구매 시 [구매 완료] 라벨 노출 및 터치 불가"
+
         #i += 1
         #result.loc[i,"Check List"] = "상품 슬롯 하단에 [구매 완료] 라벨 노출"
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
@@ -802,90 +847,110 @@ def highlight_star_cells(sheet):
 
 
 if __name__ == "__main__":
+    #def make_process(self, result_path, data_file_name, contents_name, doctype, date_text, check_box_list):
 
+    contents_name = "유료상점"
+    doctype = "TestCase"
+    
+    result_path = f'{contents_name}_{doctype}'
+    data_file_name = f'{contents_name}DATA_KR R2M.xlsx'#유료상점DATA_KR R2M.xlsx
+    date_text = '2023-10-26'
+    check_box_list = [True,False,False,True]
+    
+    if contents_name == "유료상점" : 
+        if doctype == "CheckList" :
+            data = extract_data_cashshop(data_file_name,date_text)
+            result_file_name = write_data_cashshop_inspection(data,result_path,check_box_list)
+            postprocess_cashshop(result_file_name)
+        elif doctype == "TestCase" :
+            data = extract_data_cashshop(data_file_name, date_text)
+            result_file_name = write_data_cashshop(data,result_path)
+            postprocess_cashshop(result_file_name)
 
-    #print("┃  R2M CASH SHOP CL MAKER  ┃")
-    print("체크리스트 타입 입력 :")
-    print("0:TC, 1:점검")
-    fileType = input(">:")
-    print("데이터파일명 입력 :")
-    print("0:국내, 1:대만")
-    countryType = input(">:")
-    #fileName = ""
-    if countryType == "0":
-        fileName = "유료상점DATA_KR.xlsx"
-    elif countryType == "1":
-        fileName = "유료상점DATA_TW.xlsx"
-    while not os.path.isfile(fileName) :
-        fileName = input(">:")
+    os.startfile(os.path.normpath(result_file_name))
+
+#     #print("┃  R2M CASH SHOP CL MAKER  ┃")
+#     print("체크리스트 타입 입력 :")
+#     print("0:TC, 1:점검")
+#     fileType = input(">:")
+#     print("데이터파일명 입력 :")
+#     print("0:국내, 1:대만")
+#     countryType = input(">:")
+#     #fileName = ""
+#     if countryType == "0":
+#         fileName = "유료상점DATA_KR.xlsx"
+#     elif countryType == "1":
+#         fileName = "유료상점DATA_TW.xlsx"
+#     while not os.path.isfile(fileName) :
+#         fileName = input(">:")
         
 
-    clType = ""
-    if fileType == "0":
-        clType = "TestCase"
-        print("업데이트날짜 입력 시, 해당 날짜 포함하여 이후 시작하는 상품만 작성")
-        print("YYYY-MM-DD")
-        print("(그냥 엔터키 입력 시, 오늘로 설정)")
-        tcStartDate = input(">: ")
-        if tcStartDate == "" :
-            tcStartDate = datetime.date.today().strftime('%Y-%m-%d')
-            #tcStartDate = "2000-01-01"
+#     clType = ""
+#     if fileType == "0":
+#         clType = "TestCase"
+#         print("업데이트날짜 입력 시, 해당 날짜 포함하여 이후 시작하는 상품만 작성")
+#         print("YYYY-MM-DD")
+#         print("(그냥 엔터키 입력 시, 오늘로 설정)")
+#         tcStartDate = input(">: ")
+#         if tcStartDate == "" :
+#             tcStartDate = datetime.date.today().strftime('%Y-%m-%d')
+#             #tcStartDate = "2000-01-01"
         
-    elif fileType == "1":
-        clType = "CheckList"
-        # 오늘 날짜 구하기
-        todayDate = datetime.datetime.today().date()
+#     elif fileType == "1":
+#         clType = "CheckList"
+#         # 오늘 날짜 구하기
+#         todayDate = datetime.datetime.today().date()
 
-        # 그 주의 점검 날짜 구하기 (대만:화, 국내:목)
-        dateID= 0
-        if countryType == "0":
-            dateID = (3,"목")
-        elif countryType == "1":
-            dateID = (1,"화")
+#         # 그 주의 점검 날짜 구하기 (대만:화, 국내:목)
+#         dateID= 0
+#         if countryType == "0":
+#             dateID = (3,"목")
+#         elif countryType == "1":
+#             dateID = (1,"화")
 
-        days_until_target = (dateID[0] - todayDate.weekday()) % 7
-        thursdayDate = todayDate + datetime.timedelta(days=days_until_target)
-        tcStartDate = thursdayDate.strftime('%Y-%m-%d')
+#         days_until_target = (dateID[0] - todayDate.weekday()) % 7
+#         thursdayDate = todayDate + datetime.timedelta(days=days_until_target)
+#         tcStartDate = thursdayDate.strftime('%Y-%m-%d')
 
-        print(f"이번주 {dateID[1]}요일 {tcStartDate} 기준으로 작성됩니다.")
-
-
-
-#region basic Info
-
-    cashShopDir = f"./CashShop_{clType}"
-    if not os.path.isdir(cashShopDir) :
-        os.mkdir(cashShopDir)
-    tempDir = "./temp"
-    if not os.path.isdir(tempDir) :
-        os.mkdir(tempDir)
+#         print(f"이번주 {dateID[1]}요일 {tcStartDate} 기준으로 작성됩니다.")
 
 
-    #xlFileName = f"./CL_CashShop_{clType}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
-    tempCsvName = f"./temp/tempCsv.csv"
 
-#endregion
-    try:
-        salesList = extract_data_cashshop(fileName,tcStartDate)
-        pass
-    except PermissionError:
-        print(f"해당 문서가 열려있습니다. 닫고 다시 시작해주세요. {fileName}")
-        input("아무 키나 누르세요...")
-        os.system('python ' + os.path.basename(__file__))
+# #region basic Info
+
+#     cashShopDir = f"./CashShop_{clType}"
+#     if not os.path.isdir(cashShopDir) :
+#         os.mkdir(cashShopDir)
+#     tempDir = "./temp"
+#     if not os.path.isdir(tempDir) :
+#         os.mkdir(tempDir)
 
 
-    if fileType == "0":
-        xlFileName = write_data_cashshop(salesList)
-        postprocess_cashshop(xlFileName)
-    elif fileType == "1":
-        if salesList == None :
-            salesList = extract_data_cashshop(fileName,tcStartDate)
-        xlFileName = write_data_cashshop_inspection(salesList)
-        postprocess_cashshop(xlFileName)
+#     #xlFileName = f"./CL_CashShop_{clType}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
+#     tempCsvName = f"./temp/tempCsv.csv"
+
+# #endregion
+#     try:
+#         salesList = extract_data_cashshop(fileName,tcStartDate)
+#         pass
+#     except PermissionError:
+#         print(f"해당 문서가 열려있습니다. 닫고 다시 시작해주세요. {fileName}")
+#         input("아무 키나 누르세요...")
+#         os.system('python ' + os.path.basename(__file__))
 
 
-    print("생성완료")
-    for id in idList :
-        print(id)        
-    os.system('pause')
+#     if fileType == "0":
+#         xlFileName = write_data_cashshop(salesList)
+#         postprocess_cashshop(xlFileName)
+#     elif fileType == "1":
+#         if salesList == None :
+#             salesList = extract_data_cashshop(fileName,tcStartDate)
+#         xlFileName = write_data_cashshop_inspection(salesList)
+#         postprocess_cashshop(xlFileName)
+
+
+#     print("생성완료")
+#     for id in idList :
+#         print(id)        
+#     os.system('pause')
 

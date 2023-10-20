@@ -90,6 +90,7 @@ class Event():
         self.item_list = []
         self.craft_list = []
 
+        self.item_list_1 = []#패스용
         #별도 저장값
         self.open_check = ""
 
@@ -164,8 +165,9 @@ def extract_data(fileName, tcStartDate):
             str3 = tempDf.loc[k,'ItemMovelimit_0']
             try:
                 str4 = pd.to_datetime(tempDf.loc[k,'ItemRemovedate_0'])
+                str4 = str4.strftime('%Y-%m-%d')
             except:
-                str4 = 0
+                pass
 
             if not pd.isnull(str1):
                 newItem = Item(str0,str1,str2,str3,str4)
@@ -263,7 +265,12 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
                 i += 1
                 result.loc[i,"Category3"] = f'{index+1}일차'
                 #result.loc[i,"Check List"] = f'{item.name}[귀속] {int(item.count)}개'.replace('[귀속][귀속]','[귀속]')
-                result.loc[i,"Check List"] = f'{item.name} {int(item.count)}개'#.replace('[귀속][귀속]','[귀속]')
+                
+                if not pd.isnull(item.removedate) :
+                    result.loc[i,"Check List"] = f'{item.name} {int(item.count)}개 (자동삭제 : {item.removedate}) 11:30'#.replace('[귀속][귀속]','[귀속]')
+                else :
+                    result.loc[i,"Check List"] = f'{item.name} {int(item.count)}개'#.replace('[귀속][귀속]','[귀속]')
+                #result.loc[i,"Check List"] = f'{item.name} {int(item.count)}개'#.replace('[귀속][귀속]','[귀속]')
 
 
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
@@ -292,7 +299,10 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
                 i += 1
                 result.loc[i,"Category3"] = f'{quest.name}'
                 #result.loc[i,"Check List"] = f'{item.name}[귀속] {int(item.count)}개'.replace('[귀속][귀속]','[귀속]')
-                result.loc[i,"Check List"] = f'{y.item_list[index].name} {int(y.item_list[index].count)}개'#.replace('[귀속][귀속]','[귀속]')
+                if not pd.isnull(item.removedate) :
+                    result.loc[i,"Check List"] = f'{y.item_list[index].name} {int(y.item_list[index].count)}개 (자동삭제 : {item.removedate} 11:30)'#.replace('[귀속][귀속]','[귀속]')
+                else:
+                    result.loc[i,"Check List"] = f'{y.item_list[index].name} {int(y.item_list[index].count)}개'#.replace('[귀속][귀속]','[귀속]')
 
     #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             i += 1            
@@ -363,7 +373,7 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
 
                 if not pd.isnull(item.removedate) :
                     i += 1
-                    result.loc[i,"Check List"] = f"자동 삭제 '{item.removedate.strftime('%Y-%m-%d')} 11:30' 적용"
+                    result.loc[i,"Check List"] = f"자동 삭제 '{item.removedate} 11:30' 적용"
                     i += 1    
     
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
@@ -570,10 +580,16 @@ def write_data(targetList : list[Event], resultPath = "이벤트_CheckList"):
         
         if y.type == "출석" :
             for index, item in enumerate(y.item_list) :
-                info += f'\n{int(index)+1}일차 : {item.name} {int(item.count)}개'
+                if not pd.isnull(item.removedate) :
+                    info += f'\n{int(index)+1}일차 : {item.name} {int(item.count)}개 (자동삭제 : {item.removedate} 11:30)'
+                else :
+                    info += f'\n{int(index)+1}일차 : {item.name} {int(item.count)}개'
         elif y.type == "미션" :
             for index, item in enumerate(y.item_list) :
-                info += f'\n{y.desc_list[index].name} : {item.name} {int(item.count)}개'
+                if not pd.isnull(item.removedate) :
+                    info += f'\n{y.desc_list[index].name} : {item.name} {int(item.count)}개 (자동삭제 : {item.removedate} 11:30)'
+                else :
+                    info += f'\n{y.desc_list[index].name} : {item.name} {int(item.count)}개'
         elif y.type == "드랍" :
             for index, item in enumerate(y.item_list) :
                 info += f'\n{y.desc_list[index].name} : {item.name} {round(item.count,2)}%'
