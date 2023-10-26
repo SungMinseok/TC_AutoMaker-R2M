@@ -148,12 +148,15 @@ def extract_data_cashshop(fileName, tcStartDate):
         pass
     for i, sheet_name in enumerate(sheet_names):
         
-        curDf = pd.read_excel(fileName, sheet_name=sheet_name, na_values="")
+        curDf = pd.read_excel(fileName, sheet_name=sheet_name, na_values=np.nan)
 
         #target = target.append(curDf, ignore_index = True)
         target = pd.concat([target, curDf], ignore_index=True)
-        target.replace('　', '', regex=True, inplace=True)
-        target.replace('', pd.NA, inplace=True)
+        #try:
+        #target = target.replace('　', '', regex=True, inplace=True)
+        #target = target.replace('', pd.NA, inplace=True)
+            #target = target.replace('-', pd.NA, inplace=True)
+        
 
         del curDf
         gc.collect()
@@ -168,7 +171,7 @@ def extract_data_cashshop(fileName, tcStartDate):
     # target = pd.read_excel(fileName,sheet_name = '유료상점',engine='openpyxl')
     #target["CashShop ID"] = target["CashShop ID"].replace(n,0)
 
-    target = target.replace('-',np.nan)
+    #target = target.replace('-',np.nan)
     #cashShopIdList = target.drop_duplicates(subset='CashShopID')["CashShopID"]
     cashShopIdList = target["CashShopID"].dropna(axis=0)
     cashShopIdIndexList = cashShopIdList.index
@@ -194,6 +197,8 @@ def extract_data_cashshop(fileName, tcStartDate):
         tempDf = tempDf.reset_index()
         #for i in range(0,len(cashShopIdIndexList)):
         #for i in range(0,1):
+        tempDf = tempDf.applymap(lambda x: x.strip() if isinstance(x, str) else x)
+        tempDf = tempDf.replace('-',np.nan)
 
         a = Sales()
         a.pkgID = int(tempDf.loc[0,"CashShopID"])
@@ -210,6 +215,8 @@ def extract_data_cashshop(fileName, tcStartDate):
         for k in range(len(tempDf)):
             #print(len(tempDf))
             if not pd.isnull(tempDf.iloc[k]['Name0']):
+                if tempDf.iloc[k]['Name0'] == "" :
+                    continue
                 itemName = tempDf.iloc[k]['Name0']
                 itemCount = tempDf.iloc[k]['Count0']
                 try : 
@@ -217,17 +224,27 @@ def extract_data_cashshop(fileName, tcStartDate):
                 except:
                     a.itemList0.append(f"{itemName}[귀속] {(itemCount)}개")
 
-                #print(a.itemList0)
+                a.itemList0.sort()
+                coin_items0 = [item for item in a.itemList0 if '로얄 코인' == item]
+                non_coin_items0 = [item for item in a.itemList0 if '로얄 코인' != item]
+                a.itemList0 = coin_items0 +non_coin_items0
 
         for k in range(len(tempDf)):
             if not pd.isnull(tempDf.iloc[k]['Name1']):
+                if tempDf.iloc[k]['Name1'] == "-" :
+                    continue
                 itemName = tempDf.iloc[k]['Name1']
                 itemCount = tempDf.iloc[k]['Count1']
                 try: 
                     a.itemList1.append(f"{itemName}[귀속] {int(itemCount)}개")
                 except:
                     a.itemList1.append(f"{itemName}[귀속] {(itemCount)}개")
-
+                
+                a.itemList1.sort()
+                coin_items1 = [item for item in a.itemList1 if '로얄 코인' == item]
+                non_coin_items1 = [item for item in a.itemList1 if '로얄 코인' != item]
+                a.itemList1 = coin_items1 +non_coin_items1
+        
         for k in range(len(tempDf)):
             if not pd.isnull(tempDf.iloc[k]['Name2']):
                 itemName = tempDf.iloc[k]['Name2']
@@ -251,7 +268,7 @@ def extract_data_cashshop(fileName, tcStartDate):
 
 
 
-        a.server = str(tempDf.loc[0,"Server"])
+        a.server = str(tempDf.loc[0,"Server"]).strip()
        
         a.startDate = pd.to_datetime(tempDf.loc[0,"StartDate"])
 
@@ -261,7 +278,7 @@ def extract_data_cashshop(fileName, tcStartDate):
             try: 
                 a.endDate = pd.to_datetime(tempDf.loc[0,"EndDate"])
             except : 
-                print("상품 시작/종료 시간 입력 오류 : 'yyyy-mm-dd' 만 입력되어야 함. 시간이 써있지 않은지 확인 필요")
+                print(f"상품 시작/종료 시간 입력 오류 : 'yyyy-mm-dd' 만 입력되어야 함. 시간이 써있지 않은지 확인 필요\n상품 : {a.pkgID} | {a.pkgName}" )
                 os.system('pause')
                 return
           
@@ -318,6 +335,9 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
         result.loc[i,"Check List"] = y.category
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
+        if y.pkgID == 1100043 :
+            print("test")
+
         if y.category == "" :
             i += 1
             result.loc[i,"Category3"] = "상세정보 팝업"
@@ -333,51 +353,72 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
                         #item = item.replace("다이아[귀속]","다이아몬드")
                         item = f'{item}\nR2M에서 사용되는 유료 재화 입니다.\n\n'
                     
-                    if y.category == '시즌 뽑기' :
-                        desc0 = "\n".join(map(str, y.itemList0))
-                    else :
-                        desc0 += item
-                if len(y.itemList1) != 0 :
+                    desc0 = "\n".join(map(str, y.itemList0))
+                    
+                    # if y.category == '시즌 뽑기' :
+                    #     desc0 = "\n".join(map(str, y.itemList0))
+                    # else :
+                    #     desc0 += item
+                if len(y.itemList0) != 0 and len(y.itemList1) != 0 :
                     desc0 += f'\n사용 시 다음 아이템 획득'
-                elif len(y.itemList2) != 0 :
+                elif len(y.itemList1) != 0 and len(y.itemList2) != 0 :
                     desc0 += f'\n사용 시 다음 아이템 중 1종 획득'
                 result.loc[i,"Check List"] = desc0
-            else : 
-                result.loc[i,"Check List"] = f'{y.pkgName} 상자[귀속]'
-            
-            if len(y.itemList1) != 0 :
-                i += 1
-                #desc1 = f'사용 시 다음 아이템 획득'
-                desc1 = "\n".join(map(str, y.itemList1))
-                desc1 = desc1.replace("nan\n","")
-                desc1 = desc1.replace("코인[귀속]","코인")
-                result.loc[i,"Check List"] = desc1
 
-            if len(y.itemList2) != 0 :
-                i += 1
-                #desc2 = f'사용 시 다음 아이템 중 1종 획득'
-                desc2 = "\n".join(map(str, y.itemList2))
-                desc2 = desc2.replace("nan\n","")
-                desc2 = desc2.replace("코인[귀속]","코인")
-                result.loc[i,"Check List"] = desc2
+
+                if len(y.itemList1) != 0 :
+                    i += 1
+                    #desc1 = f'사용 시 다음 아이템 획득'
+                    desc1 = "\n".join(map(str, y.itemList1))
+                    desc1 = desc1.replace("nan\n","")
+                    desc1 = desc1.replace("코인[귀속]","코인")
+                    result.loc[i,"Check List"] = desc1
+
+
+
+
+
+
+            else :                 
+                if len(y.itemList1) != 0 :
+                    desc0 = "\n".join(map(str, y.itemList1))
+                    if len(y.itemList2) != 0 :
+                        desc0 += f'\n사용 시 다음 아이템 중 1종 획득'
+                    result.loc[i,"Check List"] = desc0
+
+                else:
+                    result.loc[i,"Check List"] = f'{y.pkgName} 상자[귀속]'
+            
+
+                if len(y.itemList2) != 0 :
+                    i += 1
+                    #desc2 = f'사용 시 다음 아이템 중 1종 획득'
+                    desc2 = "\n".join(map(str, y.itemList2))
+                    desc2 = desc2.replace("nan\n","")
+                    desc2 = desc2.replace("코인[귀속]","코인")
+                    result.loc[i,"Check List"] = desc2
 
 
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
         i += 1
-        result.loc[i,"Category3"] = "상품슬롯"
+        result.loc[i,"Category3"] = "상품슬롯 이미지"
 
         for item0 in y.itemList0 :
+            #i += 1
             if '다이아몬드' in str(item0):
                 result.loc[i,"Check List"] = "다이아몬드 이미지 노출"
                 i+=1
 
         for item1 in y.itemList1 :
+            #i += 1
             if str(item1) != "nan" :
                 item1 = item1.replace("코인[귀속]","코인")
                 result.loc[i,"Check List"] = str(item1) + " 이미지 노출"
                 i+=1
 
+        i += 1
+        result.loc[i,"Category3"] = "상품슬롯 정보"
         if int(y.bonus) == 0 :
             result.loc[i,"Check List"] =  "마일리지 미노출"
         else :            
@@ -437,8 +478,9 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
                 result.loc[i,"Check List"] = "최상급 뽑기 11회 연출 및 카드 획득(고급 이상)"
             else:
                 result.loc[i,"Check List"] = y.pkgName + " 인벤토리 획득"
+            i += 1
+
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-        i += 1
         for item0 in y.itemList0 :
             if '상자' in item0 :
                 result.loc[i,"Category3"] = "상자 구성품\n획득 및 사용"
@@ -448,7 +490,7 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
         for item1 in y.itemList1 :
             if str(item1) != "nan" :
                 item1 = item1.replace("코인[귀속]","코인")
-                result.loc[i,"Check List"] = str(item1) + " 획득 및 사용"
+                result.loc[i,"Check List"] = str(item1) + " 획득 및 사용 확인"
                 i+=1
         
         i-=1
@@ -752,7 +794,7 @@ def postprocess_cashshop(xlFileName):
     ws.merge_cells("D"+str(startRow_D)+":D"+str(lastRow))
 
     #ws = highlight_belonging(ws)
-    #ws = find_and_replace(ws,"귀속","귀속")
+    ws = find_and_replace(ws,"로얄 코인[귀속]","로얄 코인")
     ws = highlight_star_cells(ws)
     wb.save(xlFileName)
 
@@ -853,7 +895,7 @@ if __name__ == "__main__":
     doctype = "TestCase"
     
     result_path = f'{contents_name}_{doctype}'
-    data_file_name = f'{contents_name}DATA_KR R2M.xlsx'#유료상점DATA_KR R2M.xlsx
+    data_file_name = f'{contents_name}DATA_TW R2M.xlsx'#유료상점DATA_KR R2M.xlsx
     date_text = '2023-10-26'
     check_box_list = [True,False,False,True]
     

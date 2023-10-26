@@ -193,7 +193,17 @@ def extract_data(fileName, tcStartDate):
         a.limit = tempDf.loc[0,"Limit"]
        
         a.start_date = pd.to_datetime(tempDf.loc[0,"StartDate"])
-        a.end_date = pd.to_datetime(tempDf.loc[0,"EndDate"])
+        try: 
+            a.end_date = pd.to_datetime(tempDf.loc[0,"EndDate"])
+        except :
+            str_end_date = str(tempDf.loc[0,"EndDate"])
+            if str_end_date == "상시" :
+                a.end_date = datetime.datetime.strptime("2099-12-31 00:00:00",'%Y-%m-%d %H:%M:%S')
+            else :
+                print(f"이벤트 종료 시간 입력 오류 : 'yyyy-mm-dd' 만 입력되어야 함. 시간이 써있지 않은지 확인 필요\n상품 : {a.id} | {a.name}" )
+                os.system('pause')
+                return
+          
 
         # if "상시" in str(tempDf.loc[0,"EndDate"]) :
         #     a.endDate = datetime.datetime.strptime("2099-12-31 00:00:00",'%Y-%m-%d %H:%M:%S')
