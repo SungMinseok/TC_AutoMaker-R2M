@@ -17,11 +17,17 @@ from PyQt5.QtWidgets import QLabel, QApplication, QWidget, QVBoxLayout
 from PyQt5.QtCore import QDate,QTimer,Qt, QThread, pyqtSignal
 import time
 import threading
+import traceback
+#import socket
+import os
+
+
 
 form_class = uic.loadUiType(f'RDM_UI.ui')[0]
 FROM_CLASS_Loading = uic.loadUiType("load.ui")[0]
 #화면을 띄우는데 사용되는 Class 선언            print(e)
 
+user_name = os.getlogin()
 class WindowClass(QMainWindow, form_class) :
     def __init__(self) :
         super().__init__()
@@ -31,6 +37,7 @@ class WindowClass(QMainWindow, form_class) :
         self.print_log("실행 가능")
 
         self.worker_thread = None
+        #self.worker_thread.update_message.connect(self.display_error_message)
 #복붙시작◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈◈
         self.set_data_path()
         self.set_result_path()
@@ -109,28 +116,45 @@ class WindowClass(QMainWindow, form_class) :
     def make_process(self, result_path, data_file_name, contents_name, doctype, date_text, check_box_list):
         
         
-        
-        if contents_name == "유료상점" : 
-            if doctype == "CheckList" :
-                data = ClCash.extract_data_cashshop(data_file_name,date_text)
-                result_file_name = ClCash.write_data_cashshop_inspection(data,result_path,check_box_list)
-                ClCash.postprocess_cashshop(result_file_name)
-            elif doctype == "TestCase" :
-                data = ClCash.extract_data_cashshop(data_file_name, date_text)
-                result_file_name = ClCash.write_data_cashshop(data,result_path)
+        try:
+            #self.popUp("454545")
+            if contents_name == "유료상점" : 
+                if doctype == "CheckList" :
+                    data = ClCash.extract_data_cashshop(data_file_name,date_text)
+                    result_file_name = ClCash.write_data_cashshop_inspection(data,result_path,check_box_list)
+                    #ClCash.postprocess_cashshop(result_file_name)
+                elif doctype == "TestCase" :
+                    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+                    result_file_name = ClCash.write_data_cashshop(data,result_path)
+
+                
                 ClCash.postprocess_cashshop(result_file_name)
 
-        elif contents_name == "이벤트" :
-            if doctype == "CheckList" :
-                data = ClEvent.extract_data(data_file_name, date_text)
-                result_file_name = ClEvent.write_data(data,result_path)
-                ClEvent.postprocess_cashshop(result_file_name)
-            elif doctype == "TestCase" :
-                data = ClEvent.extract_data(data_file_name,date_text)
-                result_file_name = ClEvent.write_data_event_testcase(data,result_path)
+            elif contents_name == "이벤트" :
+                if doctype == "CheckList" :
+                    data = ClEvent.extract_data(data_file_name, date_text)
+                    result_file_name = ClEvent.write_data(data,result_path)
+                    #ClEvent.postprocess_cashshop(result_file_name)
+                elif doctype == "TestCase" :
+                    data = ClEvent.extract_data(data_file_name,date_text)
+                    result_file_name = ClEvent.write_data_event_testcase(data,result_path)
+
+                if len(data) == 0:
+                    
+                    return
+
                 ClEvent.postprocess_cashshop(result_file_name)
 
-        os.startfile(os.path.normpath(result_file_name))
+            os.startfile(os.path.normpath(result_file_name))
+
+        except Exception as e:
+            #log_file = fr".\log\log_error_{user_name}.txt"
+            msg = traceback.format_exc()
+            self.make_log(msg)
+            # with open(log_file, "a") as file:
+            #     file.write(f'{time.strftime("%y%m%d_%H%M%S")}\n{error_message}\n')
+            # print(f'생성실패 : {e}')
+            # os.startfile(log_file)
 
         self.worker_thread.finished.emit()
         self.worker_thread.quit()
@@ -141,6 +165,13 @@ class WindowClass(QMainWindow, form_class) :
         self.loading
         self.loading.deleteLater()
 
+    def make_log(self, msg):
+        log_file = fr".\log\log_error_{user_name}.txt"
+        #error_message = traceback.format_exc()
+        with open(log_file, "a") as file:
+            file.write(f'{time.strftime("%y%m%d_%H%M%S")}\n{msg}\n')
+        #print(f'생성실패 : {e}')
+        os.startfile(log_file)
 
     def activate(self):
 
@@ -173,7 +204,9 @@ class WindowClass(QMainWindow, form_class) :
         # loading_window.show()
         # loading_thread.start()
         #self.show_loading_window()    
+    
         self.worker_thread = WorkerThread(myWindow,result_path, data_file_name,contents_name, doctype, date_text,check_box_list)
+        
         self.worker_thread.finished.connect(self.cleanup)
         self.worker_thread.start()
         #self.make_process(result_path,data_file_name,contents_name,doctype,date_text,check_box_list)
@@ -228,30 +261,29 @@ class WindowClass(QMainWindow, form_class) :
         self.worker_thread = None
 
     def start_loading(self,qma):
-        #self.loading = loading(qma)
         loading(self)
         # loading_thread = threading.Thread(target = loading(self))
         # loading_thread.start()
+    def popUp(self,desText,titleText="error"):
+        #if type == "about" :
+        #print('345435')
+        msg = QtWidgets.QMessageBox()  
+        msg.setGeometry(1520,28,400,2000)
+        msg.setText(desText)
 
+        #msg.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
+        msg.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
+        msg.addButton(QtWidgets.QMessageBox.Ok)
+        result = msg.exec_()
+        
+    def display_error_message(self, error_message):
+        self.popUp(desText=error_message)
+        print(f'생성실패 : {error_message}')
+        os.system('pause')
 
 class loading(QWidget,FROM_CLASS_Loading):
     
     def __init__(self,parent):
-    #     super(loading,self).__init__(parent)    
-    #     self.setupUi(self) 
-    #    # self.center()
-    #     self.show()
-        
-    #     # 동적 이미지 추가
-    #     self.movie = QMovie('giphy.gif', QByteArray(), self)
-    #     self.movie.setCacheMode(QMovie.CacheAll)
-    #     # QLabel에 동적 이미지 삽입
-    #     self.label.setMovie(self.movie)
-    #     self.movie.start()
-    #     # 윈도우 해더 숨기기
-    #     self.setWindowFlags(Qt.FramelessWindowHint)
-    #     #QApplication.processEvents()
-    #     self.label.resize(700, 400)
         super(loading, self).__init__(parent)    
         self.setupUi(self) 
         #self.resize(parent.size())
@@ -261,7 +293,6 @@ class loading(QWidget,FROM_CLASS_Loading):
         
         self.show()
         
-        #self.movie = QMovie('lcu_ui_ready_check.gif', QByteArray(), self)
         self.movie = QMovie('rengar.gif', QByteArray(), self)
         self.movie.setCacheMode(QMovie.CacheAll)
         self.label.setMovie(self.movie)
@@ -275,13 +306,11 @@ class loading(QWidget,FROM_CLASS_Loading):
         size=self.size()
         ph = self.parent().geometry().height()
         pw = self.parent().geometry().width()
-        #self.resize(0,0)
-        #self.setGeometry(0,0,600,600)
         self.move(int(pw/2 - size.width()/2), int(ph/2 - size.height()/2))
         self.move(int(pw/2 - size.width()/2), int(ph/2 - size.height()/2))
 class WorkerThread(QThread):
     finished = pyqtSignal()
-
+    #update_message = pyqtSignal(str)  # Define a custom signal
     def __init__(self, window, result_path, data_file_name, contents_name, doctype, date_text, check_box_list):
         super().__init__()
         self.window = window
@@ -293,9 +322,12 @@ class WorkerThread(QThread):
         self.check_box_list = check_box_list
 
     def run(self):
-        #self.sleep(1)
+        #try:
         self.window.make_process(self.result_path, self.data_file_name, self.contents_name, self.doctype, self.date_text, self.check_box_list)
+
+            #os.system('pause')
         self.finished.emit()
+
 
 
 from PyQt5 import *

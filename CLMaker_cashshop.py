@@ -615,6 +615,7 @@ def write_data_cashshop_inspection(salesList : list[Sales], resultPath, check_bo
         info_0 = f'{y.category}'
         info_1 = ""
         info_2 = ""
+        info_2_1 = ""
         info_3 = ""
         
         if y.endDate == datetime.datetime.strptime("2099-12-31 00:00:00",'%Y-%m-%d %H:%M:%S') :
@@ -636,21 +637,40 @@ def write_data_cashshop_inspection(salesList : list[Sales], resultPath, check_bo
                 info_1 = info_1.replace("코인[귀속]","코인")
                 info_1 = f'\n\n{info_1}'
 
-            if len(y.itemList1) != 0 :
+                if len(y.itemList1) != 0 :
+                    info_2 = "\n".join(map(str, y.itemList1))
+                    info_2 = info_2.replace("nan\n","")
+                    info_2 = info_2.replace("\n","\n- ")
+                    if len(y.itemList0) != 0 :
+                        info_2 = "\n\n사용 시 다음 아이템 획득\n- "+info_2
+                    else:
+                        info_2 = f'\n\n{info_2}'
+                    
+                    info_2 = info_2.replace("코인[귀속]","코인")
+
+            else:
                 info_2 = "\n".join(map(str, y.itemList1))
                 info_2 = info_2.replace("nan\n","")
-                info_2 = info_2.replace("\n","\n- ")
-                if len(y.itemList0) != 0 :
-                    info_2 = "\n\n사용 시 다음 아이템 획득\n- "+info_2
-                else:
+                #info_2 = info_2.replace("\n","\n- ")
+
+                if len(y.itemList2) != 0 :
+                    info_2_1 = "\n".join(map(str, y.itemList2))
+                    info_2_1 = info_2_1.replace("nan\n","")
+                    info_2_1 = info_2_1.replace("\n","\n- ")
+                    #if len(y.itemList0) != 0 :
+                    info_2_1 = "\n\n사용 시 다음 아이템 획득\n- "+info_2_1
+
                     info_2 = f'\n\n{info_2}'
-                
-                info_2 = info_2.replace("코인[귀속]","코인")
+                    #else:
+                        #info_2 = f'\n\n{info_2}'
+                    
+                    #info_2 = info_2.replace("코인[귀속]","코인")
             
+
             if check_box_list[3]:
                 info_3 = f'\n\n* 상세정보 및 패키지 상자 구성품 내 [귀속] 노출 확인\n* 패키지 이미지 내 구성품 관련 이미지 노출 확인'
 
-        result.loc[i,"Check List"] = f'{info_0}{info_expired}{info_1}{info_2}{info_3}'
+        result.loc[i,"Check List"] = f'{info_0}{info_expired}{info_1}{info_2}{info_2_1}{info_3}'
 
     # #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
      
@@ -892,11 +912,11 @@ if __name__ == "__main__":
     #def make_process(self, result_path, data_file_name, contents_name, doctype, date_text, check_box_list):
 
     contents_name = "유료상점"
-    doctype = "TestCase"
+    doctype = "CheckList"
     
     result_path = f'{contents_name}_{doctype}'
     data_file_name = f'{contents_name}DATA_TW R2M.xlsx'#유료상점DATA_KR R2M.xlsx
-    date_text = '2023-10-26'
+    date_text = '2023-10-31'
     check_box_list = [True,False,False,True]
     
     if contents_name == "유료상점" : 
