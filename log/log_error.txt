@@ -1,0 +1,88 @@
+date=2023-10-31 10:25:46
+user=mssung
+Traceback (most recent call last):
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\RDM.py", line 131, in make_process
+    ClCash.postprocess_cashshop(result_file_name)
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\CLMaker_cashshop.py", line 812, in postprocess_cashshop
+    ws.merge_cells("B"+str(startRow_B)+":B"+str(lastRow))
+  File "C:\Python39\lib\site-packages\openpyxl\worksheet\worksheet.py", line 597, in merge_cells
+    mcr = MergedCellRange(self, range_string)
+  File "C:\Python39\lib\site-packages\openpyxl\worksheet\merge.py", line 68, in __init__
+    super().__init__(range_string=coord)
+  File "C:\Python39\lib\site-packages\openpyxl\worksheet\cell_range.py", line 57, in __init__
+    self.min_row = min_row
+  File "C:\Python39\lib\site-packages\openpyxl\descriptors\base.py", line 111, in __set__
+    raise ValueError('Min value is {0}'.format(self.min))
+ValueError: Min value is 1
+
+date=2023-10-31 10:27:36
+user=mssung
+Traceback (most recent call last):
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\RDM.py", line 131, in make_process
+    ClCash.postprocess_cashshop(result_file_name)
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\CLMaker_cashshop.py", line 812, in postprocess_cashshop
+    ws.merge_cells("B"+str(startRow_B)+":B"+str(lastRow))
+  File "C:\Python39\lib\site-packages\openpyxl\worksheet\worksheet.py", line 597, in merge_cells
+    mcr = MergedCellRange(self, range_string)
+  File "C:\Python39\lib\site-packages\openpyxl\worksheet\merge.py", line 68, in __init__
+    super().__init__(range_string=coord)
+  File "C:\Python39\lib\site-packages\openpyxl\worksheet\cell_range.py", line 57, in __init__
+    self.min_row = min_row
+  File "C:\Python39\lib\site-packages\openpyxl\descriptors\base.py", line 111, in __set__
+    raise ValueError('Min value is {0}'.format(self.min))
+ValueError: Min value is 1
+
+            date=2023-11-03 12:06:39
+            user=mssung
+            contents_name='이벤트'
+doctype='TestCase'
+date_text='2023-11-14'
+Traceback (most recent call last):
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\RDM.py", line 140, in make_process
+    data = ClEvent.extract_data(data_file_name,date_text)
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\CLMaker_Event.py", line 103, in extract_data
+    sheet_names = pd.read_excel(fileName, sheet_name=None).keys()
+  File "C:\Python39\lib\site-packages\pandas\util\_decorators.py", line 311, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 364, in read_excel
+    io = ExcelFile(io, storage_options=storage_options, engine=engine)
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1191, in __init__
+    ext = inspect_excel_format(
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1070, in inspect_excel_format
+    with get_handle(
+  File "C:\Python39\lib\site-packages\pandas\io\common.py", line 711, in get_handle
+    handle = open(handle, ioargs.mode)
+PermissionError: [Errno 13] Permission denied: '이벤트DATA_TW R2M.xlsx'
+
+            date=2023-11-13 10:31:37
+            user=mssung
+            contents_name='유료상점'
+doctype='CheckList'
+date_text='2024-11-09'
+Traceback (most recent call last):
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\RDM.py", line 132, in make_process
+    ClCash.postprocess_cashshop(result_file_name)
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\CLMaker_cashshop.py", line 815, in postprocess_cashshop
+    ws.merge_cells("B"+str(startRow_B)+":B"+str(lastRow))
+  File "C:\Python39\lib\site-packages\openpyxl\worksheet\worksheet.py", line 597, in merge_cells
+    mcr = MergedCellRange(self, range_string)
+  File "C:\Python39\lib\site-packages\openpyxl\worksheet\merge.py", line 68, in __init__
+    super().__init__(range_string=coord)
+  File "C:\Python39\lib\site-packages\openpyxl\worksheet\cell_range.py", line 57, in __init__
+    self.min_row = min_row
+  File "C:\Python39\lib\site-packages\openpyxl\descriptors\base.py", line 111, in __set__
+    raise ValueError('Min value is {0}'.format(self.min))
+ValueError: Min value is 1
+
+            date=2023-11-13 11:33:22
+            user=mssung
+            contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-11-14'
+Traceback (most recent call last):
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\RDM.py", line 128, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\CLMaker_cashshop.py", line 204, in extract_data_cashshop
+    a.pkgID = int(tempDf.loc[0,"CashShopID"])
+ValueError: invalid literal for int() with base 10: 'TWD 1000028'
+

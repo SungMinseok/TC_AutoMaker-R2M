@@ -1,0 +1,292 @@
+                       date=2023-10-31 10:33:55
+                       user=mssung
+                        contents_name='유료상점'
+doctype='CheckList'
+date_text='2023-10-31'
+
+                       date=2023-10-31 16:04:36
+                       user=mssung
+                        contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-10-31'
+
+            date=2023-11-01 11:06:03
+            user=mssung
+            result_path='유료상점_TestCase'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-11-04'
+
+            date=2023-11-01 14:40:36
+            user=mssung
+            result_path='이벤트_TestCase'
+data_file_name='이벤트DATA_TW R2M.xlsx'
+contents_name='이벤트'
+doctype='TestCase'
+date_text='2023-11-14'
+
+            date=2023-11-01 14:52:56
+            user=mssung
+            result_path='유료상점_TestCase'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-11-14'
+
+            date=2023-11-02 10:06:52
+            user=jmyang
+            result_path='이벤트_CheckList'
+data_file_name='이벤트DATA_KR R2M.xlsx'
+contents_name='이벤트'
+doctype='CheckList'
+date_text='2023-11-02'
+
+            date=2023-11-02 10:09:19
+            user=mssung
+            result_path='유료상점_CheckList'
+data_file_name='유료상점DATA_KR R2M.xlsx'
+contents_name='유료상점'
+doctype='CheckList'
+date_text='2023-11-02'
+
+            date=2023-11-02 10:13:36
+            user=jmyang
+            result_path='이벤트_CheckList'
+data_file_name='이벤트DATA_KR R2M.xlsx'
+contents_name='이벤트'
+doctype='CheckList'
+date_text='2023-11-02'
+
+            date=2023-11-02 10:22:28
+            user=jmyang
+            result_path='유료상점_CheckList'
+data_file_name='유료상점DATA_KR R2M.xlsx'
+contents_name='유료상점'
+doctype='CheckList'
+date_text='2023-11-02'
+
+            date=2023-11-02 10:38:16
+            user=jmyang
+            result_path='유료상점_CheckList'
+data_file_name='유료상점DATA_KR R2M.xlsx'
+contents_name='유료상점'
+doctype='CheckList'
+date_text='2023-11-02'
+
+            date=2023-11-02 16:32:52
+            user=mssung
+            result_path='유료상점_TestCase'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-11-14'
+
+            date=2023-11-03 12:06:39
+            user=mssung
+            result_path='이벤트_TestCase'
+data_file_name='이벤트DATA_TW R2M.xlsx'
+contents_name='이벤트'
+doctype='TestCase'
+date_text='2023-11-14'
+
+            date=2023-11-03 12:07:09
+            user=mssung
+            result_path='이벤트_TestCase'
+data_file_name='이벤트DATA_TW R2M.xlsx'
+contents_name='이벤트'
+doctype='TestCase'
+date_text='2023-11-14'
+
+            date=2023-11-06 14:16:53
+            user=mssung
+            result_path='이벤트_TestCase'
+data_file_name='이벤트DATA_TW R2M.xlsx'
+contents_name='이벤트'
+doctype='TestCase'
+date_text='2023-11-14'
+
+            date=2023-11-06 14:17:14
+            user=mssung
+            result_path='유료상점_TestCase'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-11-14'
+
+            date=2023-11-07 09:44:00
+            user=jinsuk
+            result_path='이벤트_TestCase'
+data_file_name='이벤트DATA_TW R2M.xlsx'
+contents_name='이벤트'
+doctype='TestCase'
+date_text='2023-11-07'
+
+            date=2023-11-07 09:45:14
+            user=jinsuk
+            result_path='이벤트_CheckList'
+data_file_name='이벤트DATA_TW R2M.xlsx'
+contents_name='이벤트'
+doctype='CheckList'
+date_text='2023-11-07'
+
+            date=2023-11-07 09:50:16
+            user=jinsuk
+            result_path='유료상점_CheckList'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='CheckList'
+date_text='2023-11-07'
+
+            date=2023-11-07 09:52:17
+            user=jmyang
+            result_path='유료상점_CheckList'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='CheckList'
+date_text='2023-11-07'
+
+            date=2023-11-09 09:29:39
+            user=jinsuk
+            result_path='이벤트_CheckList'
+data_file_name='이벤트DATA_KR R2M.xlsx'
+contents_name='이벤트'
+doctype='CheckList'
+date_text='2023-11-09'
+
+            date=2023-11-09 09:44:45
+            user=jinsuk
+            result_path='유료상점_CheckList'
+data_file_name='유료상점DATA_KR R2M.xlsx'
+contents_name='유료상점'
+doctype='CheckList'
+date_text='2023-11-09'
+
+            date=2023-11-13 10:31:37
+            user=mssung
+            result_path='유료상점_CheckList'
+data_file_name='유료상점DATA_KR R2M.xlsx'
+contents_name='유료상점'
+doctype='CheckList'
+date_text='2024-11-09'
+
+            date=2023-11-13 10:31:49
+            user=mssung
+            result_path='이벤트_CheckList'
+data_file_name='이벤트DATA_KR R2M.xlsx'
+contents_name='이벤트'
+doctype='CheckList'
+date_text='2024-11-09'
+
+            date=2023-11-13 10:32:43
+            user=mssung
+            result_path='이벤트_CheckList'
+data_file_name='이벤트DATA_KR R2M.xlsx'
+contents_name='이벤트'
+doctype='CheckList'
+date_text='2023-11-09'
+
+            date=2023-11-13 10:56:01
+            user=mssung
+            result_path='유료상점_CheckList'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='CheckList'
+date_text='2023-11-14'
+
+            date=2023-11-13 11:33:22
+            user=mssung
+            result_path='유료상점_TestCase'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-11-14'
+
+            date=2023-11-13 11:34:39
+            user=mssung
+            result_path='유료상점_TestCase'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-11-14'
+
+            date=2023-11-14 09:51:45
+            user=jmyang
+            result_path='이벤트_CheckList'
+data_file_name='이벤트DATA_TW R2M.xlsx'
+contents_name='이벤트'
+doctype='CheckList'
+date_text='2023-11-14'
+
+            date=2023-11-14 09:55:04
+            user=jmyang
+            result_path='유료상점_CheckList'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='CheckList'
+date_text='2023-11-14'
+
+            date=2023-11-14 10:28:18
+            user=jmyang
+            result_path='이벤트_CheckList'
+data_file_name='이벤트DATA_TW R2M.xlsx'
+contents_name='이벤트'
+doctype='CheckList'
+date_text='2023-11-14'
+
+            date=2023-11-14 17:37:48
+            user=mssung
+            result_path='이벤트_CheckList'
+data_file_name='이벤트DATA_KR R2M.xlsx'
+contents_name='이벤트'
+doctype='CheckList'
+date_text='2023-11-15'
+
+            date=2023-11-14 17:39:54
+            user=mssung
+            result_path='유료상점_CheckList'
+data_file_name='유료상점DATA_KR R2M.xlsx'
+contents_name='유료상점'
+doctype='CheckList'
+date_text='2023-11-15'
+
+            date=2023-11-14 18:12:55
+            user=mssung
+            result_path='유료상점_CheckList'
+data_file_name='유료상점DATA_KR R2M.xlsx'
+contents_name='유료상점'
+doctype='CheckList'
+date_text='2023-11-15'
+
+            date=2023-11-15 09:48:27
+            user=jinsuk
+            result_path='이벤트_CheckList'
+data_file_name='이벤트DATA_KR R2M.xlsx'
+contents_name='이벤트'
+doctype='CheckList'
+date_text='2023-11-15'
+
+            date=2023-11-15 09:52:49
+            user=jungsoo
+            result_path='유료상점_CheckList'
+data_file_name='유료상점DATA_KR R2M.xlsx'
+contents_name='유료상점'
+doctype='CheckList'
+date_text='2023-11-15'
+
+            date=2023-11-15 10:02:07
+            user=jmyang
+            result_path='유료상점_CheckList'
+data_file_name='유료상점DATA_KR R2M.xlsx'
+contents_name='유료상점'
+doctype='CheckList'
+date_text='2023-11-15'
+
+            date=2023-11-15 10:04:50
+            user=jmyang
+            result_path='이벤트_CheckList'
+data_file_name='이벤트DATA_KR R2M.xlsx'
+contents_name='이벤트'
+doctype='CheckList'
+date_text='2023-11-15'
+

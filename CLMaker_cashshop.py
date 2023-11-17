@@ -212,6 +212,9 @@ def extract_data_cashshop(fileName, tcStartDate):
             a.bonus = 0
         a.limit = tempDf.loc[0,"Limit"]
 
+        if a.pkgID == 1100053 :
+            print('adasdsa')
+
         for k in range(len(tempDf)):
             #print(len(tempDf))
             if not pd.isnull(tempDf.iloc[k]['Name0']):
@@ -224,10 +227,10 @@ def extract_data_cashshop(fileName, tcStartDate):
                 except:
                     a.itemList0.append(f"{itemName}[귀속] {(itemCount)}개")
 
-                a.itemList0.sort()
+                #a.itemList0.sort()
                 coin_items0 = [item for item in a.itemList0 if '로얄 코인' == item]
                 non_coin_items0 = [item for item in a.itemList0 if '로얄 코인' != item]
-                a.itemList0 = coin_items0 +non_coin_items0
+                a.itemList0 = coin_items0 + non_coin_items0
 
         for k in range(len(tempDf)):
             if not pd.isnull(tempDf.iloc[k]['Name1']):
@@ -240,7 +243,7 @@ def extract_data_cashshop(fileName, tcStartDate):
                 except:
                     a.itemList1.append(f"{itemName}[귀속] {(itemCount)}개")
                 
-                a.itemList1.sort()
+                #a.itemList1.sort()
                 coin_items1 = [item for item in a.itemList1 if '로얄 코인' == item]
                 non_coin_items1 = [item for item in a.itemList1 if '로얄 코인' != item]
                 a.itemList1 = coin_items1 +non_coin_items1
@@ -563,13 +566,20 @@ def write_data_cashshop_inspection(salesList : list[Sales], resultPath, check_bo
     check_box_list : 옵션 체크 리스트
     '''
 
-    
+    category_order = ['시즌 뽑기', '기간한정상품', '패키지', '카드', '재화', '이벤트']
     
     for sale in salesList:
         print(f'{sale.pkgName}|{sale.server}|{sale.salesCheck}|{sale.category}|{sale.order}')
     try:
         #    sale.salesCheck = float(sale.salesCheck)
-        salesList.sort(key=lambda a: (a.server, a.salesCheck, a.category, a.order))
+        #salesList.sort(key=lambda a: (a.server, a.salesCheck, a.category, a.order))
+        salesList.sort(key=lambda a: (
+            a.salesCheck,
+            a.server,
+            category_order.index(a.category) if a.category in category_order else float('inf'),
+            a.order
+        ))
+
     except Exception as e:
         print(e)
         print("정렬에 문제 발생... 표에 제대로 입력됐는지 확인 필요...")
@@ -625,7 +635,7 @@ def write_data_cashshop_inspection(salesList : list[Sales], resultPath, check_bo
         else :
             info_expired = f" | {y.endDate.strftime('%m/%d/%Y(목) 점검 전 까지')}"
 
-        if check_box_list[1] or y.salesCheck == "판매 시작":
+        if not check_box_list[1] or y.salesCheck == "판매 시작":
             info_0 = f'{info_0} / {y.price} / {bonusStr} / {y.limit}'
 
             info_expired = f"\n{info_expired}"
@@ -643,6 +653,8 @@ def write_data_cashshop_inspection(salesList : list[Sales], resultPath, check_bo
                     info_2 = info_2.replace("\n","\n- ")
                     if len(y.itemList0) != 0 :
                         info_2 = "\n\n사용 시 다음 아이템 획득\n- "+info_2
+                    # elif len(y.itemList1) != 0 and len(y.itemList2) != 0 :
+                    #     info_2 = "\n\n사용 시 다음 아이템 중 1종 획득\n- "+info_2
                     else:
                         info_2 = f'\n\n{info_2}'
                     
@@ -658,7 +670,7 @@ def write_data_cashshop_inspection(salesList : list[Sales], resultPath, check_bo
                     info_2_1 = info_2_1.replace("nan\n","")
                     info_2_1 = info_2_1.replace("\n","\n- ")
                     #if len(y.itemList0) != 0 :
-                    info_2_1 = "\n\n사용 시 다음 아이템 획득\n- "+info_2_1
+                    info_2_1 = "\n\n사용 시 다음 아이템 중 1종 획득\n- "+info_2_1
 
                     info_2 = f'\n\n{info_2}'
                     #else:
@@ -815,6 +827,9 @@ def postprocess_cashshop(xlFileName):
 
     #ws = highlight_belonging(ws)
     ws = find_and_replace(ws,"로얄 코인[귀속]","로얄 코인")
+    ws = find_and_replace(ws,"로얄코인[귀속]","로얄 코인")
+    ws = find_and_replace(ws,"다이아몬드[귀속]","다이아")
+    ws = find_and_replace(ws,"[귀속][귀속]","[귀속]")
     ws = highlight_star_cells(ws)
     wb.save(xlFileName)
 
@@ -910,14 +925,14 @@ def highlight_star_cells(sheet):
 
 if __name__ == "__main__":
     #def make_process(self, result_path, data_file_name, contents_name, doctype, date_text, check_box_list):
-
+    nation = 'KR'
     contents_name = "유료상점"
     doctype = "CheckList"
     
     result_path = f'{contents_name}_{doctype}'
-    data_file_name = f'{contents_name}DATA_TW R2M.xlsx'#유료상점DATA_KR R2M.xlsx
-    date_text = '2023-10-31'
-    check_box_list = [True,False,False,True]
+    data_file_name = f'{contents_name}DATA_{nation} R2M.xlsx'#유료상점DATA_KR R2M.xlsx
+    date_text = '2023-11-15'
+    check_box_list = [True,True,False,False]
     
     if contents_name == "유료상점" : 
         if doctype == "CheckList" :

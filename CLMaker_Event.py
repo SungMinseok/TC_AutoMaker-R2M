@@ -547,7 +547,7 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
     return xlFileName
 
 
-def write_data(targetList : list[Event], resultPath = "이벤트_CheckList"):
+def write_data(targetList : list[Event], resultPath = "이벤트_CheckList", options = None):
 
     targetList.sort(key =lambda a: (a.open_check, a.id))
 
@@ -569,7 +569,7 @@ def write_data(targetList : list[Event], resultPath = "이벤트_CheckList"):
         i = curRow
         result.loc[i,"Category1"] = y.server
         result.loc[i,"Category2"] = y.open_check
-        result.loc[i,"Category3"] = y.name
+        result.loc[i,"Category3"] = f'{y.name}\n[{y.type}]'
 
     #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         #if y.open_check == "이벤트 시작" :
@@ -579,7 +579,12 @@ def write_data(targetList : list[Event], resultPath = "이벤트_CheckList"):
         #     dateID = (3,"목")
         # elif data_filename_input == "1":
        # dateID = (1,"화")
-
+       
+        if options[1] : #CL 유지/종료 항목 내용 생략
+            if y.open_check == "이벤트 유지" :
+                if not options[2] and y.end_date == datetime.datetime.strptime("2099-12-31 00:00:00",'%Y-%m-%d %H:%M:%S'):
+                    continue
+    
         info = ""
         if y.type != "도감":
             #info = f"{y.start_date.strftime('%Y-%m-%d')}({dateID[1]}) ~ {y.end_date.strftime('%Y-%m-%d')}({dateID[1]})\n"
@@ -618,20 +623,14 @@ def write_data(targetList : list[Event], resultPath = "이벤트_CheckList"):
                     item.count = f'{float(item.count) * 100}%'
                 info += f'\n{item.name} +{(item.count)}'
                 info = info.replace('[귀속]','')
-        #info_expired = y.endDate.strftime('%m/%d/%Y(목) 11:00 까지')
+                
+        if options[1] : #CL 유지/종료 항목 내용 생략
+            if y.open_check == "이벤트 유지" :
+                info = f'{y.type} {y.open_check} 확인 | 종료일 : {y.end_date.strftime("%m/%d/%Y 11:30")}'
+            elif y.open_check == "이벤트 종료" : 
+                info = f'{y.type} {y.open_check} 확인'
 
-        # info_1 = "\n".join(y.itemList0)
-        # info_1 = info_1.replace("다이아몬드[귀속]","다이아몬드")
 
-        # info_2 = "\n".join(map(str, y.itemList1))
-        # info_2 = info_2.replace("nan\n","")
-        # info_2 = info_2.replace("\n","\n- ")
-        # info_2 = "사용 시 다음 아이템 획득\n- "+info_2
-
-        # info_3 = f'* 상세정보 및 패키지 상자 구성품 내 [귀속] 노출 확인\n* 패키지 이미지 내 구성품 관련 이미지 노출 확인'
-        # elif y.open_check == "이벤트 유지" :
-        #     info = "이벤트 유지"
-        # elif y.open_check == "이벤트 종료" :
         result.loc[i,"Check List"] = f'{info}'
 
     # #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -874,62 +873,83 @@ def highlight_star_cells(sheet):
 
 if __name__ == "__main__":
 
-    while True:
-        file_type_input = input("문서타입(0:TC, 1:CL) >: ")
-        try : 
-            file_type = DocumentType(int(file_type_input)).name
-            break
-        except :             
-            print("잘못된 입력입니다. 다시 입력해주세요.")
+    # while True:
+    #     file_type_input = input("문서타입(0:TC, 1:CL) >: ")
+    #     try : 
+    #         file_type = DocumentType(int(file_type_input)).name
+    #         break
+    #     except :             
+    #         print("잘못된 입력입니다. 다시 입력해주세요.")
 
-    file_dict = {"0": "이벤트DATA_KR.xlsx", "1": "이벤트DATA_TW.xlsx"}
-    # 파일명 입력 받기
-    while True:
-        data_filename_input = input("국가설정(0:KR, 1:TW): ")
-        if data_filename_input in file_dict:
-            data_filename = file_dict[data_filename_input]
-            if Path(data_filename).is_file():
-                break
-            else:
-                print("파일이 존재하지 않습니다. 다시 입력해주세요.")
-        else:
-            print("잘못된 입력입니다. 다시 입력해주세요.")
+    # file_dict = {"0": "이벤트DATA_KR.xlsx", "1": "이벤트DATA_TW.xlsx"}
+    # # 파일명 입력 받기
+    # while True:
+    #     data_filename_input = input("국가설정(0:KR, 1:TW): ")
+    #     if data_filename_input in file_dict:
+    #         data_filename = file_dict[data_filename_input]
+    #         if Path(data_filename).is_file():
+    #             break
+    #         else:
+    #             print("파일이 존재하지 않습니다. 다시 입력해주세요.")
+    #     else:
+    #         print("잘못된 입력입니다. 다시 입력해주세요.")
 
-    todayDate = datetime.datetime.today().date()
+    # todayDate = datetime.datetime.today().date()
 
-    # 그 주의 점검 날짜 구하기 (대만:화, 국내:목)
-    if file_type == DocumentType.TestCase :
+    # # 그 주의 점검 날짜 구하기 (대만:화, 국내:목)
+    # if file_type == DocumentType.TestCase :
 
-        check_start_date = input("업데이트날짜(YYYY-MM-DD) >: ")
-        if check_start_date == "" :
-            check_start_date = datetime.datetime.now().strftime('%Y-%m-%d')
+    #     check_start_date = input("업데이트날짜(YYYY-MM-DD) >: ")
+    #     if check_start_date == "" :
+    #         check_start_date = datetime.datetime.now().strftime('%Y-%m-%d')
 
-    else:
-        global dateID
-        dateID= 0
-        if data_filename_input == "0":
-            dateID = (3,"목")
-        elif data_filename_input == "1":
-            dateID = (1,"화")
+    # else:
+    #     global dateID
+    #     dateID= 0
+    #     if data_filename_input == "0":
+    #         dateID = (3,"목")
+    #     elif data_filename_input == "1":
+    #         dateID = (1,"화")
 
-        days_until_target = (dateID[0] - todayDate.weekday()) % 7
-        thursdayDate = todayDate + datetime.timedelta(days=days_until_target)
-        check_start_date = thursdayDate.strftime('%Y-%m-%d')
+    #     days_until_target = (dateID[0] - todayDate.weekday()) % 7
+    #     thursdayDate = todayDate + datetime.timedelta(days=days_until_target)
+    #     check_start_date = thursdayDate.strftime('%Y-%m-%d')
 
-        print(f"이번주 {dateID[1]}요일 {check_start_date} 기준으로 작성됩니다.")
+    #     print(f"이번주 {dateID[1]}요일 {check_start_date} 기준으로 작성됩니다.")
 
-    #check_start_date = datetime.datetime.strptime(check_start_date, '%Y-%m-%d')
+    # #check_start_date = datetime.datetime.strptime(check_start_date, '%Y-%m-%d')
 
-    result_directory = f"./Event_{file_type}"
-    if not os.path.isdir(result_directory) :
-        os.mkdir(result_directory)
+    # result_directory = f"./Event_{file_type}"
+    # if not os.path.isdir(result_directory) :
+    #     os.mkdir(result_directory)
 
-    #xl_filename = f"{result_directory}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
+    # #xl_filename = f"{result_directory}/result_{time.strftime('%y%m%d_%H%M%S')}.xlsx"
 
-    targetList = extract_data(data_filename,check_start_date)
-    xlFileName = write_data(targetList)
-    postprocess_cashshop(xlFileName)
+    # targetList = extract_data(data_filename,check_start_date)
+    # xlFileName = write_data(targetList)
+    # postprocess_cashshop(xlFileName)
 
 
-    print("complete!")
-    os.system("pause")
+    # print("complete!")
+    # os.system("pause")
+    nation = 'KR'
+    doctype = "CheckList"
+
+    contents_name = "이벤트"
+    
+    result_path = f'{contents_name}_{doctype}'
+    data_file_name = f'{contents_name}DATA_{nation} R2M.xlsx'#유료상점DATA_KR R2M.xlsx
+    date_text = '2023-11-15'
+    check_box_list = [True,True,False,True]
+
+    if doctype == "CheckList" :
+        data = extract_data(data_file_name, date_text)
+        result_file_name = write_data(data,result_path,check_box_list)
+    elif doctype == "TestCase" :
+        data = extract_data(data_file_name,date_text)
+        result_file_name = write_data_event_testcase(data,result_path)
+
+
+    postprocess_cashshop(result_file_name)
+
+    os.startfile(os.path.normpath(result_file_name))

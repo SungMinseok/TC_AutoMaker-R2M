@@ -32,7 +32,8 @@ class WindowClass(QMainWindow, form_class) :
     def __init__(self) :
         super().__init__()
         self.setupUi(self) 
-        self.setFixedSize(400,325)
+        self.setGeometry(1470,28,400,400)
+        self.setFixedSize(450,350)
         self.action_patchnote.triggered.connect(lambda : self.파일열기("패치노트_RDM.txt"))
         self.print_log("실행 가능")
 
@@ -133,7 +134,7 @@ class WindowClass(QMainWindow, form_class) :
             elif contents_name == "이벤트" :
                 if doctype == "CheckList" :
                     data = ClEvent.extract_data(data_file_name, date_text)
-                    result_file_name = ClEvent.write_data(data,result_path)
+                    result_file_name = ClEvent.write_data(data,result_path,check_box_list)
                     #ClEvent.postprocess_cashshop(result_file_name)
                 elif doctype == "TestCase" :
                     data = ClEvent.extract_data(data_file_name,date_text)
@@ -149,8 +150,9 @@ class WindowClass(QMainWindow, form_class) :
 
         except Exception as e:
             #log_file = fr".\log\log_error_{user_name}.txt"
-            msg = traceback.format_exc()
-            self.make_log(msg)
+            msg = f'{contents_name=}\n{doctype=}\n{date_text=}\n'
+            msg += traceback.format_exc()
+            self.make_log(msg,auto_open=True)
             # with open(log_file, "a") as file:
             #     file.write(f'{time.strftime("%y%m%d_%H%M%S")}\n{error_message}\n')
             # print(f'생성실패 : {e}')
@@ -165,13 +167,27 @@ class WindowClass(QMainWindow, form_class) :
         self.loading
         self.loading.deleteLater()
 
-    def make_log(self, msg):
-        log_file = fr".\log\log_error_{user_name}.txt"
+    #result_path, data_file_name
+        msg = f'{result_path=}\n{data_file_name=}\n{contents_name=}\n{doctype=}\n{date_text=}\n'
+        self.make_log(msg,'execute')
+
+    def make_log(self, msg, log_type : str = 'error', auto_open :bool = False):
+        '''
+        log_type : str = error / execute
+        '''
+
+
+        
+        log_file = fr".\log\log_{log_type}.txt"
         #error_message = traceback.format_exc()
         with open(log_file, "a") as file:
-            file.write(f'{time.strftime("%y%m%d_%H%M%S")}\n{msg}\n')
+            file.write(f'\
+            date={time.strftime("%Y-%m-%d %H:%M:%S")}\n\
+            user={user_name}\n\
+            {msg}\n')
         #print(f'생성실패 : {e}')
-        os.startfile(log_file)
+        if auto_open :
+            os.startfile(log_file)
 
     def activate(self):
 
@@ -293,7 +309,8 @@ class loading(QWidget,FROM_CLASS_Loading):
         
         self.show()
         
-        self.movie = QMovie('rengar.gif', QByteArray(), self)
+        #self.movie = QMovie('rengar.gif', QByteArray(), self)
+        self.movie = QMovie('dda956507874240e5f0d05ac575e1c30.webp', QByteArray(), self)
         self.movie.setCacheMode(QMovie.CacheAll)
         self.label.setMovie(self.movie)
         self.label.setScaledContents(True)
