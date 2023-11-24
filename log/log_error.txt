@@ -1,3 +1,98 @@
+
+user=mssung
+date=2023-11-24 19:19:05
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-11-30'
+Traceback (most recent call last):
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\RDM.py", line 129, in make_process
+    result_file_name = ClCash.write_data_cashshop(data,result_path)
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\CLMaker_cashshop.py", line 427, in write_data_cashshop
+    result.loc[i,"Check List"] = f'{y.name} 관련 이미지 노출'
+AttributeError: 'Sales' object has no attribute 'name'
+
+────────────────────────────────────────
+
+user=mssung
+date=2023-11-23 15:05:40
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-09-23'
+Traceback (most recent call last):
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\RDM.py", line 128, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\CLMaker_cashshop.py", line 142, in extract_data_cashshop
+    sheet_names = pd.ExcelFile(fileName).sheet_names
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1191, in __init__
+    ext = inspect_excel_format(
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1070, in inspect_excel_format
+    with get_handle(
+  File "C:\Python39\lib\site-packages\pandas\io\common.py", line 711, in get_handle
+    handle = open(handle, ioargs.mode)
+PermissionError: [Errno 13] Permission denied: '유료상점DATA_KR R2M.xlsx'
+
+
+────────────────────────────────────────
+user=mssung
+date=2023-11-23 15:04:04
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-10-23'
+Traceback (most recent call last):
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\RDM.py", line 128, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\CLMaker_cashshop.py", line 142, in extract_data_cashshop
+    sheet_names = pd.ExcelFile(fileName).sheet_names
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1191, in __init__
+    ext = inspect_excel_format(
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1070, in inspect_excel_format
+    with get_handle(
+  File "C:\Python39\lib\site-packages\pandas\io\common.py", line 711, in get_handle
+    handle = open(handle, ioargs.mode)
+PermissionError: [Errno 13] Permission denied: '유료상점DATA_KR R2M.xlsx'
+
+
+────────────────────────────────────────
+user=mssung
+date=2023-11-23 15:03:40
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-10-23'
+Traceback (most recent call last):
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\RDM.py", line 128, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\CLMaker_cashshop.py", line 142, in extract_data_cashshop
+    sheet_names = pd.ExcelFile(fileName).sheet_names
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1191, in __init__
+    ext = inspect_excel_format(
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1070, in inspect_excel_format
+    with get_handle(
+  File "C:\Python39\lib\site-packages\pandas\io\common.py", line 711, in get_handle
+    handle = open(handle, ioargs.mode)
+PermissionError: [Errno 13] Permission denied: '유료상점DATA_KR R2M.xlsx'
+
+
+────────────────────────────────────────
+user=mssung
+date=2023-11-23 15:03:34
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-10-23'
+Traceback (most recent call last):
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\RDM.py", line 128, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\CLMaker_cashshop.py", line 142, in extract_data_cashshop
+    sheet_names = pd.ExcelFile(fileName).sheet_names
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1191, in __init__
+    ext = inspect_excel_format(
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1070, in inspect_excel_format
+    with get_handle(
+  File "C:\Python39\lib\site-packages\pandas\io\common.py", line 711, in get_handle
+    handle = open(handle, ioargs.mode)
+PermissionError: [Errno 13] Permission denied: '유료상점DATA_KR R2M.xlsx'
+
+
+────────────────────────────────────────
 date=2023-10-31 10:25:46
 user=mssung
 Traceback (most recent call last):
@@ -86,3 +181,4 @@ Traceback (most recent call last):
     a.pkgID = int(tempDf.loc[0,"CashShopID"])
 ValueError: invalid literal for int() with base 10: 'TWD 1000028'
 
+                    

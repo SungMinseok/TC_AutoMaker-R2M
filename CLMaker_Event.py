@@ -90,7 +90,7 @@ class Event():
         self.item_list = []
         self.craft_list = []
 
-        self.item_list_1 = []#패스용
+        #self.item_list_1 = []#패스용
         #별도 저장값
         self.open_check = ""
 
@@ -247,7 +247,7 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
 
         if y.open_check == "이벤트 유지" or y.open_check == "이벤트 종료"  :
             continue
-    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■[출석]
 
         if y.type == "출석" :
             result.loc[i,"Category1"] = f'{y.type} 이벤트'
@@ -283,7 +283,7 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
                 #result.loc[i,"Check List"] = f'{item.name} {int(item.count)}개'#.replace('[귀속][귀속]','[귀속]')
 
 
-    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■[미션]
         elif y.type == "미션" :
             result.loc[i,"Category1"] = f'{y.type} 이벤트'
             result.loc[i,"Category2"] = f'{y.name}\n{y.id}'#y.pkgName + "\n" + str(y.pkgID)
@@ -321,7 +321,7 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
 
     #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     
-    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■[드랍]
         elif y.type == "드랍" :
             result.loc[i,"Category1"] = f'{y.type} 이벤트'
             result.loc[i,"Category2"] = f'{y.name}\n{y.id}'#y.pkgName + "\n" + str(y.pkgID)
@@ -344,7 +344,7 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
                 result.loc[i,"Check List"] = f'{item.name} : {round(item.count,2)}%'#.replace('[귀속][귀속]','[귀속]')
 
     
-    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■[제작]
         elif y.type == "제작" :
             result.loc[i,"Category1"] = f'{y.type} 이벤트'
 
@@ -386,7 +386,7 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
                     result.loc[i,"Check List"] = f"자동 삭제 '{item.removedate} 11:30' 적용"
                     i += 1    
     
-    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■[도감]
 
         elif y.type == "도감" :
             result.loc[i,"Category1"] = f'{y.type} 이벤트'
@@ -422,6 +422,41 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
                     result.loc[i,"Check List"] = f"{item.name} +{stat_amount}".replace('[귀속]','')
                 except : 
                     result.loc[i,"Check List"] = f'{item.name} +{(item.count)}'.replace('[귀속]','')#.replace('[귀속][귀속]','[귀속]')
+    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■[도감]
+
+        elif y.type == "패스" :
+            result.loc[i,"Category1"] = f'패스 이벤트'
+            result.loc[i,"Category2"] = f'{y.name}\neventID : {y.id}'
+            result.loc[i,"Category3"] = "패스 이름"
+            result.loc[i,"Check List"] = f'{y.name}'
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            i += 1
+            result.loc[i,"Category3"] = "기간"
+            result.loc[i,"Check List"] = f"이벤트 기간 : {y.start_date.strftime('%m/%d/%Y')} 11:30 ~ {y.end_date.strftime('%m/%d/%Y')} 11:30"
+        #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            
+            for index, quest in enumerate(y.craft_list) :
+                i += 1
+                result.loc[i,"Category3"] = f'패스 미션 및 보상'
+                result.loc[i,"Check List"] = f'{quest.limit} : {quest.recipe}'#.replace('[귀속][귀속]','[귀속]')
+
+        #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            
+            for index, item in enumerate(y.item_list) :
+                i += 1
+                result.loc[i,"Category3"] = f'{y.desc_list[index].name}'
+                result.loc[i,"Check List"] = f'{item.name} {int(item.count)}개'#.replace('[귀속][귀속]','[귀속]')
+                # try:
+                #     stat_amount = float(item.count)
+                #     if stat_amount < 1 :
+                #         stat_amount *= 100
+                #         stat_amount = f'{stat_amount}0%'
+                #     else :
+                #         stat_amount = int(stat_amount)
+
+                #     result.loc[i,"Check List"] = f"{item.name} +{stat_amount}".replace('[귀속]','')
+                # except : 
+                #     result.loc[i,"Check List"] = f'{item.name} +{(item.count)}'.replace('[귀속]','')#.replace('[귀속][귀속]','[귀속]')
 
     #     if len(y.itemList0) != 0 :
     #         desc0 = "\n".join(y.itemList0)
@@ -933,13 +968,13 @@ if __name__ == "__main__":
     # print("complete!")
     # os.system("pause")
     nation = 'KR'
-    doctype = "CheckList"
+    doctype = "TestCase"
 
     contents_name = "이벤트"
     
     result_path = f'{contents_name}_{doctype}'
     data_file_name = f'{contents_name}DATA_{nation} R2M.xlsx'#유료상점DATA_KR R2M.xlsx
-    date_text = '2023-11-15'
+    date_text = '2023-12-07'
     check_box_list = [True,True,False,True]
 
     if doctype == "CheckList" :

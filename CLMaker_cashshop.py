@@ -390,7 +390,10 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
                     result.loc[i,"Check List"] = desc0
 
                 else:
-                    result.loc[i,"Check List"] = f'{y.pkgName} 상자[귀속]'
+                    if '뽑기' not in str(y.pkgName) :
+                        result.loc[i,"Check List"] = f'{y.pkgName} 상자[귀속]'
+                    else :
+                        result.loc[i,"Check List"] = f'{y.pkgName} 관련 뽑기 내역 노출'
             
 
                 if len(y.itemList2) != 0 :
@@ -407,19 +410,21 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
         i += 1
         result.loc[i,"Category3"] = "상품슬롯 이미지"
 
-        for item0 in y.itemList0 :
-            #i += 1
-            if '다이아몬드' in str(item0):
-                result.loc[i,"Check List"] = "다이아몬드 이미지 노출"
-                i+=1
+        if len(y.itemList0) != 0 or len(y.itemList1) != 0 :
+            for item0 in y.itemList0 :
+                #i += 1
+                if '다이아몬드' in str(item0):
+                    result.loc[i,"Check List"] = "다이아몬드 이미지 노출"
+                    i+=1
 
-        for item1 in y.itemList1 :
-            #i += 1
-            if str(item1) != "nan" :
-                item1 = item1.replace("코인[귀속]","코인")
-                result.loc[i,"Check List"] = str(item1) + " 이미지 노출"
-                i+=1
-
+            for item1 in y.itemList1 :
+                #i += 1
+                if str(item1) != "nan" :
+                    item1 = item1.replace("코인[귀속]","코인")
+                    result.loc[i,"Check List"] = str(item1) + " 이미지 노출"
+                    i+=1
+        else:
+            result.loc[i,"Check List"] = f'{y.pkgName} 관련 이미지 노출'
         i += 1
         result.loc[i,"Category3"] = "상품슬롯 정보"
         if int(y.bonus) == 0 :
@@ -454,6 +459,7 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
 
         if int(y.bonus) == 0 :
             result.loc[i,"Check List"] =  "미획득"
+            i -= 1
         else :            
             result.loc[i,"Check List"] =  "마일리지 : " + str(y.bonus)+ " 적립"
 
@@ -461,7 +467,7 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
         i += 1
         if "원" in y.price or "TWD" in y.price:
             result.loc[i,"Category3"] = "보관함 수령"
-        elif y.category == "시즌 뽑기":
+        elif y.category == "시즌 뽑기" or '뽑기' in y.pkgName:
             result.loc[i,"Category3"] = "뽑기 획득"
         else:
             result.loc[i,"Category3"] = "아이템 획득"
@@ -479,6 +485,8 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
             
             if y.category == "시즌 뽑기":
                 result.loc[i,"Check List"] = "최상급 뽑기 11회 연출 및 카드 획득(고급 이상)"
+            elif '뽑기' in y.pkgName:
+                result.loc[i,"Check List"] = f"{y.pkgName} 연출 및 카드 획득"
             else:
                 result.loc[i,"Check List"] = y.pkgName + " 인벤토리 획득"
             i += 1
@@ -928,10 +936,11 @@ if __name__ == "__main__":
     nation = 'KR'
     contents_name = "유료상점"
     doctype = "CheckList"
+    doctype = "TestCase"
     
     result_path = f'{contents_name}_{doctype}'
     data_file_name = f'{contents_name}DATA_{nation} R2M.xlsx'#유료상점DATA_KR R2M.xlsx
-    date_text = '2023-11-15'
+    date_text = '2023-11-30'
     check_box_list = [True,True,False,False]
     
     if contents_name == "유료상점" : 

@@ -34,7 +34,7 @@ class WindowClass(QMainWindow, form_class) :
         self.setupUi(self) 
         self.setGeometry(1470,28,400,400)
         self.setFixedSize(450,350)
-        self.action_patchnote.triggered.connect(lambda : self.파일열기("패치노트_RDM.txt"))
+        self.action_patchnote.triggered.connect(lambda : self.파일열기("release_note_RDM.xlsx"))
         self.print_log("실행 가능")
 
         self.worker_thread = None
@@ -180,11 +180,21 @@ class WindowClass(QMainWindow, form_class) :
         
         log_file = fr".\log\log_{log_type}.txt"
         #error_message = traceback.format_exc()
-        with open(log_file, "a") as file:
-            file.write(f'\
-            date={time.strftime("%Y-%m-%d %H:%M:%S")}\n\
-            user={user_name}\n\
-            {msg}\n')
+        if not os.path.exists(log_file):
+            with open(log_file, "w"):
+                pass  # Create the file if it doesn't exist
+        with open(log_file, "r") as file:        
+            existing_logs = file.read()
+
+
+        with open(log_file, "w") as file:
+            file.write(f'\n\
+user={user_name}\n\
+date={time.strftime("%Y-%m-%d %H:%M:%S")}\n\
+{msg}\n\
+────────────────────────────────────────\n\
+{existing_logs}\
+    ')
         #print(f'생성실패 : {e}')
         if auto_open :
             os.startfile(log_file)
