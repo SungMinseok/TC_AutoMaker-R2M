@@ -1,129 +1,9 @@
 
-user=jungsoo
-date=2023-11-29 18:18:59
-result_path='이벤트_TestCase'
-data_file_name='이벤트DATA_TW R2M.xlsx'
-contents_name='이벤트'
-doctype='TestCase'
-date_text='2023-12-12'
-
-────────────────────────────────────────
-
-user=jungsoo
-date=2023-11-29 18:08:16
-result_path='이벤트_TestCase'
-data_file_name='이벤트DATA_TW R2M.xlsx'
-contents_name='이벤트'
-doctype='TestCase'
-date_text='2023-12-12'
-
-────────────────────────────────────────
-
-user=jungsoo
-date=2023-11-29 18:06:00
-result_path='이벤트_TestCase'
-data_file_name='이벤트DATA_TW R2M.xlsx'
-contents_name='이벤트'
-doctype='TestCase'
-date_text='2023-12-12'
-
-────────────────────────────────────────
-
-user=mssung
-date=2023-11-29 18:02:23
-result_path='유료상점_CheckList'
-data_file_name='유료상점DATA_KR R2M.xlsx'
-contents_name='유료상점'
-doctype='CheckList'
-date_text='2023-11-30'
-
-────────────────────────────────────────
-
-user=mssung
-date=2023-11-29 16:29:09
-result_path='이벤트_CheckList'
-data_file_name='이벤트DATA_KR R2M.xlsx'
-contents_name='이벤트'
-doctype='CheckList'
-date_text='2023-11-30'
-
-────────────────────────────────────────
-
-user=mssung
-date=2023-11-29 15:29:08
-result_path='이벤트_CheckList'
-data_file_name='이벤트DATA_KR R2M.xlsx'
-contents_name='이벤트'
-doctype='CheckList'
-date_text='2023-11-30'
-
-────────────────────────────────────────
-
-user=mssung
-date=2023-11-29 15:28:42
-result_path='이벤트_TestCase'
-data_file_name='이벤트DATA_KR R2M.xlsx'
-contents_name='이벤트'
-doctype='TestCase'
-date_text='2023-11-30'
-
-────────────────────────────────────────
-
-user=mssung
-date=2023-11-29 15:28:12
-result_path='이벤트_TestCase'
-data_file_name='이벤트DATA_KR R2M.xlsx'
-contents_name='이벤트'
-doctype='TestCase'
-date_text='2023-11-30'
-
-────────────────────────────────────────
-
-user=mssung
-date=2023-11-28 15:23:25
-result_path='이벤트_TestCase'
-data_file_name='이벤트DATA_KR R2M.xlsx'
-contents_name='이벤트'
-doctype='TestCase'
-date_text='2023-11-30'
-
-────────────────────────────────────────
-
 user=jmyang
-date=2023-11-28 10:06:13
-result_path='유료상점_CheckList'
-data_file_name='유료상점DATA_TW R2M.xlsx'
-contents_name='유료상점'
-doctype='CheckList'
-date_text='2023-11-28'
-
-────────────────────────────────────────
-
-user=jmyang
-date=2023-11-28 10:05:29
+date=2023-11-28 09:59:15
 result_path='이벤트_CheckList'
 data_file_name='이벤트DATA_TW R2M.xlsx'
 contents_name='이벤트'
-doctype='CheckList'
-date_text='2023-11-28'
-
-────────────────────────────────────────
-
-user=jungsoo
-date=2023-11-28 09:58:41
-result_path='이벤트_CheckList'
-data_file_name='이벤트DATA_TW R2M.xlsx'
-contents_name='이벤트'
-doctype='CheckList'
-date_text='2023-11-28'
-
-────────────────────────────────────────
-
-user=jungsoo
-date=2023-11-28 09:58:31
-result_path='유료상점_CheckList'
-data_file_name='유료상점DATA_TW R2M.xlsx'
-contents_name='유료상점'
 doctype='CheckList'
 date_text='2023-11-28'
 
@@ -678,4 +558,4 @@ contents_name='유료상점'
 doctype='CheckList'
 date_text='2023-11-23'
 
-                                                                                                                            
+                                                                            

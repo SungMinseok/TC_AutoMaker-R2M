@@ -1,5 +1,83 @@
 
 user=mssung
+date=2023-11-29 16:29:09
+contents_name='이벤트'
+doctype='CheckList'
+date_text='2023-11-30'
+Traceback (most recent call last):
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\RDM.py", line 137, in make_process
+    result_file_name = ClEvent.write_data(data,result_path,check_box_list)
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\CLMaker_Event.py", line 664, in write_data
+    info += f'\n{item.name}\n제한:{craft.limit}, 비용:{int(craft.price)}\n'
+ValueError: cannot convert float NaN to integer
+
+────────────────────────────────────────
+
+user=mssung
+date=2023-11-29 15:28:12
+contents_name='이벤트'
+doctype='TestCase'
+date_text='2023-11-30'
+Traceback (most recent call last):
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\RDM.py", line 140, in make_process
+    data = ClEvent.extract_data(data_file_name,date_text)
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\CLMaker_Event.py", line 103, in extract_data
+    sheet_names = pd.read_excel(fileName, sheet_name=None).keys()
+  File "C:\Python39\lib\site-packages\pandas\util\_decorators.py", line 311, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 364, in read_excel
+    io = ExcelFile(io, storage_options=storage_options, engine=engine)
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1191, in __init__
+    ext = inspect_excel_format(
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1070, in inspect_excel_format
+    with get_handle(
+  File "C:\Python39\lib\site-packages\pandas\io\common.py", line 711, in get_handle
+    handle = open(handle, ioargs.mode)
+PermissionError: [Errno 13] Permission denied: '이벤트DATA_KR R2M.xlsx'
+
+────────────────────────────────────────
+
+user=mssung
+date=2023-11-27 12:06:03
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-11-30'
+Traceback (most recent call last):
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\RDM.py", line 128, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\CLMaker_cashshop.py", line 142, in extract_data_cashshop
+    sheet_names = pd.ExcelFile(fileName).sheet_names
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1191, in __init__
+    ext = inspect_excel_format(
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1070, in inspect_excel_format
+    with get_handle(
+  File "C:\Python39\lib\site-packages\pandas\io\common.py", line 711, in get_handle
+    handle = open(handle, ioargs.mode)
+PermissionError: [Errno 13] Permission denied: '유료상점DATA_KR R2M.xlsx'
+
+────────────────────────────────────────
+
+user=mssung
+date=2023-11-27 11:43:49
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-11-30'
+Traceback (most recent call last):
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\RDM.py", line 128, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\CLMaker_cashshop.py", line 142, in extract_data_cashshop
+    sheet_names = pd.ExcelFile(fileName).sheet_names
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1191, in __init__
+    ext = inspect_excel_format(
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1070, in inspect_excel_format
+    with get_handle(
+  File "C:\Python39\lib\site-packages\pandas\io\common.py", line 711, in get_handle
+    handle = open(handle, ioargs.mode)
+PermissionError: [Errno 13] Permission denied: '유료상점DATA_KR R2M.xlsx'
+
+────────────────────────────────────────
+
+user=mssung
 date=2023-11-24 19:19:05
 contents_name='유료상점'
 doctype='TestCase'
@@ -181,4 +259,4 @@ Traceback (most recent call last):
     a.pkgID = int(tempDf.loc[0,"CashShopID"])
 ValueError: invalid literal for int() with base 10: 'TWD 1000028'
 
-                    
+                                    

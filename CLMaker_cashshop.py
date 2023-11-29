@@ -315,7 +315,27 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
     totalResult = pd.DataFrame()
 #print(len(salesList))
 
-    salesList.sort(key =lambda a: (a.server,a.category,a.pkgID))
+    #salesList.sort(key =lambda a: (a.server,a.category,a.pkgID))
+
+    category_order = ['시즌 뽑기', '기간한정상품', '패키지', '카드', '재화', '이벤트', '마일리지']
+    
+    for sale in salesList:
+        print(f'{sale.pkgName}|{sale.server}|{sale.salesCheck}|{sale.category}|{sale.order}')
+    try:
+        #    sale.salesCheck = float(sale.salesCheck)
+        #salesList.sort(key=lambda a: (a.server, a.salesCheck, a.category, a.order))
+        salesList.sort(key=lambda a: (
+            #a.salesCheck,
+            a.server,
+            category_order.index(a.category) if a.category in category_order else float('inf'),
+            a.order
+        ))
+
+    except Exception as e:
+        print(e)
+        print("정렬에 문제 발생... 표에 제대로 입력됐는지 확인 필요...")
+
+
     curRow = 0
     count = 0
     tqdmCount0=0
@@ -366,6 +386,8 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
                     desc0 += f'\n사용 시 다음 아이템 획득'
                 elif len(y.itemList1) != 0 and len(y.itemList2) != 0 :
                     desc0 += f'\n사용 시 다음 아이템 중 1종 획득'
+                elif len(y.itemList1) == 0 and len(y.itemList2) != 0 :
+                    desc0 += f'\n사용 시 다음 아이템 중 1종 획득'
                 result.loc[i,"Check List"] = desc0
 
 
@@ -373,6 +395,14 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
                     i += 1
                     #desc1 = f'사용 시 다음 아이템 획득'
                     desc1 = "\n".join(map(str, y.itemList1))
+                    desc1 = desc1.replace("nan\n","")
+                    desc1 = desc1.replace("코인[귀속]","코인")
+                    result.loc[i,"Check List"] = desc1
+
+                if len(y.itemList2) != 0 :
+                    i += 1
+                    #desc1 = f'사용 시 다음 아이템 획득'
+                    desc1 = "\n".join(map(str, y.itemList2))
                     desc1 = desc1.replace("nan\n","")
                     desc1 = desc1.replace("코인[귀속]","코인")
                     result.loc[i,"Check List"] = desc1
@@ -410,7 +440,18 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
         i += 1
         result.loc[i,"Category3"] = "상품슬롯 이미지"
 
-        if len(y.itemList0) != 0 or len(y.itemList1) != 0 :
+        if y.pkgID == 80060 :
+            print('didiid')
+
+        if len(y.itemList0) != 0 :
+            for item0 in y.itemList0 :
+                if '다이아몬드' in str(item0):
+                    result.loc[i,"Check List"] = "다이아몬드 이미지 노출"
+                    i+=1
+                else :
+                    result.loc[i,"Check List"] = f"{item0} 관련 이미지 노출"
+                    i+=1
+        elif len(y.itemList1) != 0 :
             for item0 in y.itemList0 :
                 #i += 1
                 if '다이아몬드' in str(item0):
@@ -488,7 +529,16 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
             elif '뽑기' in y.pkgName:
                 result.loc[i,"Check List"] = f"{y.pkgName} 연출 및 카드 획득"
             else:
-                result.loc[i,"Check List"] = y.pkgName + " 인벤토리 획득"
+                if len(y.itemList0) != 0 :
+                    for item0 in y.itemList0 :
+                        # if '다이아몬드' in str(item0):
+                        #     result.loc[i,"Check List"] = "다이아몬드 이미지 노출"
+                        #     i+=1
+                        # else :
+                        result.loc[i,"Check List"] = f"{item0} 인벤토리 획득"
+                        i+=1
+                else:
+                    result.loc[i,"Check List"] = y.pkgName + " 인벤토리 획득"
             i += 1
 
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■

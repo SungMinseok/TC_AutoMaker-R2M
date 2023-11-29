@@ -20,7 +20,7 @@ import threading
 import traceback
 #import socket
 import os
-#import pandas as pd
+import pandas as pd
 
 
 
@@ -30,6 +30,16 @@ FROM_CLASS_Loading = uic.loadUiType("load.ui")[0]
 
 user_name = os.getlogin()
 
+
+cache_folder = "./cache"
+if not os.path.isdir(cache_folder):                                                           
+    os.mkdir(cache_folder)
+
+cache_path = f'./cache/cache_{user_name}.csv'
+try:
+    df_cache = pd.read_csv(cache_path, sep='\t', encoding='utf-16', index_col='key')
+except FileNotFoundError as e:
+    print(f'{e} : 캐시 파일 없음')
 
 class WindowClass(QMainWindow, form_class) :
     def __init__(self) :
@@ -66,14 +76,16 @@ class WindowClass(QMainWindow, form_class) :
         self.btn_resultpath.clicked.connect(self.select_data_file)
         self.btn_resultpath_2.clicked.connect(lambda : self.파일열기(self.input_resultpath.text()))    
 
-        # '''패치노트'''
-        # patch_note_check = self.import_cache_all([QCheckBox,'check_option_1'])
+        '''패치노트'''
+        patch_note_check = self.import_cache_all([QCheckBox,'check_option_1'])
 
-        # if patch_note_check.lower() == 'true': #or ( patch_note_check.lower() == 'false' and is_next_day): 
-        #     x, patch_see_again = self.popup2(des_text=
-        #                                 f"업데이트 일자 : {last_modified_date}\n\n최신 업데이트 항목 10개\n\n{ms.read_patch_notes('release_note_R2A.xlsx')}", popup_type='patchnote')
+        if patch_note_check != None and patch_note_check.lower() == 'true': #or ( patch_note_check.lower() == 'false' and is_next_day): 
+            x, patch_see_again = self.popup2(des_text=
+                                        f"업데이트 일자 : {last_modified_date}\n\n최신 업데이트 항목 10개\n\n{ms.read_patch_notes('release_note_R2A.xlsx')}", popup_type='patchnote')
         
-        #     self.check_option_1.setChecked(not patch_see_again)
+            self.check_option_1.setChecked(not patch_see_again)
+
+        self.import_cache_all()
 
 #기본동작■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
@@ -319,80 +331,83 @@ date={time.strftime("%Y-%m-%d %H:%M:%S")}\n\
         print(f'생성실패 : {error_message}')
         os.system('pause')
 
-    # def import_cache_all(self,any_widget = None):
-    #     '''any_widget : [QLineEdit,'input_00']'''
+    def import_cache_all(self,any_widget = None):
+        '''any_widget : [QLineEdit,'input_00']'''
 
-    #     try:
-    #         if df_cache is None :
-    #         # Load CSV file with tab delimiter and utf-16 encoding
-    #             df = pd.read_csv(cache_path, sep='\t', encoding='utf-16', index_col='key')
-    #         else :
-    #             df = df_cache
-    #         if any_widget == None :
-    #             all_widgets = self.findChildren((QLineEdit, QLabel, QComboBox, QCheckBox, QPlainTextEdit,QPushButton))
-    #         else:
-    #             all_widgets = [self.findChild(any_widget[0] ,any_widget[1])]
-    #             #return 
-    #         #all_widgets = self.findChildren((QLineEdit, QLabel, QComboBox, QCheckBox, QPlainTextEdit,QPushButton))
+        try:
+            if df_cache is None :
+            # Load CSV file with tab delimiter and utf-16 encoding
+                df = pd.read_csv(cache_path, sep='\t', encoding='utf-16', index_col='key')
+            else :
+                df = df_cache
+            if any_widget == None :
+                all_widgets = self.findChildren((QLineEdit, QLabel, QComboBox, QCheckBox, QPlainTextEdit,QPushButton))
+            else:
+                all_widgets = [self.findChild(any_widget[0] ,any_widget[1])]
+                #return 
+            #all_widgets = self.findChildren((QLineEdit, QLabel, QComboBox, QCheckBox, QPlainTextEdit,QPushButton))
 
-    #         for widget in all_widgets:
-    #             object_name = widget.objectName()
-    #             if object_name in df.index:
-    #                 value = str(df.loc[object_name, 'value'])
-    #                 if isinstance(widget, (QLineEdit,QLabel,QPushButton)):
-    #                     widget.setText(value)
-    #                 elif isinstance(widget, QComboBox):
-    #                     # Set selected index based on the value, adjust as needed
-    #                     index = widget.findText(value)
-    #                     if index != -1:
-    #                         widget.setCurrentIndex(index)
-    #                 elif isinstance(widget, QCheckBox):
-    #                     widget.setChecked(value.lower() == 'true')
-    #                 elif isinstance(widget, QPlainTextEdit):
-    #                     widget.setPlainText(value)
+            for widget in all_widgets:
+                object_name = widget.objectName()
+                if object_name in df.index:
+                    value = str(df.loc[object_name, 'value'])
+                    if isinstance(widget, (QLineEdit,QLabel,QPushButton)):
+                        widget.setText(value)
+                    elif isinstance(widget, QComboBox):
+                        # Set selected index based on the value, adjust as needed
+                        index = widget.findText(value)
+                        if index != -1:
+                            widget.setCurrentIndex(index)
+                    elif isinstance(widget, QCheckBox):
+                        widget.setChecked(value.lower() == 'true')
+                    elif isinstance(widget, QPlainTextEdit):
+                        widget.setPlainText(value)
 
-    #         if any_widget != None :
-    #             return value
-    #     except Exception as e:
-    #         print(f"Error importing cache: {e}")
+            if any_widget != None :
+                return value
+        except Exception as e:
+            print(f"Error importing cache: {e}")
 
 
 
-    # def export_cache_all(self):
-    #     try:
-    #         data = {'key': [], 'value': []}
+    def export_cache_all(self):
+        try:
+            data = {'key': [], 'value': []}
 
-    #         all_widgets = self.findChildren((QLineEdit, QLabel, QComboBox, QCheckBox, QPlainTextEdit,QPushButton, QDateTimeEdit))
+            all_widgets = self.findChildren((QLineEdit, QLabel, QComboBox, QCheckBox, QPlainTextEdit,QPushButton, QDateTimeEdit))
 
-    #         for widget in all_widgets:
-    #             value = ""
-    #             if isinstance(widget, (QLineEdit,QLabel)) :
-    #                 value = widget.text()
-    #             elif isinstance(widget, (QPushButton)) :
-    #                 if 'preset_bookmark' in widget.objectName() : 
-    #                     value = widget.text()
-    #                 else : 
-    #                     continue
-    #             elif isinstance(widget, QComboBox):
-    #                 value = widget.currentText()
-    #             elif isinstance(widget, QCheckBox):
-    #                 value = str(widget.isChecked())
-    #             elif isinstance(widget, QPlainTextEdit):
-    #                 value = widget.toPlainText()
-    #             elif isinstance(widget, QDateTimeEdit):
-    #                 value = widget.dateTime().toString(Qt.ISODate)
+            for widget in all_widgets:
+                value = ""
+                if isinstance(widget, (QLineEdit,QLabel)) :
+                    value = widget.text()
+                elif isinstance(widget, (QPushButton)) :
+                    if 'preset_bookmark' in widget.objectName() : 
+                        value = widget.text()
+                    else : 
+                        continue
+                elif isinstance(widget, QComboBox):
+                    value = widget.currentText()
+                elif isinstance(widget, QCheckBox):
+                    value = str(widget.isChecked())
+                elif isinstance(widget, QPlainTextEdit):
+                    value = widget.toPlainText()
+                elif isinstance(widget, QDateTimeEdit):
+                    value = widget.dateTime().toString(Qt.ISODate)
 
-    #             if value != "":
-    #                 key = widget.objectName()
-    #                 data['key'].append(key)
-    #                 data['value'].append(value)
+                if value != "":
+                    key = widget.objectName()
+                    data['key'].append(key)
+                    data['value'].append(value)
 
-    #         df = pd.DataFrame(data)
-    #         df.set_index('key', inplace=True)
-    #         df.to_csv(cache_path, sep='\t', encoding='utf-16')
-    #     except Exception as e:
-    #         print(f"Error exporting cache: {e}")
+            df = pd.DataFrame(data)
+            df.set_index('key', inplace=True)
+            df.to_csv(cache_path, sep='\t', encoding='utf-16')
+            print(f"exporting cache successfully!")
+        except Exception as e:
+            print(f"Error exporting cache: {e}")
 
+    def closeEvent(self,event):
+        self.export_cache_all()
 
 class loading(QWidget,FROM_CLASS_Loading):
     

@@ -157,7 +157,7 @@ def extract_data(fileName, tcStartDate):
                 if '[귀속]' not in str1 :
                     str1 = f'{str1}[귀속]'
                     str1 = str1.replace(' [귀속]','[귀속]')
-                if '코인' in str1 :
+                if '코인' in str1 and '상자' not in str1:
                     str1 = str1.replace('[귀속]','')
             except : 
                 pass
@@ -658,6 +658,15 @@ def write_data(targetList : list[Event], resultPath = "이벤트_CheckList", opt
                     item.count = f'{float(item.count) * 100}%'
                 info += f'\n{item.name} +{(item.count)}'
                 info = info.replace('[귀속]','')
+        elif y.type == "상점" :
+            for index, item in enumerate(y.item_list) :
+                craft = y.craft_list[index]
+                info += f'\n{item.name}\n{craft.limit}, {craft.recipe}\n'
+        elif y.type == "패스" :
+            info += f'{y.limit} 수행 가능\n'
+            for index, item in enumerate(y.item_list) :
+                quest = y.desc_list[index]
+                info += f'\n{quest.name}:{item.name} {int(item.count)}개'
                 
         if options[1] : #CL 유지/종료 항목 내용 생략
             if y.open_check == "이벤트 유지" :
@@ -969,12 +978,13 @@ if __name__ == "__main__":
     # os.system("pause")
     nation = 'KR'
     doctype = "TestCase"
+    doctype = "CheckList"
 
     contents_name = "이벤트"
     
     result_path = f'{contents_name}_{doctype}'
     data_file_name = f'{contents_name}DATA_{nation} R2M.xlsx'#유료상점DATA_KR R2M.xlsx
-    date_text = '2023-12-07'
+    date_text = '2023-11-30'
     check_box_list = [True,True,False,True]
 
     if doctype == "CheckList" :
