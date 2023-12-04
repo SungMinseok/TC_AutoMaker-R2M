@@ -204,7 +204,7 @@ def extract_data_cashshop(fileName, tcStartDate):
         a.pkgID = int(tempDf.loc[0,"CashShopID"])
         a.pkgName = tempDf.loc[0,"PkgName"] #+ "[귀속]"
         a.category = str(tempDf.loc[0,"Category"])
-        a.order = tempDf.loc[0,"Order"]
+        a.order = tempDf["Order"].iloc[0] if "Order" in tempDf.columns else '0'
         a.price = str(tempDf.loc[0,"Price"])
         try:
             a.bonus = int(tempDf.loc[0,"Bonus"])
@@ -317,10 +317,12 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
 
     #salesList.sort(key =lambda a: (a.server,a.category,a.pkgID))
 
-    category_order = ['시즌 뽑기', '기간한정상품', '패키지', '카드', '재화', '이벤트', '마일리지']
-    
+    category_order_KR = ['시즌 뽑기', '기간한정상품', '패키지', '카드', '재화', '이벤트', '마일리지']
+    category_order_TW = ['3자 결제', '핫딜 상품', '추천상품', '럭키박스', '시즌 뽑기', '다이아', '마일리지']
+    category_order = category_order_KR if nation == "KR" else category_order_TW
     for sale in salesList:
-        print(f'{sale.pkgName}|{sale.server}|{sale.salesCheck}|{sale.category}|{sale.order}')
+        #print(f'{sale.pki}|{sale.server}|{sale.category}|{sale.order}')
+        print(f'{sale.pkgID}')
     try:
         #    sale.salesCheck = float(sale.salesCheck)
         #salesList.sort(key=lambda a: (a.server, a.salesCheck, a.category, a.order))
@@ -354,8 +356,14 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
 
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
         i += 1
-        result.loc[i,"Category3"] = "카테고리"
-        result.loc[i,"Check List"] = y.category
+        if y.category == "3자 결제":
+            result.loc[i,"Category3"] = "3자결제 웹페이지"
+            result.loc[i,"Check List"] = f"판매종료일 : {y.endDate.strftime('~ %m/%d/%Y')} (https://alpha-asia-pay-r2m.webzen.com.tw/payment)"
+            
+        
+        else:
+            result.loc[i,"Category3"] = "카테고리"
+            result.loc[i,"Check List"] = y.category
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
         if y.pkgID == 1100043 :
@@ -484,8 +492,10 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
 
         i += 1
         result.loc[i,"Category3"] = "아이템 구매"
-
-        if "원" in y.price or "TWD" in y.price:
+        if y.category == '3자 결제':
+            result.loc[i,"Check List"] = f'3자결제 웹페이지 내 해당 상품 선택, MyCard 선택 후 NEXT\n체크박스 체크 후 儲值\nTW - MyCard Wallet 선택\nricky@soft-world.com.tw / sw123456 입력 후 Login\nPayment code : 123456 입력 후 Confirm\n인게임 유료상점 보관함 스크롤 시 획득'
+        
+        elif "원" in y.price or "TWD" in y.price or ('다이아' not in y.price and '마일리지' not in y.price and '골드' not in y.price and '로얄' not in y.price ):
             result.loc[i,"Check List"] = f"결제 모듈 내 {y.pkgName} 노출"
             i += 1
             result.loc[i,"Check List"] = f"결제 모듈 내 {y.price} 노출"
@@ -556,16 +566,26 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
         
         i-=1
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-        i += 1
-        result.loc[i,"Category3"] = "구매 제한"
+    
+        if '스텝' in y.pkgName :
+            i += 1
+            result.loc[i,"Category3"] = "스텝업"
+            result.loc[i,"Check List"] = str(y.limit) + " 구매 시 스텝업 다음 단계 상품 노출\n(마지막 단계 : [구매 완료] 라벨 노출 및 터치 불가)"
+    
         
-        if str(y.limit) == 'nan' or str(y.limit) == '무제한':
-            result.loc[i,"Check List"] = "구매 제한 없음 (n회 구매 시, [구매 완료] 라벨 미노출)"
-        else :            
-            if '스텝' in y.pkgName :
-                result.loc[i,"Check List"] = str(y.limit) + " 구매 시 스텝업 다음 단계 상품 노출\n(마지막 단계 : [구매 완료] 라벨 노출 및 터치 불가)"
-            else :
-                result.loc[i,"Check List"] = str(y.limit) + " 구매 시 [구매 완료] 라벨 노출 및 터치 불가"
+        
+        
+        
+        # i += 1
+        # result.loc[i,"Category3"] = "스텝업"
+        
+        # if str(y.limit) == 'nan' or str(y.limit) == '무제한':
+        #     result.loc[i,"Check List"] = "구매 제한 없음 (n회 구매 시, [구매 완료] 라벨 미노출)"
+        # else :            
+        #     if '스텝' in y.pkgName :
+        #         result.loc[i,"Check List"] = str(y.limit) + " 구매 시 스텝업 다음 단계 상품 노출\n(마지막 단계 : [구매 완료] 라벨 노출 및 터치 불가)"
+        #     else :
+        #         result.loc[i,"Check List"] = str(y.limit) + " 구매 시 [구매 완료] 라벨 노출 및 터치 불가"
 
         #i += 1
         #result.loc[i,"Check List"] = "상품 슬롯 하단에 [구매 완료] 라벨 노출"
@@ -983,14 +1003,14 @@ def highlight_star_cells(sheet):
 
 if __name__ == "__main__":
     #def make_process(self, result_path, data_file_name, contents_name, doctype, date_text, check_box_list):
-    nation = 'KR'
+    nation = 'TW'
     contents_name = "유료상점"
     doctype = "CheckList"
     doctype = "TestCase"
     
     result_path = f'{contents_name}_{doctype}'
     data_file_name = f'{contents_name}DATA_{nation} R2M.xlsx'#유료상점DATA_KR R2M.xlsx
-    date_text = '2023-11-30'
+    date_text = '2023-12-12'
     check_box_list = [True,True,False,False]
     
     if contents_name == "유료상점" : 

@@ -1,4 +1,174 @@
 
+user=mssung
+date=2023-12-01 16:44:38
+result_path='유료상점_TestCase'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+
+────────────────────────────────────────
+
+user=mssung
+date=2023-12-01 16:39:14
+result_path='유료상점_TestCase'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+
+────────────────────────────────────────
+
+user=mssung
+date=2023-12-01 16:38:48
+result_path='유료상점_TestCase'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+
+────────────────────────────────────────
+
+user=mssung
+date=2023-12-01 16:38:40
+result_path='유료상점_TestCase'
+data_file_name='유료상점DATA_KR R2M.xlsx'
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+
+────────────────────────────────────────
+
+user=jungsoo
+date=2023-12-01 15:54:18
+result_path='유료상점_TestCase'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+
+────────────────────────────────────────
+
+user=jungsoo
+date=2023-12-01 09:52:28
+result_path='유료상점_TestCase'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+
+────────────────────────────────────────
+
+user=jungsoo
+date=2023-12-01 09:52:07
+result_path='유료상점_TestCase'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+
+────────────────────────────────────────
+
+user=jungsoo
+date=2023-11-30 16:22:15
+result_path='유료상점_TestCase'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+
+────────────────────────────────────────
+
+user=jungsoo
+date=2023-11-30 16:21:12
+result_path='유료상점_TestCase'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+
+────────────────────────────────────────
+
+user=jungsoo
+date=2023-11-30 16:20:45
+result_path='유료상점_TestCase'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+
+────────────────────────────────────────
+
+user=jungsoo
+date=2023-11-30 16:20:35
+result_path='유료상점_TestCase'
+data_file_name='유료상점DATA_TW R2M.xlsx'
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+
+────────────────────────────────────────
+
+user=mssung
+date=2023-11-30 10:42:26
+result_path='이벤트_CheckList'
+data_file_name='이벤트DATA_KR R2M.xlsx'
+contents_name='이벤트'
+doctype='CheckList'
+date_text='2023-11-23'
+
+────────────────────────────────────────
+
+user=mssung
+date=2023-11-30 10:18:20
+result_path='유료상점_CheckList'
+data_file_name='유료상점DATA_KR R2M.xlsx'
+contents_name='유료상점'
+doctype='CheckList'
+date_text='2023-11-30'
+
+────────────────────────────────────────
+
+user=mssung
+date=2023-11-30 10:16:36
+result_path='유료상점_CheckList'
+data_file_name='유료상점DATA_KR R2M.xlsx'
+contents_name='유료상점'
+doctype='CheckList'
+date_text='2023-11-30'
+
+────────────────────────────────────────
+
+user=mssung
+date=2023-11-30 10:09:07
+result_path='유료상점_CheckList'
+data_file_name='유료상점DATA_KR R2M.xlsx'
+contents_name='유료상점'
+doctype='CheckList'
+date_text='2023-11-30'
+
+────────────────────────────────────────
+
+user=jungsoo
+date=2023-11-30 10:01:25
+result_path='유료상점_CheckList'
+data_file_name='유료상점DATA_KR R2M.xlsx'
+contents_name='유료상점'
+doctype='CheckList'
+date_text='2023-11-30'
+
+────────────────────────────────────────
+
+user=jmyang
+date=2023-11-30 10:00:13
+result_path='이벤트_CheckList'
+data_file_name='이벤트DATA_KR R2M.xlsx'
+contents_name='이벤트'
+doctype='CheckList'
+date_text='2023-11-30'
+
+────────────────────────────────────────
+
 user=jungsoo
 date=2023-11-29 18:18:59
 result_path='이벤트_TestCase'
@@ -678,4 +848,4 @@ contents_name='유료상점'
 doctype='CheckList'
 date_text='2023-11-23'
 
-                                                                                                                            
+                                                                                                                                                                                                

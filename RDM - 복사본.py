@@ -21,6 +21,7 @@ import traceback
 #import socket
 import os
 import pandas as pd
+import mspkg as mp
 
 
 
@@ -29,6 +30,8 @@ FROM_CLASS_Loading = uic.loadUiType("load.ui")[0]
 #화면을 띄우는데 사용되는 Class 선언            print(e)
 
 user_name = os.getlogin()
+patch_file_name = 'release_note_RDM.xlsx'
+patch_show_count = 5
 
 
 cache_folder = "./cache"
@@ -47,7 +50,7 @@ class WindowClass(QMainWindow, form_class) :
         self.setupUi(self) 
         self.setGeometry(1470,28,400,400)
         self.setFixedSize(450,350)
-        self.action_patchnote.triggered.connect(lambda : self.파일열기("release_note_RDM.xlsx"))
+        self.action_patchnote.triggered.connect(lambda : self.파일열기(patch_file_name))
         self.print_log("실행 가능")
 
         self.worker_thread = None
@@ -56,6 +59,9 @@ class WindowClass(QMainWindow, form_class) :
         self.set_data_path()
         self.set_result_path()
 
+
+        file_dict = mp.get_recent_file_list(os.getcwd())
+        last_modified_date = list(file_dict.values())[0]
 
         self.btn_datapath.clicked.connect(self.select_data_file)
         self.btn_datapath_2.clicked.connect(lambda : self.파일열기(self.input_datapath.text()))
@@ -76,14 +82,15 @@ class WindowClass(QMainWindow, form_class) :
         self.btn_resultpath.clicked.connect(self.select_data_file)
         self.btn_resultpath_2.clicked.connect(lambda : self.파일열기(self.input_resultpath.text()))    
 
-        '''패치노트'''
-        patch_note_check = self.import_cache_all([QCheckBox,'check_option_1'])
+        
 
+        '''패치노트'''
+        patch_note_check = self.import_cache_all([QCheckBox,'checkBox_99'])
         if patch_note_check != None and patch_note_check.lower() == 'true': #or ( patch_note_check.lower() == 'false' and is_next_day): 
             x, patch_see_again = self.popup2(des_text=
-                                        f"업데이트 일자 : {last_modified_date}\n\n최신 업데이트 항목 10개\n\n{ms.read_patch_notes('release_note_R2A.xlsx')}", popup_type='patchnote')
+                                        f"업데이트 일자 : {last_modified_date}\n\n최신 업데이트 항목 {patch_show_count}개\n\n{mp.read_patch_notes(patch_file_name,patch_show_count)}", popup_type='patchnote')
         
-            self.check_option_1.setChecked(not patch_see_again)
+            self.checkBox_99.setChecked(not patch_see_again)
 
         self.import_cache_all()
 
@@ -405,6 +412,37 @@ date={time.strftime("%Y-%m-%d %H:%M:%S")}\n\
             print(f"exporting cache successfully!")
         except Exception as e:
             print(f"Error exporting cache: {e}")
+    
+    def popup2(self, des_text = "", popup_type = ''):
+
+        msg = QtWidgets.QMessageBox()  
+        #msg.setGeometry(1470,58,300,2000)
+        msg.setTextInteractionFlags(QtCore.Qt.TextInteractionFlag.TextSelectableByMouse)
+        
+        if popup_type == "":
+            msg.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+            msg.setText(des_text)
+            return msg.exec_()
+        elif popup_type == 'patchnote' :
+                        # Create a checkbox
+            checkbox = QtWidgets.QCheckBox("오늘은 그만 보기", msg)
+            #msg.setStandardButtons(QtWidgets.QMessageBox.Open | QtWidgets.QMessageBox.Cancel)
+            msg.setStandardButtons(QtWidgets.QMessageBox.Cancel)
+
+            msg.setCheckBox(checkbox)
+            msg.setText(des_text)
+            #print(checkbox.isChecked())
+            return msg.exec_(), checkbox.isChecked()
+        elif popup_type == 'report' :
+            #checkbox = QtWidgets.QCheckBox("오늘은 그만 보기", msg)
+            #msg.setStandardButtons(QtWidgets.QMessageBox.Open | QtWidgets.QMessageBox.Cancel)
+            report_text = QtWidgets.QPlainTextEdit()
+
+            msg.setStandardButtons(QtWidgets.QMessageBox.Ok | QtWidgets.QMessageBox.Cancel)
+
+            #msg.setText(des_text)
+            #print(checkbox.isChecked())
+            return msg.exec_(), checkbox.isChecked()
 
     def closeEvent(self,event):
         self.export_cache_all()
@@ -475,6 +513,40 @@ import CLMaker_cashshop as ClCash
 import CLMaker_Event as ClEvent
 import openpyxl
 
+# .py 파일을 모두 찾아내는 함수
+def get_recent_file_list(directory):
+    '''
+    os.getcwd()
+
+    
+    #print(list(file_dict.keys())[0])
+    #print(list(file_dict.values())[0])
+    '''
+    
+    current_directory = directory
+
+    def find_py_files(directory):
+        for root, dirs, files in os.walk(directory):
+            for file in files:
+                if file.endswith('.py'):
+                    yield os.path.join(root, file)
+
+    # .py 파일 중에서 수정 날짜가 최신인 순으로 정렬
+    py_files = list(find_py_files(current_directory))
+    py_files.sort(key=lambda x: os.path.getmtime(x), reverse=True)
+
+    file_dict = {}
+
+    # 최신 수정 날짜를 가진 .py 파일 출력
+    for file in py_files:
+        modified_time = os.path.getmtime(file)
+        modified_date = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(modified_time))
+        #print(f"{file}: {modified_date}")
+        file_dict[file] = modified_date
+
+    #print(list(file_dict.keys())[0])
+    #print(list(file_dict.values())[0])
+    return file_dict
 if __name__ == "__main__" :
     #QApplication : 프로그램을 실행시켜주는 클래스
     app = QApplication(sys.argv) 

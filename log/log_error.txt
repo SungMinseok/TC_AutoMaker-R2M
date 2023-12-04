@@ -1,4 +1,391 @@
 
+user=jungsoo
+date=2023-12-01 16:40:09
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+Traceback (most recent call last):
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\RDM.py", line 140, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\CLMaker_cashshop.py", line 142, in extract_data_cashshop
+    sheet_names = pd.ExcelFile(fileName).sheet_names
+                  ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\io\excel\_base.py", line 1652, in __init__
+    ext = inspect_excel_format(
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\io\excel\_base.py", line 1525, in inspect_excel_format
+    with get_handle(
+         ^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\io\common.py", line 865, in get_handle
+    handle = open(handle, ioargs.mode)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '유료상점DATA_TW R2M.xlsx'
+
+────────────────────────────────────────
+
+user=jungsoo
+date=2023-12-01 16:39:39
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+Traceback (most recent call last):
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\RDM.py", line 140, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\CLMaker_cashshop.py", line 142, in extract_data_cashshop
+    sheet_names = pd.ExcelFile(fileName).sheet_names
+                  ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\io\excel\_base.py", line 1652, in __init__
+    ext = inspect_excel_format(
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\io\excel\_base.py", line 1525, in inspect_excel_format
+    with get_handle(
+         ^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\io\common.py", line 865, in get_handle
+    handle = open(handle, ioargs.mode)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '유료상점DATA_TW R2M.xlsx'
+
+────────────────────────────────────────
+
+user=mssung
+date=2023-12-01 16:38:48
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+Traceback (most recent call last):
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\RDM.py", line 140, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\CLMaker_cashshop.py", line 142, in extract_data_cashshop
+    sheet_names = pd.ExcelFile(fileName).sheet_names
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1191, in __init__
+    ext = inspect_excel_format(
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1070, in inspect_excel_format
+    with get_handle(
+  File "C:\Python39\lib\site-packages\pandas\io\common.py", line 711, in get_handle
+    handle = open(handle, ioargs.mode)
+PermissionError: [Errno 13] Permission denied: '유료상점DATA_TW R2M.xlsx'
+
+────────────────────────────────────────
+
+user=mssung
+date=2023-12-01 16:38:40
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+Traceback (most recent call last):
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\RDM.py", line 140, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\CLMaker_cashshop.py", line 142, in extract_data_cashshop
+    sheet_names = pd.ExcelFile(fileName).sheet_names
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1191, in __init__
+    ext = inspect_excel_format(
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1070, in inspect_excel_format
+    with get_handle(
+  File "C:\Python39\lib\site-packages\pandas\io\common.py", line 711, in get_handle
+    handle = open(handle, ioargs.mode)
+PermissionError: [Errno 13] Permission denied: '유료상점DATA_KR R2M.xlsx'
+
+────────────────────────────────────────
+
+user=jungsoo
+date=2023-12-01 15:54:18
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+Traceback (most recent call last):
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexes\base.py", line 3802, in get_loc
+    return self._engine.get_loc(casted_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "pandas\_libs\index.pyx", line 138, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\index.pyx", line 165, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5745, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5753, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Order'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\RDM.py", line 140, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\CLMaker_cashshop.py", line 207, in extract_data_cashshop
+    a.order = tempDf.loc[0,"Order"]
+              ~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexing.py", line 1066, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\frame.py", line 3917, in _get_value
+    series = self._get_item_cache(col)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\frame.py", line 4282, in _get_item_cache
+    loc = self.columns.get_loc(item)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexes\base.py", line 3804, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Order'
+
+────────────────────────────────────────
+
+user=jungsoo
+date=2023-12-01 09:52:28
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+Traceback (most recent call last):
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexes\base.py", line 3802, in get_loc
+    return self._engine.get_loc(casted_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "pandas\_libs\index.pyx", line 138, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\index.pyx", line 165, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5745, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5753, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Order'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\RDM.py", line 140, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\CLMaker_cashshop.py", line 207, in extract_data_cashshop
+    a.order = tempDf.loc[0,"Order"]
+              ~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexing.py", line 1066, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\frame.py", line 3917, in _get_value
+    series = self._get_item_cache(col)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\frame.py", line 4282, in _get_item_cache
+    loc = self.columns.get_loc(item)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexes\base.py", line 3804, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Order'
+
+────────────────────────────────────────
+
+user=jungsoo
+date=2023-12-01 09:52:07
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+Traceback (most recent call last):
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexes\base.py", line 3802, in get_loc
+    return self._engine.get_loc(casted_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "pandas\_libs\index.pyx", line 138, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\index.pyx", line 165, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5745, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5753, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Order'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\RDM.py", line 140, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\CLMaker_cashshop.py", line 207, in extract_data_cashshop
+    a.order = tempDf.loc[0,"Order"]
+              ~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexing.py", line 1066, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\frame.py", line 3917, in _get_value
+    series = self._get_item_cache(col)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\frame.py", line 4282, in _get_item_cache
+    loc = self.columns.get_loc(item)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexes\base.py", line 3804, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Order'
+
+────────────────────────────────────────
+
+user=jungsoo
+date=2023-11-30 16:22:15
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+Traceback (most recent call last):
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexes\base.py", line 3802, in get_loc
+    return self._engine.get_loc(casted_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "pandas\_libs\index.pyx", line 138, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\index.pyx", line 165, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5745, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5753, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Order'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\RDM.py", line 140, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\CLMaker_cashshop.py", line 207, in extract_data_cashshop
+    a.order = tempDf.loc[0,"Order"]
+              ~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexing.py", line 1066, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\frame.py", line 3917, in _get_value
+    series = self._get_item_cache(col)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\frame.py", line 4282, in _get_item_cache
+    loc = self.columns.get_loc(item)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexes\base.py", line 3804, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Order'
+
+────────────────────────────────────────
+
+user=jungsoo
+date=2023-11-30 16:21:12
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+Traceback (most recent call last):
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexes\base.py", line 3802, in get_loc
+    return self._engine.get_loc(casted_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "pandas\_libs\index.pyx", line 138, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\index.pyx", line 165, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5745, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5753, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Order'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\RDM.py", line 140, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\CLMaker_cashshop.py", line 207, in extract_data_cashshop
+    a.order = tempDf.loc[0,"Order"]
+              ~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexing.py", line 1066, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\frame.py", line 3917, in _get_value
+    series = self._get_item_cache(col)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\frame.py", line 4282, in _get_item_cache
+    loc = self.columns.get_loc(item)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexes\base.py", line 3804, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Order'
+
+────────────────────────────────────────
+
+user=jungsoo
+date=2023-11-30 16:20:45
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+Traceback (most recent call last):
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexes\base.py", line 3802, in get_loc
+    return self._engine.get_loc(casted_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "pandas\_libs\index.pyx", line 138, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\index.pyx", line 165, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5745, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5753, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Order'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\RDM.py", line 140, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\CLMaker_cashshop.py", line 207, in extract_data_cashshop
+    a.order = tempDf.loc[0,"Order"]
+              ~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexing.py", line 1066, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\frame.py", line 3917, in _get_value
+    series = self._get_item_cache(col)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\frame.py", line 4282, in _get_item_cache
+    loc = self.columns.get_loc(item)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexes\base.py", line 3804, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Order'
+
+────────────────────────────────────────
+
+user=jungsoo
+date=2023-11-30 16:20:34
+contents_name='유료상점'
+doctype='TestCase'
+date_text='2023-12-12'
+Traceback (most recent call last):
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexes\base.py", line 3802, in get_loc
+    return self._engine.get_loc(casted_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "pandas\_libs\index.pyx", line 138, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\index.pyx", line 165, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5745, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5753, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'Order'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\RDM.py", line 140, in make_process
+    data = ClCash.extract_data_cashshop(data_file_name, date_text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\OneDrive - Webzen Inc\R2M전용도구\유료상점CL생성기\CLMaker_cashshop.py", line 207, in extract_data_cashshop
+    a.order = tempDf.loc[0,"Order"]
+              ~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexing.py", line 1066, in __getitem__
+    return self.obj._get_value(*key, takeable=self._takeable)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\frame.py", line 3917, in _get_value
+    series = self._get_item_cache(col)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\frame.py", line 4282, in _get_item_cache
+    loc = self.columns.get_loc(item)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jungsoo\AppData\Local\Programs\Python\Python311\Lib\site-packages\pandas\core\indexes\base.py", line 3804, in get_loc
+    raise KeyError(key) from err
+KeyError: 'Order'
+
+────────────────────────────────────────
+
+user=mssung
+date=2023-11-30 10:42:26
+contents_name='이벤트'
+doctype='CheckList'
+date_text='2023-11-23'
+Traceback (most recent call last):
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\RDM.py", line 148, in make_process
+    data = ClEvent.extract_data(data_file_name, date_text)
+  File "C:\Users\mssung\OneDrive - Webzen Inc\R2M도구\유료상점CL생성기\CLMaker_Event.py", line 103, in extract_data
+    sheet_names = pd.read_excel(fileName, sheet_name=None).keys()
+  File "C:\Python39\lib\site-packages\pandas\util\_decorators.py", line 311, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 364, in read_excel
+    io = ExcelFile(io, storage_options=storage_options, engine=engine)
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1191, in __init__
+    ext = inspect_excel_format(
+  File "C:\Python39\lib\site-packages\pandas\io\excel\_base.py", line 1070, in inspect_excel_format
+    with get_handle(
+  File "C:\Python39\lib\site-packages\pandas\io\common.py", line 711, in get_handle
+    handle = open(handle, ioargs.mode)
+PermissionError: [Errno 13] Permission denied: '이벤트DATA_KR R2M.xlsx'
+
+────────────────────────────────────────
+
 user=mssung
 date=2023-11-29 16:29:09
 contents_name='이벤트'
@@ -259,4 +646,4 @@ Traceback (most recent call last):
     a.pkgID = int(tempDf.loc[0,"CashShopID"])
 ValueError: invalid literal for int() with base 10: 'TWD 1000028'
 
-                                    
+                                                                                    
