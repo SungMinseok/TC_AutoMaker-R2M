@@ -280,10 +280,15 @@ def extract_data_cashshop(fileName, tcStartDate):
         else: 
             try: 
                 a.endDate = pd.to_datetime(tempDf.loc[0,"EndDate"])
-            except : 
-                print(f"상품 시작/종료 시간 입력 오류 : 'yyyy-mm-dd' 만 입력되어야 함. 시간이 써있지 않은지 확인 필요\n상품 : {a.pkgID} | {a.pkgName}" )
-                os.system('pause')
-                return
+            except :   
+                temp_endDate_str = tempDf.loc[0,"EndDate"]
+                temp_endDate_str = temp_endDate_str.replace('\n', '').replace(' ', '')
+                a.endDate = pd.to_datetime(temp_endDate_str, format='%Y-%m-%d%H:%M:%S')
+                #print(pd.to_datetime(a))#a = a.replace('\n', '').replace(' ', '')
+                #print(pd.to_datetime(a, format='%Y-%m-%d%H:%M:%S'))
+            #     print(f"상품 시작/종료 시간 입력 오류 : 'yyyy-mm-dd' 만 입력되어야 함. 시간이 써있지 않은지 확인 필요\n상품 : {a.pkgID} | {a.pkgName}" )
+            #     os.system('pause')
+            #     return
           
         #if fileType == "0" :#TC
             #startDate = datetime.datetime.strptime(tcStartDate, '%Y-%m-%d')
@@ -317,9 +322,10 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
 
     #salesList.sort(key =lambda a: (a.server,a.category,a.pkgID))
 
-    category_order_KR = ['시즌 뽑기', '기간한정상품', '패키지', '카드', '재화', '이벤트', '마일리지']
-    category_order_TW = ['3자 결제', '핫딜 상품', '추천상품', '럭키박스', '시즌 뽑기', '다이아', '마일리지']
-    category_order = category_order_KR if nation == "KR" else category_order_TW
+    #category_order_KR = ['시즌 뽑기', '기간한정상품', '패키지', '카드', '재화', '이벤트', '마일리지']
+    #category_order_TW = ['3자 결제', '핫딜 상품', '추천상품', '럭키박스', '시즌 뽑기', '다이아', '마일리지']
+    category_order = ['3자 결제', '핫딜 상품', '추천상품', '럭키박스', '시즌 뽑기', '다이아', '기간한정상품', '패키지', '카드', '재화', '이벤트', '마일리지']
+    #category_order = category_order_KR if nation == "KR" else category_order_TW
     for sale in salesList:
         #print(f'{sale.pki}|{sale.server}|{sale.category}|{sale.order}')
         print(f'{sale.pkgID}')
@@ -330,7 +336,8 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
             #a.salesCheck,
             a.server,
             category_order.index(a.category) if a.category in category_order else float('inf'),
-            a.order
+            a.order,
+            #a.pkgID,
         ))
 
     except Exception as e:
@@ -366,8 +373,8 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
             result.loc[i,"Check List"] = y.category
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
-        if y.pkgID == 1100043 :
-            print("test")
+        # if y.pkgID == 1100043 :
+        #     print("test")
 
         if y.category == "" :
             i += 1
@@ -375,7 +382,10 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
 
         else :
             i += 1
-            result.loc[i,"Category3"] = "상세정보 팝업"
+            if y.category == "시즌 뽑기" :
+                result.loc[i,"Category3"] = "확정보상 팝업"
+            else:
+                result.loc[i,"Category3"] = "상세정보 팝업"
             desc0 = ""
             if len(y.itemList0) != 0 :
                 for item in y.itemList0 :
@@ -445,13 +455,28 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
 
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
+        if y.category == "시즌 뽑기" :
+            i += 1
+            result.loc[i,"Category3"] = "상세정보 팝업"
+            #gacha_type = "변신" if "변신" in y.pkgName else "서번트"
+            result.loc[i,"Check List"] = f"아래의 목록 중 무작위로 11개 획득 가능\n[고급]~\n[희귀]~\n[영웅]~\n(확정보상 포함 확인)"
+
+
+
+    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+
         i += 1
         result.loc[i,"Category3"] = "상품슬롯 이미지"
 
-        if y.pkgID == 80060 :
-            print('didiid')
+        # if y.pkgID == 80060 :
+        #     print('didiid')
+        if y.category == "시즌 뽑기" :
+            gacha_type = "변신" if "변신" in y.pkgName else "서번트"
+            result.loc[i,"Check List"] = f"{gacha_type} 뽑기권 + 11 + 빨간 불꽃 이미지 노출"
+            i += 1
 
-        if len(y.itemList0) != 0 :
+
+        elif len(y.itemList0) != 0 :
             for item0 in y.itemList0 :
                 if '다이아몬드' in str(item0):
                     result.loc[i,"Check List"] = "다이아몬드 이미지 노출"
@@ -473,7 +498,11 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
                     result.loc[i,"Check List"] = str(item1) + " 이미지 노출"
                     i+=1
         else:
+            
             result.loc[i,"Check List"] = f'{y.pkgName} 관련 이미지 노출'
+
+    #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+
         i += 1
         result.loc[i,"Category3"] = "상품슬롯 정보"
         if int(y.bonus) == 0 :
@@ -552,19 +581,21 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
             i += 1
 
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-        for item0 in y.itemList0 :
-            if '상자' in item0 :
-                result.loc[i,"Category3"] = "상자 구성품\n획득 및 사용"
-                break
-            result.loc[i,"Category3"] = "아이템 사용"
+        if len( y.itemList1) != 0 :
+            
+            for item0 in y.itemList0 :
+                if '상자' in item0  :
+                    result.loc[i,"Category3"] = "상자 구성품\n획득 및 사용"
+                    break
+                result.loc[i,"Category3"] = "아이템 사용"
 
-        for item1 in y.itemList1 :
-            if str(item1) != "nan" :
-                item1 = item1.replace("코인[귀속]","코인")
-                result.loc[i,"Check List"] = str(item1) + " 획득 및 사용 확인"
-                i+=1
-        
-        i-=1
+            for item1 in y.itemList1 :
+                if str(item1) != "nan" :
+                    item1 = item1.replace("코인[귀속]","코인")
+                    result.loc[i,"Check List"] = str(item1) + " 획득 및 사용 확인"
+                    i+=1
+            
+            i-=1
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
     
         if '스텝' in y.pkgName :
@@ -643,8 +674,9 @@ def write_data_cashshop_inspection(salesList : list[Sales], resultPath, check_bo
     유료상점_체크리스트_작성용\n
     check_box_list : 옵션 체크 리스트
     '''
+    #category_order = ['3자 결제', '핫딜 상품', '추천상품', '럭키박스', '시즌 뽑기', '다이아', '기간한정상품', '패키지', '카드', '재화', '이벤트', '마일리지']
 
-    category_order = ['시즌 뽑기', '기간한정상품', '패키지', '카드', '재화', '이벤트']
+    category_order = [ '재화',  '다이아',  '핫딜 상품', '추천상품', '럭키박스', '시즌 뽑기', '기간한정상품', '패키지', '카드', '이벤트', '마일리지', '3자 결제']
     
     for sale in salesList:
         print(f'{sale.pkgName}|{sale.server}|{sale.salesCheck}|{sale.category}|{sale.order}')
@@ -711,7 +743,10 @@ def write_data_cashshop_inspection(salesList : list[Sales], resultPath, check_bo
             if y.salesCheck != "판매 시작":
                 continue
         else :
-            info_expired = f" | {y.endDate.strftime('%m/%d/%Y(목) 점검 전 까지')}"
+            if y.endDate.hour == 0 and y.endDate.minute == 0 and y.endDate.second == 0:
+                info_expired = f" | {y.endDate.strftime('%m/%d/%Y(목) 점검 전 까지')}"
+            else:
+                info_expired = f" | {y.endDate.strftime('%m/%d/%Y(목) %H:%M 까지')}"
 
         if not check_box_list[1] or y.salesCheck == "판매 시작":
             info_0 = f'{info_0} / {y.price} / {bonusStr} / {y.limit}'
@@ -1003,14 +1038,19 @@ def highlight_star_cells(sheet):
 
 if __name__ == "__main__":
     #def make_process(self, result_path, data_file_name, contents_name, doctype, date_text, check_box_list):
+    #global nation
     nation = 'TW'
-    contents_name = "유료상점"
+    nation = 'KR'
+
     doctype = "CheckList"
-    doctype = "TestCase"
+    #doctype = "TestCase"
+
+    date_text = '2023-12-21'
+
+    contents_name = "유료상점"
     
     result_path = f'{contents_name}_{doctype}'
     data_file_name = f'{contents_name}DATA_{nation} R2M.xlsx'#유료상점DATA_KR R2M.xlsx
-    date_text = '2023-12-12'
     check_box_list = [True,True,False,False]
     
     if contents_name == "유료상점" : 

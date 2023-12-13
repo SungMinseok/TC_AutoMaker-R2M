@@ -94,6 +94,7 @@ class Event():
         #별도 저장값
         self.open_check = ""
 
+        self.etc = ""
 
 def extract_data(fileName, tcStartDate):
 
@@ -101,8 +102,12 @@ def extract_data(fileName, tcStartDate):
     
 
     sheet_names = pd.read_excel(fileName, sheet_name=None).keys()
-    for sheet_name in sheet_names:
-        
+    for index, sheet_name in enumerate(sheet_names):
+        if index >= 3 :
+            break
+
+
+
         if sheet_name == "사용법" or sheet_name == "템플릿" :
             continue
         
@@ -111,6 +116,8 @@ def extract_data(fileName, tcStartDate):
         target = pd.concat([target, curDf], ignore_index=True)
         del curDf
         gc.collect()
+
+        
 
     target = target.replace('-',np.nan)
     targetIdList = target["ID"].dropna(axis=0) #실제 ID의 리스트
@@ -134,6 +141,7 @@ def extract_data(fileName, tcStartDate):
         a.id = int(tempDf.loc[0,"ID"])
         a.type = str(tempDf.loc[0,"EventType"])
         a.name = str(tempDf.loc[0,"EventName"]) #+ "[귀속]"
+        a.etc = str(tempDf.loc[0,"etc"])
 
         for k in range(len(tempDf)):
             str0 = tempDf.loc[k,'QuestID']
@@ -230,7 +238,7 @@ def extract_data(fileName, tcStartDate):
     return targetList
 
 
-def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_TestCase"):
+def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_TestCase",check_box_list = None ):
     totalResult = pd.DataFrame()
 #print(len(salesList))
 
@@ -273,14 +281,26 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
     #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             for index, item in enumerate(y.item_list) :
                 i += 1
+                if len(y.desc_list) > 0 :
+                    quest = y.desc_list[index]
+
+                #result.loc[i,"Category3"] = f'{index+1}일차 | {int(quest.id)}'  if not pd.isnull(quest.id) and check_box_list[4] else f'{index+1}일차'
                 result.loc[i,"Category3"] = f'{index+1}일차'
+                if check_box_list[4]:
+                    result.loc[i,"Category3"] += f" | {int(quest.id)}"
                 #result.loc[i,"Check List"] = f'{item.name}[귀속] {int(item.count)}개'.replace('[귀속][귀속]','[귀속]')
                 
+                result.loc[i,"Check List"] = f'{item.name} {format(int(item.count), ",d")}개'
+                if check_box_list[4] and not pd.isna(item.id) :
+                    result.loc[i,"Check List"] += f' | {format(int(item.id))}'
                 if not pd.isnull(item.removedate) :
-                    result.loc[i,"Check List"] = f'{item.name} {int(item.count)}개 (자동삭제 : {item.removedate}) 11:30'#.replace('[귀속][귀속]','[귀속]')
-                else :
-                    result.loc[i,"Check List"] = f'{item.name} {int(item.count)}개'#.replace('[귀속][귀속]','[귀속]')
-                #result.loc[i,"Check List"] = f'{item.name} {int(item.count)}개'#.replace('[귀속][귀속]','[귀속]')
+                    result.loc[i,"Check List"] += f'\n(자동삭제 : {item.removedate} 11:30)'
+
+
+                # if not pd.isnull(item.removedate) :
+                #     result.loc[i,"Check List"] = f'{item.name} {format(int(item.count), ",d")}개 | {format(int(item.id))}\n(자동삭제 : {item.removedate} 11:30)'#.replace('[귀속][귀속]','[귀속]')
+                # else :
+                #     result.loc[i,"Check List"] = f'{item.name} {format(int(item.count), ",d")}개'#.replace('[귀속][귀속]','[귀속]')
 
 
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■[미션]
@@ -307,13 +327,21 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
     #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             for index, quest in enumerate(y.desc_list) :
                 i += 1
-                result.loc[i,"Category3"] = f'{quest.name}'
+                result.loc[i,"Category3"] = f'{quest.name}'  
+                if not pd.isnull(quest.id) and check_box_list[4]:
+                    result.loc[i,"Category3"] += f"\n{int(quest.id)}"
                 #result.loc[i,"Check List"] = f'{item.name}[귀속] {int(item.count)}개'.replace('[귀속][귀속]','[귀속]')
-                if not pd.isnull(item.removedate) :
-                    result.loc[i,"Check List"] = f'{y.item_list[index].name} {int(y.item_list[index].count)}개 (자동삭제 : {item.removedate} 11:30)'#.replace('[귀속][귀속]','[귀속]')
-                else:
-                    result.loc[i,"Check List"] = f'{y.item_list[index].name} {int(y.item_list[index].count)}개'#.replace('[귀속][귀속]','[귀속]')
+                item = y.item_list[index]
+                # if not pd.isnull(item.removedate) :
+                #     result.loc[i,"Check List"] = f'{item.name} {format(int(item.count), ",d")}개 | {format(int(item.id))}\n(자동삭제 : {item.removedate} 11:30)'#.replace('[귀속][귀속]','[귀속]')
+                # else:
+                #     result.loc[i,"Check List"] = f'{item.name} {format(int(item.count), ",d")}개'#.replace('[귀속][귀속]','[귀속]')
 
+                result.loc[i,"Check List"] = f'{item.name} {format(int(item.count), ",d")}개'
+                if check_box_list[4] and not pd.isnull(item.id) :
+                    result.loc[i,"Check List"] += f' | {format(int(item.id))}'
+                if not pd.isnull(item.removedate) :
+                    result.loc[i,"Check List"] += f'\n(자동삭제 : {item.removedate} 11:30)'
     #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             i += 1            
             result.loc[i,"Category3"] = "퀘스트 연결"
@@ -331,12 +359,18 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
     #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             i += 1            
             result.loc[i,"Category3"] = "드랍 위치"
-            result.loc[i,"Check List"] = f'{y.desc_list[0].name}'
+            result.loc[i,"Check List"] = f'{y.desc_list[0].name} : 콜포트, 카오스던전 확인'
     #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             for index, item in enumerate(y.item_list) :
                 i += 1
                 result.loc[i,"Category3"] = "드랍 아이템"                
-                result.loc[i,"Check List"] = f'{item.name} ({(item.id)})'.replace('.0','')
+                result.loc[i,"Check List"] = f'{item.name} | {int(item.id)}' if not pd.isna(item.id) else f'{item.name}'
+    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            for index, item in enumerate(y.item_list) :
+                if len(y.craft_list) > index and not pd.isnull(y.craft_list[index].price) :
+                    i += 1
+                    result.loc[i,"Category3"] = "위탁 매입상"                
+                    result.loc[i,"Check List"] = f'위탁 매입상 판매 : 개당 {int(y.craft_list[index].price)} 골드'
     #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
             for index, item in enumerate(y.item_list) :
                 i += 1
@@ -362,7 +396,7 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
     #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 i += 1            
                 result.loc[i,"Category3"] = "기간"
-                result.loc[i,"Check List"] = f"{y.start_date.strftime('%m/%d/%Y')} ~ {y.end_date.strftime('%m/%d/%Y')} (이벤트 기간 실데이터 2:30:00)"
+                result.loc[i,"Check List"] = f"{y.start_date.strftime('%m/%d/%Y')} 11:30 ~ {y.end_date.strftime('%m/%d/%Y')} 11:30"
     #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
        
                 i += 1            
@@ -377,14 +411,15 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
                 result.loc[i,"Category3"] = "확률"
                 result.loc[i,"Check List"] = f"{int(y.craft_list[index].rate)}%로 제작 성공"
     #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-                i += 1            
-                result.loc[i,"Category3"] = "실제 제작"
-                result.loc[i,"Check List"] = f"아이템 제작 버튼 터치 시, 인벤토리 내 '{item.name}' 획득"
+                # i += 1            
+                # result.loc[i,"Category3"] = "실제 제작"
+                # result.loc[i,"Check List"] = f"아이템 제작 후, 인벤토리 내 '{item.name}' 획득"
 
-                if not pd.isnull(item.removedate) :
-                    i += 1
-                    result.loc[i,"Check List"] = f"자동 삭제 '{item.removedate} 11:30' 적용"
-                    i += 1    
+                # if not pd.isnull(item.removedate) :
+                #     i += 1
+                #     result.loc[i,"Check List"] = f"자동 삭제 '{item.removedate} 11:30' 적용"
+                #     i += 1    
+                i += 1            
     
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■[도감]
 
@@ -631,15 +666,15 @@ def write_data(targetList : list[Event], resultPath = "이벤트_CheckList", opt
         if y.type == "출석" :
             for index, item in enumerate(y.item_list) :
                 if not pd.isnull(item.removedate) :
-                    info += f'\n{int(index)+1}일차 : {item.name} {int(item.count)}개 (자동삭제 : {item.removedate} 11:30)'
+                    info += f'\n{int(index)+1}일차 : {item.name} {format(int(item.count), ",d")}개 (자동삭제 : {item.removedate} 11:30)'
                 else :
-                    info += f'\n{int(index)+1}일차 : {item.name} {int(item.count)}개'
+                    info += f'\n{int(index)+1}일차 : {item.name} {format(int(item.count), ",d")}개'
         elif y.type == "미션" :
             for index, item in enumerate(y.item_list) :
                 if not pd.isnull(item.removedate) :
-                    info += f'\n{y.desc_list[index].name} : {item.name} {int(item.count)}개 (자동삭제 : {item.removedate} 11:30)'
+                    info += f'\n{y.desc_list[index].name} : {item.name} {format(int(item.count), ",d")}개 (자동삭제 : {item.removedate} 11:30)'
                 else :
-                    info += f'\n{y.desc_list[index].name} : {item.name} {int(item.count)}개'
+                    info += f'\n{y.desc_list[index].name} : {item.name} {format(int(item.count), ",d")}개'
         elif y.type == "드랍" :
             for index, item in enumerate(y.item_list) :
                 info += f'\n{y.desc_list[index].name} : {item.name} {round(item.count,2)}%'
@@ -666,7 +701,7 @@ def write_data(targetList : list[Event], resultPath = "이벤트_CheckList", opt
             info += f'{y.limit} 수행 가능\n'
             for index, item in enumerate(y.item_list) :
                 quest = y.desc_list[index]
-                info += f'\n{quest.name}:{item.name} {int(item.count)}개'
+                info += f'\n{quest.name}:{item.name} {format(int(item.count), ",d")}개'
                 
         if options[1] : #CL 유지/종료 항목 내용 생략
             if y.open_check == "이벤트 유지" :
@@ -674,6 +709,8 @@ def write_data(targetList : list[Event], resultPath = "이벤트_CheckList", opt
             elif y.open_check == "이벤트 종료" : 
                 info = f'{y.type} {y.open_check} 확인'
 
+        if y.etc != 'nan':
+            info = f'{y.etc}\n\n{info}'
 
         result.loc[i,"Check List"] = f'{info}'
 
@@ -977,6 +1014,7 @@ if __name__ == "__main__":
     # print("complete!")
     # os.system("pause")
     nation = 'KR'
+    #nation = 'TW'
     doctype = "TestCase"
     doctype = "CheckList"
 
@@ -984,15 +1022,15 @@ if __name__ == "__main__":
     
     result_path = f'{contents_name}_{doctype}'
     data_file_name = f'{contents_name}DATA_{nation} R2M.xlsx'#유료상점DATA_KR R2M.xlsx
-    date_text = '2023-11-30'
-    check_box_list = [True,True,False,True]
+    date_text = '2023-12-28'
+    check_box_list = [True,True,False,True,True]
 
     if doctype == "CheckList" :
         data = extract_data(data_file_name, date_text)
         result_file_name = write_data(data,result_path,check_box_list)
     elif doctype == "TestCase" :
         data = extract_data(data_file_name,date_text)
-        result_file_name = write_data_event_testcase(data,result_path)
+        result_file_name = write_data_event_testcase(data,result_path,check_box_list)
 
 
     postprocess_cashshop(result_file_name)
