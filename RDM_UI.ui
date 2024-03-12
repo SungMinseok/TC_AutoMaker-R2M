@@ -958,7 +958,7 @@ font : bold</string>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="btn_execute_3">
+       <widget class="QPushButton" name="btn_0">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -1000,7 +1000,7 @@ font: bold</string>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="btn_execute_2">
+       <widget class="QPushButton" name="btn_1">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
           <horstretch>0</horstretch>

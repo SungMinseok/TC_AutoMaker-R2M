@@ -7,7 +7,15 @@ CL_CashShop_정기점검/
 backup/
 temp/
 dist/
-~$*.xlsx
+#~$*.xlsx
 Event_CheckList/
 Event_DocumentType.TestCase/
 .venv/
+*.xlsx
+log
+__pycache__
+cache
+.vscode
+etc
+upload.log
+test.py

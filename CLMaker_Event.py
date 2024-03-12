@@ -103,7 +103,7 @@ def extract_data(fileName, tcStartDate):
 
     sheet_names = pd.read_excel(fileName, sheet_name=None).keys()
     for index, sheet_name in enumerate(sheet_names):
-        if index >= 3 :
+        if index >= 6 :
             break
 
 
@@ -125,6 +125,7 @@ def extract_data(fileName, tcStartDate):
 
     totalCount = len(targetIdIndexList)
     targetList = []
+
     print("데이터 추출 중...")
 
     for j in tqdm(range(0,totalCount)):\
@@ -141,7 +142,10 @@ def extract_data(fileName, tcStartDate):
         a.id = int(tempDf.loc[0,"ID"])
         a.type = str(tempDf.loc[0,"EventType"])
         a.name = str(tempDf.loc[0,"EventName"]) #+ "[귀속]"
-        a.etc = str(tempDf.loc[0,"etc"])
+        try:
+            a.etc = str(tempDf.loc[0,"etc"])
+        except:
+            a.etc = "nan"
 
         for k in range(len(tempDf)):
             str0 = tempDf.loc[k,'QuestID']
@@ -286,12 +290,18 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
 
                 #result.loc[i,"Category3"] = f'{index+1}일차 | {int(quest.id)}'  if not pd.isnull(quest.id) and check_box_list[4] else f'{index+1}일차'
                 result.loc[i,"Category3"] = f'{index+1}일차'
-                if check_box_list[4]:
+                try:
+                    #if check_box_list[4]:
+                    
                     result.loc[i,"Category3"] += f" | {int(quest.id)}"
+                except:
+                    pass
                 #result.loc[i,"Check List"] = f'{item.name}[귀속] {int(item.count)}개'.replace('[귀속][귀속]','[귀속]')
-                
+                #print(check_box_list)
+                #print(check_box_list[4])
                 result.loc[i,"Check List"] = f'{item.name} {format(int(item.count), ",d")}개'
-                if check_box_list[4] and not pd.isna(item.id) :
+                #if check_box_list[4] and not pd.isna(item.id) :
+                if not pd.isna(item.id) :
                     result.loc[i,"Check List"] += f' | {format(int(item.id))}'
                 if not pd.isnull(item.removedate) :
                     result.loc[i,"Check List"] += f'\n(자동삭제 : {item.removedate} 11:30)'
@@ -328,7 +338,7 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
             for index, quest in enumerate(y.desc_list) :
                 i += 1
                 result.loc[i,"Category3"] = f'{quest.name}'  
-                if not pd.isnull(quest.id) and check_box_list[4]:
+                if not pd.isnull(quest.id) :#and check_box_list[4]:
                     result.loc[i,"Category3"] += f"\n{int(quest.id)}"
                 #result.loc[i,"Check List"] = f'{item.name}[귀속] {int(item.count)}개'.replace('[귀속][귀속]','[귀속]')
                 item = y.item_list[index]
@@ -338,7 +348,8 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
                 #     result.loc[i,"Check List"] = f'{item.name} {format(int(item.count), ",d")}개'#.replace('[귀속][귀속]','[귀속]')
 
                 result.loc[i,"Check List"] = f'{item.name} {format(int(item.count), ",d")}개'
-                if check_box_list[4] and not pd.isnull(item.id) :
+                #if check_box_list[4] and not pd.isnull(item.id) :
+                if not pd.isnull(item.id) :
                     result.loc[i,"Check List"] += f' | {format(int(item.id))}'
                 if not pd.isnull(item.removedate) :
                     result.loc[i,"Check List"] += f'\n(자동삭제 : {item.removedate} 11:30)'
@@ -405,7 +416,11 @@ def write_data_event_testcase(targetList : list[Event], resultPath = "이벤트_
     #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 i += 1            
                 result.loc[i,"Category3"] = "비용"
-                result.loc[i,"Check List"] = f"{int(y.craft_list[index].price)} 골드"
+                try:
+                    result.loc[i,"Check List"] = f"{int(y.craft_list[index].price)} 골드"
+                except:
+                    result.loc[i,"Check List"] = f"{(y.craft_list[index].price)}"
+
     #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                 i += 1            
                 result.loc[i,"Category3"] = "확률"
@@ -626,102 +641,109 @@ def write_data(targetList : list[Event], resultPath = "이벤트_CheckList", opt
     count = 0
     print("데이터 쓰는 중...")
     for y in tqdm(targetList):
+        try:
+            count += 1
+            result = pd.DataFrame()
 
-        count += 1
-        result = pd.DataFrame()
 
+            if y.open_check == "이벤트 제외" or y.open_check == "이벤트 전"  :
+                continue
 
-        if y.open_check == "이벤트 제외" or y.open_check == "이벤트 전"  :
-            continue
+            
 
+            i = curRow
+            result.loc[i,"Category1"] = y.server
+            result.loc[i,"Category2"] = y.open_check
+            result.loc[i,"Category3"] = f'{y.name}\n[{y.type}]'
+
+        #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            #if y.open_check == "이벤트 시작" :
+
+            # dateID= 0
+            # if data_filename_input == "0":
+            #     dateID = (3,"목")
+            # elif data_filename_input == "1":
+        # dateID = (1,"화")
         
-
-        i = curRow
-        result.loc[i,"Category1"] = y.server
-        result.loc[i,"Category2"] = y.open_check
-        result.loc[i,"Category3"] = f'{y.name}\n[{y.type}]'
-
-    #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        #if y.open_check == "이벤트 시작" :
-
-        # dateID= 0
-        # if data_filename_input == "0":
-        #     dateID = (3,"목")
-        # elif data_filename_input == "1":
-       # dateID = (1,"화")
-       
-        if options[1] : #CL 유지/종료 항목 내용 생략
-            if y.open_check == "이벤트 유지" :
-                if not options[2] and y.end_date == datetime.datetime.strptime("2099-12-31 00:00:00",'%Y-%m-%d %H:%M:%S'):
-                    continue
-    
-        info = ""
-        if y.type != "도감":
-            #info = f"{y.start_date.strftime('%Y-%m-%d')}({dateID[1]}) ~ {y.end_date.strftime('%Y-%m-%d')}({dateID[1]})\n"
-            info = f"{y.start_date.strftime('%Y-%m-%d')} ~ {y.end_date.strftime('%Y-%m-%d')}\n"
+            if options[1] : #CL 유지/종료 항목 내용 생략
+                if y.open_check == "이벤트 유지" :
+                    if not options[2] and y.end_date == datetime.datetime.strptime("2099-12-31 00:00:00",'%Y-%m-%d %H:%M:%S'):
+                        continue
         
-        if y.type == "출석" or y.type == "미션" :
-            info += f"{y.limit} 수행 가능\n"
+            info = ""
+            if y.type != "도감":
+                #info = f"{y.start_date.strftime('%Y-%m-%d')}({dateID[1]}) ~ {y.end_date.strftime('%Y-%m-%d')}({dateID[1]})\n"
+                info = f"{y.start_date.strftime('%Y-%m-%d')} ~ {y.end_date.strftime('%Y-%m-%d')}\n"
+            
+            if y.type == "출석" or y.type == "미션" :
+                info += f"{y.limit} 수행 가능\n"
+            
+            if y.type == "출석" :
+                for index, item in enumerate(y.item_list) :
+                    if not pd.isnull(item.removedate) :
+                        info += f'\n{int(index)+1}일차 : {item.name} {format(int(item.count), ",d")}개 (자동삭제 : {item.removedate} 11:30)'
+                    else :
+                        info += f'\n{int(index)+1}일차 : {item.name} {format(int(item.count), ",d")}개'
+            elif y.type == "미션" :
+                for index, item in enumerate(y.item_list) :
+                    if not pd.isnull(item.removedate) :
+                        info += f'\n{y.desc_list[index].name} : {item.name} {format(int(item.count), ",d")}개 (자동삭제 : {item.removedate} 11:30)'
+                    else :
+                        info += f'\n{y.desc_list[index].name} : {item.name} {format(int(item.count), ",d")}개'
+            elif y.type == "드랍" :
+                for index, item in enumerate(y.item_list) :
+                    info += f'\n{y.desc_list[index].name} : {item.name} {round(item.count,2)}%'
+            elif y.type == "제작" :
+                for index, item in enumerate(y.item_list) :
+                    craft = y.craft_list[index]
+                    try:
+                        info += f'\n━━━━{item.name}━━━━\n:: {craft.limit} / 골드 {int(craft.price)} / {craft.recipe}'
+                    except:
+                        info += f'\n━━━━{item.name}━━━━\n:: {craft.limit} / {(craft.price)} / {craft.recipe}'
+            elif y.type == "도감" :
+                info += f"이벤트 기간 : {y.start_date.strftime('%m/%d/%Y')} 11:30 ~ {y.end_date.strftime('%m/%d/%Y')} 11:30\n"
+                for index, desc in enumerate(y.desc_list) :
+                    info += f'\n재료 : {desc.name}\n'
+                for index, item in enumerate(y.item_list) :
+                    if item.count >= 1 :
+                        item.count = int(item.count)
+                    else : 
+                        item.count = f'{float(item.count) * 100}%'
+                    info += f'\n{item.name} +{(item.count)}'
+                    info = info.replace('[귀속]','')
+            elif y.type == "상점" :
+                for index, item in enumerate(y.item_list) :
+                    craft = y.craft_list[index]
+                    info += f'\n{item.name}\n{craft.limit}, {craft.recipe}\n'
+            elif y.type == "패스" :
+                info += f'{y.limit} 수행 가능\n'
+                for index, item in enumerate(y.item_list) :
+                    quest = y.desc_list[index]
+                    info += f'\n{quest.name}:{item.name} {format(int(item.count), ",d")}개'
+                    
+            if options[1] : #CL 유지/종료 항목 내용 생략
+                if y.open_check == "이벤트 유지" :
+                    info = f'{y.type} {y.open_check} 확인 | 종료일 : {y.end_date.strftime("%m/%d/%Y 11:30")}'
+                elif y.open_check == "이벤트 종료" : 
+                    info = f'{y.type} {y.open_check} 확인'
+
+            if y.etc != 'nan':
+                info = f'{y.etc}\n\n{info}'
+
+            result.loc[i,"Check List"] = f'{info}'
+
+        # #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         
-        if y.type == "출석" :
-            for index, item in enumerate(y.item_list) :
-                if not pd.isnull(item.removedate) :
-                    info += f'\n{int(index)+1}일차 : {item.name} {format(int(item.count), ",d")}개 (자동삭제 : {item.removedate} 11:30)'
-                else :
-                    info += f'\n{int(index)+1}일차 : {item.name} {format(int(item.count), ",d")}개'
-        elif y.type == "미션" :
-            for index, item in enumerate(y.item_list) :
-                if not pd.isnull(item.removedate) :
-                    info += f'\n{y.desc_list[index].name} : {item.name} {format(int(item.count), ",d")}개 (자동삭제 : {item.removedate} 11:30)'
-                else :
-                    info += f'\n{y.desc_list[index].name} : {item.name} {format(int(item.count), ",d")}개'
-        elif y.type == "드랍" :
-            for index, item in enumerate(y.item_list) :
-                info += f'\n{y.desc_list[index].name} : {item.name} {round(item.count,2)}%'
-        elif y.type == "제작" :
-            for index, item in enumerate(y.item_list) :
-                craft = y.craft_list[index]
-                info += f'\n{item.name} ({craft.limit})\n골드 {int(craft.price)} + {craft.recipe}\n'
-        elif y.type == "도감" :
-            info += f"이벤트 기간 : {y.start_date.strftime('%m/%d/%Y')} 11:30 ~ {y.end_date.strftime('%m/%d/%Y')} 11:30\n"
-            for index, desc in enumerate(y.desc_list) :
-                info += f'\n재료 : {desc.name}\n'
-            for index, item in enumerate(y.item_list) :
-                if item.count >= 1 :
-                    item.count = int(item.count)
-                else : 
-                    item.count = f'{float(item.count) * 100}%'
-                info += f'\n{item.name} +{(item.count)}'
-                info = info.replace('[귀속]','')
-        elif y.type == "상점" :
-            for index, item in enumerate(y.item_list) :
-                craft = y.craft_list[index]
-                info += f'\n{item.name}\n{craft.limit}, {craft.recipe}\n'
-        elif y.type == "패스" :
-            info += f'{y.limit} 수행 가능\n'
-            for index, item in enumerate(y.item_list) :
-                quest = y.desc_list[index]
-                info += f'\n{quest.name}:{item.name} {format(int(item.count), ",d")}개'
-                
-        if options[1] : #CL 유지/종료 항목 내용 생략
-            if y.open_check == "이벤트 유지" :
-                info = f'{y.type} {y.open_check} 확인 | 종료일 : {y.end_date.strftime("%m/%d/%Y 11:30")}'
-            elif y.open_check == "이벤트 종료" : 
-                info = f'{y.type} {y.open_check} 확인'
+            result.loc[i,"ETC"] = y.id
 
-        if y.etc != 'nan':
-            info = f'{y.etc}\n\n{info}'
+            del y
+            gc.collect()
+            #if y.salesCheck != "판매 제외" and y.salesCheck != "판매 전"  :
+            totalResult = pd.concat([totalResult,result], ignore_index=True)
+        except Exception as e:
+            print(f'{y.name=}, {y.id=}\n')
+            print(e)
 
-        result.loc[i,"Check List"] = f'{info}'
-
-    # #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-     
-        result.loc[i,"ETC"] = y.id
-
-        del y
-        gc.collect()
-        #if y.salesCheck != "판매 제외" and y.salesCheck != "판매 전"  :
-        totalResult = pd.concat([totalResult,result], ignore_index=True)
 
     totalResult = totalResult.replace("NaN","")
     totalResult = totalResult.replace("nan","")
@@ -1022,7 +1044,7 @@ if __name__ == "__main__":
     
     result_path = f'{contents_name}_{doctype}'
     data_file_name = f'{contents_name}DATA_{nation} R2M.xlsx'#유료상점DATA_KR R2M.xlsx
-    date_text = '2023-12-28'
+    date_text = '2024-02-08'
     check_box_list = [True,True,False,True,True]
 
     if doctype == "CheckList" :

@@ -186,6 +186,7 @@ def extract_data_cashshop(fileName, tcStartDate):
     salesList = [Sales] 
     #salesList : list[Sales]
     salesList.clear()
+    temp_category = "" #셀병합으로 인해 카테고리 누락된 거 처리용
     print("데이터 추출 중...")
     for j in tqdm(range(0,totalCount)):
         #print(cashShopIdIndexList[j], j+1)
@@ -204,6 +205,11 @@ def extract_data_cashshop(fileName, tcStartDate):
         a.pkgID = int(tempDf.loc[0,"CashShopID"])
         a.pkgName = tempDf.loc[0,"PkgName"] #+ "[귀속]"
         a.category = str(tempDf.loc[0,"Category"])
+        if a.category != "nan" :
+            temp_category = a.category
+        else : 
+            a.category = temp_category
+        
         a.order = tempDf["Order"].iloc[0] if "Order" in tempDf.columns else '0'
         a.price = str(tempDf.loc[0,"Price"])
         try:
@@ -326,9 +332,9 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
     #category_order_TW = ['3자 결제', '핫딜 상품', '추천상품', '럭키박스', '시즌 뽑기', '다이아', '마일리지']
     category_order = ['3자 결제', '핫딜 상품', '추천상품', '럭키박스', '시즌 뽑기', '다이아', '기간한정상품', '패키지', '카드', '재화', '이벤트', '마일리지']
     #category_order = category_order_KR if nation == "KR" else category_order_TW
-    for sale in salesList:
-        #print(f'{sale.pki}|{sale.server}|{sale.category}|{sale.order}')
-        print(f'{sale.pkgID}')
+    # for sale in salesList:
+    #     #print(f'{sale.pki}|{sale.server}|{sale.category}|{sale.order}')
+    #     print(f'{sale.pkgID}')
     try:
         #    sale.salesCheck = float(sale.salesCheck)
         #salesList.sort(key=lambda a: (a.server, a.salesCheck, a.category, a.order))
@@ -349,6 +355,8 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
     count = 0
     tqdmCount0=0
     print("데이터 쓰는 중...")
+
+    check_id_list = []
     for y in tqdm(salesList):
         tqdmCount0+=1
         y : Sales
@@ -371,6 +379,7 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
         else:
             result.loc[i,"Category3"] = "카테고리"
             result.loc[i,"Check List"] = y.category
+            check_id_list.append(y.pkgID)
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
         # if y.pkgID == 1100043 :
@@ -524,7 +533,7 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
         if y.category == '3자 결제':
             result.loc[i,"Check List"] = f'3자결제 웹페이지 내 해당 상품 선택, MyCard 선택 후 NEXT\n체크박스 체크 후 儲值\nTW - MyCard Wallet 선택\nricky@soft-world.com.tw / sw123456 입력 후 Login\nPayment code : 123456 입력 후 Confirm\n인게임 유료상점 보관함 스크롤 시 획득'
         
-        elif "원" in y.price or "TWD" in y.price or ('다이아' not in y.price and '마일리지' not in y.price and '골드' not in y.price and '로얄' not in y.price ):
+        elif "원" in y.price or "TWD" in y.price or ('다이아' not in y.price and '마일리지' not in y.price and '골드' not in y.price and '로얄' not in y.price  and '코인' not in y.price ):
             result.loc[i,"Check List"] = f"결제 모듈 내 {y.pkgName} 노출"
             i += 1
             result.loc[i,"Check List"] = f"결제 모듈 내 {y.price} 노출"
@@ -664,7 +673,8 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
                 #freeze_panes = (2, 0)
 
                 ) 
-
+    for id in idList :
+        print(id)
     return xlFileName
 
 
@@ -1040,12 +1050,12 @@ if __name__ == "__main__":
     #def make_process(self, result_path, data_file_name, contents_name, doctype, date_text, check_box_list):
     #global nation
     nation = 'TW'
-    nation = 'KR'
+    #nation = 'KR'
 
     doctype = "CheckList"
-    #doctype = "TestCase"
+    doctype = "TestCase"
 
-    date_text = '2023-12-21'
+    date_text = '2024-03-12'
 
     contents_name = "유료상점"
     

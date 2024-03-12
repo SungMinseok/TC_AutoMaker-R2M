@@ -225,6 +225,7 @@ date={time.strftime("%Y-%m-%d %H:%M:%S")}\n\
             self.checkBox_1.isChecked(),
             self.checkBox_2.isChecked(),
             self.checkBox_3.isChecked(),
+            self.checkBox_99.isChecked(),
             ]
         #self.start_loading()
 
