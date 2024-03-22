@@ -461,6 +461,9 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
                     desc2 = desc2.replace("코인[귀속]","코인")
                     result.loc[i,"Check List"] = desc2
 
+            if '스텝' in y.pkgName :
+                i += 1
+                result.loc[i,"Check List"] = '우측 스텝업 상품 전용 슬롯에 패키지명 온전히 노출 확인'
 
     #■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
@@ -1050,12 +1053,12 @@ if __name__ == "__main__":
     #def make_process(self, result_path, data_file_name, contents_name, doctype, date_text, check_box_list):
     #global nation
     nation = 'TW'
-    #nation = 'KR'
+    nation = 'KR'
 
     doctype = "CheckList"
     doctype = "TestCase"
 
-    date_text = '2024-03-12'
+    date_text = '2024-03-21'
 
     contents_name = "유료상점"
     
