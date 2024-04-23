@@ -341,6 +341,7 @@ def write_data_cashshop(salesList : list[Sales], resultPath = "유료상점_Test
         salesList.sort(key=lambda a: (
             #a.salesCheck,
             a.server,
+            a.pkgID,
             category_order.index(a.category) if a.category in category_order else float('inf'),
             a.order,
             #a.pkgID,
@@ -1058,7 +1059,7 @@ if __name__ == "__main__":
     doctype = "CheckList"
     doctype = "TestCase"
 
-    date_text = '2024-03-21'
+    date_text = '2024-04-25'
 
     contents_name = "유료상점"
     
